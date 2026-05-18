@@ -592,11 +592,11 @@
       <input type="text" id="cfg-url" class="form-input" placeholder="https://xxxxxxxxxxxx.supabase.co" />
     </div>
     <div class="form-group">
-      <label class="form-label">Supabase Anon Key</label>
-      <input type="text" id="cfg-key" class="form-input" placeholder="eyJhbGci..." />
+      <label class="form-label">Supabase Anon / Publishable Key</label>
+      <input type="text" id="cfg-key" class="form-input" placeholder="eyJhbGci... or sb_publishable_..." />
     </div>
     <button class="btn-primary" onclick="saveConfig()">Connect to Supabase →</button>
-    <p class="config-hint">Your credentials are saved locally in your browser only.<br>See the <a href="#" onclick="showSetupGuide()">Setup Guide</a> for step-by-step instructions.</p>
+    <p class="config-hint">Your credentials are saved locally in your browser only. Both legacy <code>anon</code> keys and new <code>sb_publishable_...</code> keys are supported.<br>See the <a href="#" onclick="showSetupGuide()">Setup Guide</a> for step-by-step instructions.</p>
   </div>
 </div>
 
@@ -1526,9 +1526,17 @@ function loadSupabaseLib() {
   return new Promise((resolve, reject) => {
     if (window.supabase && window.supabase.createClient) { resolve(); return; }
     const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    // Pin to 2.50.0+ which supports the new sb_publishable_... key format
+    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.0/dist/umd/supabase.min.js';
     s.onload = resolve;
-    s.onerror = reject;
+    s.onerror = () => {
+      // Fallback to unpkg if jsDelivr fails
+      const s2 = document.createElement('script');
+      s2.src = 'https://unpkg.com/@supabase/supabase-js@2.50.0/dist/umd/supabase.min.js';
+      s2.onload = resolve;
+      s2.onerror = reject;
+      document.head.appendChild(s2);
+    };
     document.head.appendChild(s);
   });
 }
@@ -1549,7 +1557,11 @@ async function connectToSupabase(url, key) {
   if (btn) { btn.textContent = 'Connecting...'; btn.disabled = true; }
   try {
     await Promise.all([loadSupabaseLib(), loadChartLib()]);
-    supabase = window.supabase.createClient(url, key);
+    // Support both legacy anon keys and the new sb_publishable_... key format
+    const clientOptions = key.startsWith('sb_publishable_')
+      ? { auth: { persistSession: true, autoRefreshToken: true } }
+      : {};
+    supabase = window.supabase.createClient(url, key, clientOptions);
     // Test the connection
     const { error } = await supabase.from('athletes').select('id').limit(1);
     if (error && error.code !== 'PGRST116') throw error;
