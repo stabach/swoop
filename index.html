@@ -1357,6 +1357,29 @@
     </div>
   </div>
 </div>
+<div class="modal-overlay" id="calendar-event-modal" style="display:none;" onclick="closeCalendarEventModal(event)">
+  <div class="modal-box">
+    <div class="modal-title" id="calendar-event-title">Add Calendar Event</div>
+    <div class="modal-grid">
+      <div>
+        <label class="modal-label">Date</label>
+        <input type="date" id="calendar-event-date" class="modal-input" />
+      </div>
+      <div>
+        <label class="modal-label">Time (optional)</label>
+        <input type="time" id="calendar-event-time" class="modal-input" />
+      </div>
+    </div>
+    <div>
+      <label class="modal-label">Event Text</label>
+      <textarea id="calendar-event-text" class="modal-input" rows="3" placeholder="Practice, game, lift, note..." style="width:100%;resize:vertical;"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-sm green" onclick="saveCalendarEventFromModal()">Save Event</button>
+      <button class="btn-sm" onclick="closeCalendarEventModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
@@ -2590,6 +2613,7 @@ async function runAttendanceOverview() {
   el.innerHTML = `<table class="log-table"><thead><tr><th>Student</th><th>Group</th><th>Date Range</th><th>Absences</th><th>Presents</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.name}</td><td>${group}</td><td>${start} → ${end}</td><td>${r.absences}</td><td>${r.presents}</td></tr>`).join('')}</tbody></table>`;
 }
 let calendarEvents = [];
+let calendarModalDate = null;
 async function loadCalendarEvents() {
   const monthKey = document.getElementById('calendar-month').value;
   if (!monthKey) return;
@@ -2613,15 +2637,29 @@ function renderCalendarMonth(monthKey) {
   }
   grid.innerHTML = cells.join('');
 }
-async function openCalendarEventPrompt(date) {
-  const time = prompt(`Time for ${date} (HH:MM, optional):`, '15:00');
-  if (time === null) return;
-  const text = prompt(`Event text for ${date}:`, '');
-  if (!text) return;
-  calendarEvents.push({ date, time: time || '', text });
+function openCalendarEventPrompt(date) {
+  calendarModalDate = date;
+  document.getElementById('calendar-event-title').textContent = `Add Event — ${date}`;
+  document.getElementById('calendar-event-date').value = date;
+  document.getElementById('calendar-event-time').value = '';
+  document.getElementById('calendar-event-text').value = '';
+  document.getElementById('calendar-event-modal').style.display = 'flex';
+}
+function closeCalendarEventModal(e) {
+  if (!e || e.target === document.getElementById('calendar-event-modal')) {
+    document.getElementById('calendar-event-modal').style.display = 'none';
+  }
+}
+async function saveCalendarEventFromModal() {
+  const date = document.getElementById('calendar-event-date').value || calendarModalDate;
+  const time = document.getElementById('calendar-event-time').value || '';
+  const text = document.getElementById('calendar-event-text').value.trim();
+  if (!date || !text) { toast('Date and event text are required'); return; }
+  calendarEvents.push({ date, time, text });
   const monthKey = document.getElementById('calendar-month').value;
   const { error } = await supabase.from('calendar_notes').upsert({ month_key: monthKey, notes: calendarEvents }, { onConflict: 'month_key' });
   if (error) return toast(error.message);
+  closeCalendarEventModal();
   renderCalendarMonth(monthKey);
   toast('Calendar event saved');
 }
