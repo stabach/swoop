@@ -955,7 +955,7 @@
       <input type="text" id="cfg-key" class="form-input" placeholder="eyJhbGci... or sb_publishable_..." />
     </div>
     <button class="btn-primary" onclick="saveConfig()">Connect to Supabase →</button>
-    <p class="config-hint">Your credentials are saved locally in your browser only. Both legacy <code>anon</code> keys and new <code>sb_publishable_...</code> keys are supported.<br>See the <a href="#" onclick="showSetupGuide()">Setup Guide</a> for step-by-step instructions.</p>
+    <p class="config-hint">Credentials are used for this live session only and are never stored locally. Both legacy <code>anon</code> keys and new <code>sb_publishable_...</code> keys are supported.<br>See the <a href="#" onclick="showSetupGuide()">Setup Guide</a> for step-by-step instructions.</p>
   </div>
 </div>
 
@@ -972,6 +972,8 @@
     <button class="header-nav-btn" onclick="showPage('today')">📅 Today's Workout</button>
     <button class="header-nav-btn" onclick="showPage('edit-workouts')">✏️ Edit Workouts</button>
     <button class="header-nav-btn" onclick="showPage('admin')">⚙ Manage Athletes</button>
+    <button class="header-nav-btn" onclick="showPage('attendance')">✅ Attendance</button>
+    <button class="header-nav-btn" onclick="showPage('calendar')">🗓 Calendar</button>
     <button class="header-nav-btn" onclick="resetConfig()" style="opacity:0.6;font-size:12px;">Disconnect</button>
   </div>
 </div>
@@ -1009,11 +1011,11 @@
           <div class="tile-sub">Add · Edit · Status</div>
         </div>
       </div>
-      <div class="quick-tile" onclick="showPage('admin')">
+      <div class="quick-tile" onclick="openWeeklyOverview()">
         <div class="tile-icon">📊</div>
         <div>
           <div class="tile-label">Weekly Overview</div>
-          <div class="tile-sub">View all workouts</div>
+          <div class="tile-sub">View weekly logged lifts</div>
         </div>
       </div>
     </div>
@@ -1135,6 +1137,10 @@
           <input type="text" id="new-sport" class="form-input" placeholder="Football, Basketball, etc." />
         </div>
         <div class="form-group">
+          <label class="form-label">Groups (comma separated)</label>
+          <input type="text" id="new-groups" class="form-input" placeholder="Varsity, Morning, Rehab" />
+        </div>
+        <div class="form-group">
           <label class="form-label">Default Level</label>
           <select id="new-level" class="form-input">
             <option value="L3" selected>L3 — Performance (Default)</option>
@@ -1173,6 +1179,10 @@
         <div class="form-group">
           <label class="form-label">Sport</label>
           <input type="text" id="edit-sport" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Groups (comma separated)</label>
+          <input type="text" id="edit-groups" class="form-input" />
         </div>
         <div class="form-group">
           <label class="form-label">Default Level</label>
@@ -1214,8 +1224,31 @@
     <div class="edit-day-tabs" id="edit-day-tabs"></div>
     <div id="edit-workout-editor"></div>
     <div class="edit-save-bar">
-      <span class="save-msg" id="edit-save-msg">Changes auto-saved locally</span>
+      <span class="save-msg" id="edit-save-msg">Changes saved to Supabase</span>
       <button class="btn-save-workout" onclick="saveEditedWorkout()">💾 Save Day</button>
+    </div>
+  </div>
+
+  <div id="page-attendance" class="page">
+    <div class="nav-row"><button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button></div>
+    <div class="dash-heading" style="margin-bottom:16px;">✅ Attendance</div>
+    <div class="admin-card">
+      <label class="form-label">Group</label><select id="attendance-group" class="form-input" onchange="renderAttendanceList()"></select>
+      <label class="form-label" style="margin-top:8px;">Date</label><input id="attendance-date" type="date" class="form-input"/>
+      <button class="btn-sm green" style="margin-top:8px;" onclick="saveAttendance()">Save Attendance</button>
+      <button class="btn-sm" style="margin-top:8px;" onclick="openAttendanceOverview()">Attendance Overview</button>
+      <div id="attendance-list" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <div id="page-calendar" class="page">
+    <div class="nav-row"><button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button></div>
+    <div class="dash-heading" style="margin-bottom:16px;">🗓 Calendar</div>
+    <div class="admin-card">
+      <input type="month" id="calendar-month" class="form-input" onchange="loadCalendarNotes()" />
+      <button class="btn-sm" style="margin-top:8px;" onclick="addCalendarField()">+ Add Text Field</button>
+      <div id="calendar-fields" style="margin-top:10px;"></div>
+      <button class="btn-sm green" style="margin-top:8px;" onclick="saveCalendarNotes()">Save Calendar Notes</button>
     </div>
   </div>
 
@@ -1312,24 +1345,18 @@
 
 <script>
 // ===================== CONFIG =====================
-const CONFIG_KEY = 'eagle_strength_config';
 let supabase = null;
 
-function getConfig() {
-  try { return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {}; } catch { return {}; }
-}
 function saveConfig() {
   const url = document.getElementById('cfg-url').value.trim();
   const key = document.getElementById('cfg-key').value.trim();
   if (!url || !key) { toast('Please enter both URL and Key'); return; }
   if (!url.startsWith('https://')) { toast('URL must start with https://'); return; }
-  localStorage.setItem(CONFIG_KEY, JSON.stringify({ url, key }));
-  connectToSupabase(url, key);
+connectToSupabase(url, key);
 }
 function resetConfig() {
   if (!confirm('Disconnect from Supabase? You can reconnect anytime.')) return;
-  localStorage.removeItem(CONFIG_KEY);
-  location.reload();
+location.reload();
 }
 
 // ===================== WORKOUT DATA =====================
@@ -1465,6 +1492,7 @@ async function initApp() {
   document.getElementById('app-header').style.display = 'flex';
   document.getElementById('main-content').style.display = 'block';
   await loadAthletes();
+  await loadWorkoutTemplates();
   renderDashboard();
 }
 
@@ -1479,13 +1507,15 @@ async function addAthlete() {
   const name = document.getElementById('new-name').value.trim();
   const grade = parseInt(document.getElementById('new-grade').value);
   const sport = document.getElementById('new-sport').value.trim();
+  const groups = parseGroups(document.getElementById('new-groups').value);
   const level = document.getElementById('new-level').value;
   if (!name) { toast('Please enter athlete name'); return; }
-  const { error } = await supabase.from('athletes').insert([{ name, grade, sport, default_level: level, active_status: true, notes: '' }]);
+  const { error } = await supabase.from('athletes').insert([{ name, grade, sport, groups, default_level: level, active_status: true, notes: '' }]);
   if (error) { toast('Error: ' + error.message); return; }
   toast('Athlete added!');
   document.getElementById('new-name').value = '';
   document.getElementById('new-sport').value = '';
+  document.getElementById('new-groups').value = '';
   await loadAthletes();
   renderAdminList();
   renderAthleteGrid();
@@ -1521,9 +1551,10 @@ async function saveEditAthlete() {
   const name = document.getElementById('edit-name').value.trim();
   const grade = parseInt(document.getElementById('edit-grade').value);
   const sport = document.getElementById('edit-sport').value.trim();
+  const groups = parseGroups(document.getElementById('edit-groups').value);
   const level = document.getElementById('edit-level').value;
   if (!name) { toast('Name required'); return; }
-  const { error } = await supabase.from('athletes').update({ name, grade, sport, default_level: level }).eq('id', id);
+  const { error } = await supabase.from('athletes').update({ name, grade, sport, groups, default_level: level }).eq('id', id);
   if (error) { toast('Error: ' + error.message); return; }
   toast('Saved!');
   await loadAthletes();
@@ -1649,6 +1680,7 @@ function openEditAthlete(id) {
   document.getElementById('edit-grade').value = a.grade;
   document.getElementById('edit-sport').value = a.sport || '';
   document.getElementById('edit-level').value = a.default_level;
+  document.getElementById('edit-groups').value = formatGroups(a.groups);
   document.getElementById('edit-panel').style.display = 'block';
   document.getElementById('edit-panel').scrollIntoView({ behavior: 'smooth' });
 }
@@ -1904,6 +1936,8 @@ function showPage(page) {
   if (page === 'dashboard') { renderDashboard(); }
   if (page === 'today') { showTodayPage(); }
   if (page === 'edit-workouts') { showEditWorkoutsPage(); }
+  if (page === 'attendance') { renderAttendanceGroupOptions(); }
+  if (page === 'calendar') { if (!document.getElementById('calendar-month').value) document.getElementById('calendar-month').value = new Date().toISOString().slice(0,7); loadCalendarNotes(); }
 }
 
 function switchTab(tab) {
@@ -1946,24 +1980,21 @@ function showSetupGuide() {
 }
 
 // ===================== WORKOUT STORAGE =====================
-const WORKOUT_STORAGE_KEY = 'eagle_strength_workouts_v1';
+let liveTemplates = JSON.parse(JSON.stringify(WORKOUT_TEMPLATES));
 
-function getWorkoutTemplates() {
-  try {
-    const stored = localStorage.getItem(WORKOUT_STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch(e) {}
-  return JSON.parse(JSON.stringify(WORKOUT_TEMPLATES)); // deep clone defaults
+async function loadWorkoutTemplates() {
+  const { data, error } = await supabase.from('workout_templates').select('day_name, template_json');
+  if (error || !data || data.length===0) return;
+  data.forEach(r => { liveTemplates[r.day_name] = r.template_json; });
 }
 
-function saveWorkoutTemplates(templates) {
-  localStorage.setItem(WORKOUT_STORAGE_KEY, JSON.stringify(templates));
+async function saveWorkoutTemplates(templates) {
+  for (const day of Object.keys(templates)) {
+    await supabase.from('workout_templates').upsert({ day_name: day, template_json: templates[day] }, { onConflict: 'day_name' });
+  }
+  liveTemplates = JSON.parse(JSON.stringify(templates));
 }
-
-// Use stored templates everywhere instead of the hardcoded const
-function getLiveTemplates() {
-  return getWorkoutTemplates();
-}
+function getLiveTemplates() { return liveTemplates; }
 
 // ===================== TODAY'S WORKOUT PAGE =====================
 function showTodayPage() {
@@ -2007,7 +2038,7 @@ let editCurrentDay = 'Monday';
 let editWorkouts = {}; // working copy while on edit page
 
 function showEditWorkoutsPage() {
-  editWorkouts = getWorkoutTemplates();
+  editWorkouts = JSON.parse(JSON.stringify(getLiveTemplates()));
   renderEditDayTabs();
   renderEditWorkoutEditor();
 }
@@ -2094,7 +2125,7 @@ function saveEditedWorkout() {
   const msg = document.getElementById('edit-save-msg');
   msg.textContent = '✓ Saved!';
   msg.style.color = 'var(--green-300)';
-  setTimeout(() => { msg.textContent = 'Changes auto-saved locally'; msg.style.color = ''; }, 2500);
+  setTimeout(() => { msg.textContent = 'Changes saved to Supabase'; msg.style.color = ''; }, 2500);
   toast(`${editCurrentDay} workout saved!`);
 }
 
@@ -2486,17 +2517,26 @@ function tvShowFinished() {
   tvSetRing(1);
 }
 
+
+function parseGroups(text){ return (text||'').split(',').map(x=>x.trim()).filter(Boolean); }
+function formatGroups(arr){ return (arr||[]).join(', '); }
+async function openWeeklyOverview(){
+  const end = new Date(); const start = new Date(); start.setDate(end.getDate()-6);
+  const { data: logs } = await supabase.from('workout_logs').select('athlete_id,date,exercise,weight_used,reps_completed,athletes(name)').gte('date', start.toISOString().split('T')[0]).lte('date', end.toISOString().split('T')[0]).order('date',{ascending:false});
+  const grouped={}; (logs||[]).forEach(l=>{const n=l.athletes?.name||'Unknown'; (grouped[n]??=[]).push(`${l.date}: ${l.exercise} ${l.weight_used?'- '+l.weight_used+' lbs':''}`)});
+  alert(Object.entries(grouped).map(([n,v])=>`${n}\n${v.join('\n')}`).join('\n\n')||'No logs this week.');
+}
+function renderAttendanceGroupOptions(){ const sel=document.getElementById('attendance-group'); if(!sel) return; const groups=[...new Set(athletes.flatMap(a=>a.groups||[]))]; sel.innerHTML=groups.map(g=>`<option value="${g}">${g}</option>`).join(''); renderAttendanceList(); }
+function renderAttendanceList(){ const g=document.getElementById('attendance-group')?.value; const list=document.getElementById('attendance-list'); if(!list) return; const filtered=athletes.filter(a=>(a.groups||[]).includes(g)); list.innerHTML=filtered.map(a=>`<label style="display:block;"><input type="checkbox" data-att="${a.id}" checked /> ${a.name}</label>`).join('')||'No athletes in this group.'; }
+async function saveAttendance(){ const date=document.getElementById('attendance-date').value || new Date().toISOString().split('T')[0]; const group=document.getElementById('attendance-group').value; const rows=[...document.querySelectorAll('[data-att]')].map(c=>({athlete_id:c.dataset.att, date, group_name:group, status:c.checked?'present':'absent'})); const {error}=await supabase.from('attendance_logs').upsert(rows,{onConflict:'athlete_id,date,group_name'}); if(error) return toast(error.message); toast('Attendance saved'); }
+async function openAttendanceOverview(){ const {data}=await supabase.from('attendance_logs').select('date,status,group_name,athletes(name)').order('date',{ascending:false}).limit(300); alert((data||[]).map(r=>`${r.date} | ${r.group_name} | ${r.athletes?.name} | ${r.status}`).join('\n')||'No attendance logged.'); }
+function addCalendarField(val=''){ const wrap=document.getElementById('calendar-fields'); const i=document.createElement('textarea'); i.className='form-input'; i.style.marginTop='8px'; i.value=val; wrap.appendChild(i);}
+async function loadCalendarNotes(){ const m=document.getElementById('calendar-month').value; if(!m) return; const {data}=await supabase.from('calendar_notes').select('notes').eq('month_key',m).maybeSingle(); const wrap=document.getElementById('calendar-fields'); wrap.innerHTML=''; (data?.notes||['']).forEach(addCalendarField);}
+async function saveCalendarNotes(){ const m=document.getElementById('calendar-month').value; const notes=[...document.querySelectorAll('#calendar-fields textarea')].map(x=>x.value); const {error}=await supabase.from('calendar_notes').upsert({month_key:m, notes},{onConflict:'month_key'}); if(error) return toast(error.message); toast('Calendar saved'); }
+
 // ===================== BOOT =====================
 window.addEventListener('DOMContentLoaded', () => {
-  const cfg = getConfig();
-  if (!cfg.url || !cfg.key) {
-    document.getElementById('config-screen').style.display = 'block';
-  } else {
-    document.getElementById('cfg-url').value = cfg.url;
-    document.getElementById('cfg-key').value = cfg.key;
-    document.getElementById('config-screen').style.display = 'block';
-    setTimeout(() => connectToSupabase(cfg.url, cfg.key), 400);
-  }
+  document.getElementById('config-screen').style.display = 'block';
 });
 
 function loadSupabaseLib() {
