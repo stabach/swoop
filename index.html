@@ -162,11 +162,11 @@
     flex-wrap: wrap;
     gap: 12px;
   }
-  .dash-heading { font-family: 'Barlow Condensed', sans-serif; font-size: 30px; font-weight: 800; color: var(--green-900); letter-spacing: 0.4px; }
-  .dash-date { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+  .dash-heading { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 800; color: var(--green-900); letter-spacing: 0.2px; }
+  .dash-date { font-size: 12px; color: var(--gray-600); font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.8px; }
   .search-wrap { position: relative; }
   .search-input {
-    padding: 9px 14px 9px 38px;
+    padding: 10px 14px 10px 38px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     font-family: 'Barlow', sans-serif;
@@ -174,29 +174,29 @@
     width: 220px;
     background: white;
   }
-  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 16px; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
   .quick-tiles {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 12px;
     margin-bottom: 24px;
   }
   .quick-tile {
-    background: linear-gradient(180deg, #ffffff 0%, #f7fbf8 100%);
+    background: #ffffff;
     color: var(--green-900);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
+    border-radius: 12px;
+    padding: 16px 18px;
     cursor: pointer;
     transition: box-shadow 0.15s, transform 0.1s, border-color 0.15s;
     display: flex;
     align-items: center;
     gap: 12px;
   }
-  .quick-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11,46,26,0.10); border-color: var(--green-300); }
-  .tile-icon { font-size: 22px; width: 36px; height: 36px; border-radius: 8px; background: #e9f4ee; display:flex; align-items:center; justify-content:center; }
-  .tile-label { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
-  .tile-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+  .quick-tile:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(11,46,26,0.08); border-color: #b4c5ba; }
+  .tile-icon { font-size: 11px; width: 34px; height: 34px; border-radius: 6px; background: #f1f5f2; color: var(--green-700); display:flex; align-items:center; justify-content:center; font-weight:700; letter-spacing:0.4px; }
+  .tile-label { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 0.3px; }
+  .tile-sub { font-size: 11px; color: var(--gray-600); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
   .section-heading {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 18px;
@@ -1004,7 +1004,7 @@
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <div class="search-wrap">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon">⌕</span>
           <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
         </div>
       </div>
@@ -1012,21 +1012,21 @@
 
     <div class="quick-tiles">
       <div class="quick-tile" onclick="setDayFilter('today')">
-        <div class="tile-icon">📅</div>
+        <div class="tile-icon">DAY</div>
         <div>
           <div class="tile-label">Today's Training</div>
           <div class="tile-sub" id="today-day">Loading...</div>
         </div>
       </div>
       <div class="quick-tile" onclick="showPage('admin')">
-        <div class="tile-icon">👥</div>
+        <div class="tile-icon">ATH</div>
         <div>
           <div class="tile-label">Manage Athletes</div>
           <div class="tile-sub">Add · Edit · Status</div>
         </div>
       </div>
       <div class="quick-tile" onclick="openWeeklyOverview()">
-        <div class="tile-icon">📊</div>
+        <div class="tile-icon">WK</div>
         <div>
           <div class="tile-label">Weekly Overview</div>
           <div class="tile-sub">View weekly logged lifts</div>
