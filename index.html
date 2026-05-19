@@ -1231,7 +1231,6 @@
     <div class="edit-day-tabs" id="edit-day-tabs"></div>
     <div id="edit-workout-editor"></div>
     <div class="edit-save-bar">
-      <span class="save-msg" id="edit-save-msg">Changes saved to Supabase</span>
       <button class="btn-save-workout" onclick="saveEditedWorkout()">💾 Save Day</button>
     </div>
   </div>
@@ -2072,7 +2071,6 @@ function showTodayPage() {
   panel.innerHTML = template.map(section => `
     <div class="section-card">
       <div class="section-card-header">
-        <span class="section-icon">${getSectionIcon(section.section)}</span>
         ${section.section}
       </div>
       ${section.exercises.map(ex => `
@@ -2117,7 +2115,6 @@ function renderEditWorkoutEditor() {
   container.innerHTML = template.map((section, si) => `
     <div class="edit-section-card" id="edit-sec-${si}">
       <div class="edit-section-header">
-        <span style="margin-right:8px;">${getSectionIcon(section.section)}</span>
         <input class="edit-section-title-input" value="${section.section}"
           onchange="updateSectionTitle(${si}, this.value)" placeholder="Section name..." />
         <button class="btn-del" style="color:rgba(255,255,255,0.5);" onclick="deleteSection(${si})" title="Delete section">✕</button>
@@ -2177,10 +2174,6 @@ function addSection() {
 }
 function saveEditedWorkout() {
   saveWorkoutTemplates(editWorkouts);
-  const msg = document.getElementById('edit-save-msg');
-  msg.textContent = '✓ Saved!';
-  msg.style.color = 'var(--green-300)';
-  setTimeout(() => { msg.textContent = 'Changes saved to Supabase'; msg.style.color = ''; }, 2500);
   toast(`${editCurrentDay} workout saved!`);
 }
 
