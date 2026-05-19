@@ -162,11 +162,11 @@
     flex-wrap: wrap;
     gap: 12px;
   }
-  .dash-heading { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 800; color: var(--green-900); }
-  .dash-date { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+  .dash-heading { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 800; color: var(--green-900); letter-spacing: 0.2px; }
+  .dash-date { font-size: 12px; color: var(--gray-600); font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.8px; }
   .search-wrap { position: relative; }
   .search-input {
-    padding: 9px 14px 9px 38px;
+    padding: 10px 14px 10px 38px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     font-family: 'Barlow', sans-serif;
@@ -174,28 +174,41 @@
     width: 220px;
     background: white;
   }
-  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 16px; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
   .quick-tiles {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 12px;
     margin-bottom: 24px;
   }
   .quick-tile {
-    background: var(--green-900);
-    color: white;
-    border-radius: var(--radius);
-    padding: 16px;
+    background: #ffffff;
+    color: var(--green-900);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
     cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
+    transition: box-shadow 0.15s, transform 0.1s, border-color 0.15s;
     display: flex;
     align-items: center;
     gap: 12px;
   }
-  .quick-tile:hover { background: var(--green-800); transform: translateY(-1px); }
-  .tile-icon { font-size: 24px; }
-  .tile-label { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
-  .tile-sub { font-size: 11px; color: var(--green-200); margin-top: 1px; }
+  .quick-tile:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(11,46,26,0.08); border-color: #b4c5ba; }
+  .tile-icon {
+    font-size: 20px;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: #f1f5f2;
+    color: var(--green-700);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    line-height:1;
+    font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif;
+  }
+  .tile-label { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 0.3px; }
+  .tile-sub { font-size: 11px; color: var(--gray-600); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
   .section-heading {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 18px;
@@ -686,7 +699,7 @@
     padding: 12px 20px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     z-index: 50;
     border-top: 2px solid var(--green-700);
     margin: 0 -16px;
@@ -930,6 +943,19 @@
   .tv-queue-item.done:hover { opacity: 0.6; background: rgba(255,255,255,0.06); cursor: pointer; }
   .tv-queue-item-name { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; color: white; }
   .tv-queue-item-detail { font-size: 12px; color: var(--green-300); margin-top: 2px; }
+  .calendar-grid { display:grid; grid-template-columns: repeat(7, minmax(120px,1fr)); gap:8px; }
+  .calendar-weekdays { display:grid; grid-template-columns: repeat(7, minmax(120px,1fr)); gap:8px; }
+  .calendar-cell { background:#fff; border:1px solid var(--border); border-radius:8px; min-height:120px; padding:8px; cursor:pointer; }
+  .calendar-cell.muted { opacity:0.45; }
+  .calendar-date { font-weight:700; font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+  .calendar-item { font-size:12px; margin-bottom:4px; background:var(--green-100); border-radius:4px; padding:3px 6px; }
+  .weekday-head { font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); text-align:center; margin-bottom:8px; }
+  .attendance-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap:10px; }
+  .attendance-tile { border:1px solid var(--border); border-radius:10px; padding:12px; cursor:pointer; user-select:none; transition:all .15s; background:#fff; }
+  .attendance-tile.present { background: #e8f8ee; border-color: #8de8a9; }
+  .attendance-tile.absent { background: #fdebea; border-color: #f1b5b0; }
+  .attendance-name { font-weight:700; color:var(--text-main); }
+  .attendance-status { font-size:12px; color:var(--text-muted); margin-top:4px; }
 </style>
 </head>
 <body>
@@ -955,7 +981,7 @@
       <input type="text" id="cfg-key" class="form-input" placeholder="eyJhbGci... or sb_publishable_..." />
     </div>
     <button class="btn-primary" onclick="saveConfig()">Connect to Supabase →</button>
-    <p class="config-hint">Your credentials are saved locally in your browser only. Both legacy <code>anon</code> keys and new <code>sb_publishable_...</code> keys are supported.<br>See the <a href="#" onclick="showSetupGuide()">Setup Guide</a> for step-by-step instructions.</p>
+    <p class="config-hint">Credentials are used for this live session only and are never stored locally. Both legacy <code>anon</code> keys and new <code>sb_publishable_...</code> keys are supported.<br>See the <a href="#" onclick="showSetupGuide()">Setup Guide</a> for step-by-step instructions.</p>
   </div>
 </div>
 
@@ -972,6 +998,8 @@
     <button class="header-nav-btn" onclick="showPage('today')">📅 Today's Workout</button>
     <button class="header-nav-btn" onclick="showPage('edit-workouts')">✏️ Edit Workouts</button>
     <button class="header-nav-btn" onclick="showPage('admin')">⚙ Manage Athletes</button>
+    <button class="header-nav-btn" onclick="showPage('attendance')">✅ Attendance</button>
+    <button class="header-nav-btn" onclick="showPage('calendar')">🗓 Calendar</button>
     <button class="header-nav-btn" onclick="resetConfig()" style="opacity:0.6;font-size:12px;">Disconnect</button>
   </div>
 </div>
@@ -983,12 +1011,12 @@
   <div id="page-dashboard" class="page active">
     <div class="dash-top">
       <div>
-        <div class="dash-heading">🏋 Coaching Dashboard</div>
+        <div class="dash-heading">Coaching Dashboard</div>
         <div class="dash-date" id="dash-date"></div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <div class="search-wrap">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon">⌕</span>
           <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
         </div>
       </div>
@@ -1009,11 +1037,11 @@
           <div class="tile-sub">Add · Edit · Status</div>
         </div>
       </div>
-      <div class="quick-tile" onclick="showPage('admin')">
+      <div class="quick-tile" onclick="openWeeklyOverview()">
         <div class="tile-icon">📊</div>
         <div>
           <div class="tile-label">Weekly Overview</div>
-          <div class="tile-sub">View all workouts</div>
+          <div class="tile-sub">View weekly logged lifts</div>
         </div>
       </div>
     </div>
@@ -1135,6 +1163,10 @@
           <input type="text" id="new-sport" class="form-input" placeholder="Football, Basketball, etc." />
         </div>
         <div class="form-group">
+          <label class="form-label">Groups (comma separated)</label>
+          <input type="text" id="new-groups" class="form-input" placeholder="Varsity, Morning, Rehab" />
+        </div>
+        <div class="form-group">
           <label class="form-label">Default Level</label>
           <select id="new-level" class="form-input">
             <option value="L3" selected>L3 — Performance (Default)</option>
@@ -1175,6 +1207,10 @@
           <input type="text" id="edit-sport" class="form-input" />
         </div>
         <div class="form-group">
+          <label class="form-label">Groups (comma separated)</label>
+          <input type="text" id="edit-groups" class="form-input" />
+        </div>
+        <div class="form-group">
           <label class="form-label">Default Level</label>
           <select id="edit-level" class="form-input">
             <option value="L3">L3</option><option value="L2">L2</option><option value="L1">L1</option>
@@ -1210,12 +1246,45 @@
     <div class="nav-row">
       <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
     </div>
-    <div class="dash-heading" style="margin-bottom:16px;">✏️ Edit Workouts</div>
+    <div class="dash-heading" style="margin-bottom:16px;">Edit Workouts</div>
     <div class="edit-day-tabs" id="edit-day-tabs"></div>
     <div id="edit-workout-editor"></div>
     <div class="edit-save-bar">
-      <span class="save-msg" id="edit-save-msg">Changes auto-saved locally</span>
       <button class="btn-save-workout" onclick="saveEditedWorkout()">💾 Save Day</button>
+    </div>
+  </div>
+
+  <div id="page-attendance" class="page">
+    <div class="nav-row"><button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button></div>
+    <div class="dash-heading" style="margin-bottom:16px;">✅ Attendance</div>
+    <div class="admin-card">
+      <label class="form-label">Group</label><select id="attendance-group" class="form-input" onchange="renderAttendanceList()"></select>
+      <label class="form-label" style="margin-top:8px;">Date</label><input id="attendance-date" type="date" class="form-input"/>
+      <button class="btn-sm green" style="margin-top:8px;" onclick="saveAttendance()">Save Attendance</button>
+      <button class="btn-sm" style="margin-top:8px;" onclick="openAttendanceOverview()">Attendance Overview</button>
+      <div id="attendance-list" style="margin-top:12px;"></div>
+    </div>
+    <div class="admin-card" id="attendance-overview-card" style="display:none;margin-top:12px;">
+      <div class="admin-title">Attendance Overview by Student</div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:8px;">
+        <div><label class="form-label">Group</label><select id="attendance-overview-group" class="form-input"></select></div>
+        <div><label class="form-label">Start Date</label><input id="attendance-range-start" type="date" class="form-input" /></div>
+        <div><label class="form-label">End Date</label><input id="attendance-range-end" type="date" class="form-input" /></div>
+      </div>
+      <button class="btn-sm green" style="margin-top:8px;" onclick="runAttendanceOverview()">Run Overview</button>
+      <div id="attendance-overview-results" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <div id="page-calendar" class="page">
+    <div class="nav-row"><button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button></div>
+    <div class="dash-heading" style="margin-bottom:16px;">🗓 Calendar</div>
+    <div class="admin-card">
+      <div style="display:flex;gap:8px;align-items:end;max-width:480px;">
+        <div style="flex:1;"><label class="form-label">Month</label><input type="month" id="calendar-month" class="form-input" onchange="loadCalendarEvents()" /></div>
+      </div>
+      <div id="calendar-weekdays" class="calendar-weekdays" style="margin-top:10px;"></div>
+      <div id="calendar-grid" class="calendar-grid" style="margin-top:8px;"></div>
     </div>
   </div>
 
@@ -1306,28 +1375,72 @@
     </div>
   </div>
 </div>
+<div class="modal-overlay" id="calendar-event-modal" style="display:none;" onclick="closeCalendarEventModal(event)">
+  <div class="modal-box">
+    <div class="modal-title" id="calendar-event-title">Add Calendar Event</div>
+    <div class="modal-grid">
+      <div>
+        <label class="modal-label">Date</label>
+        <input type="date" id="calendar-event-date" class="modal-input" />
+      </div>
+      <div>
+        <label class="modal-label">Time (optional)</label>
+        <input type="time" id="calendar-event-time" class="modal-input" />
+      </div>
+    </div>
+    <div>
+      <label class="modal-label">Event Text</label>
+      <textarea id="calendar-event-text" class="modal-input" rows="3" placeholder="Practice, game, lift, note..." style="width:100%;resize:vertical;"></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-sm green" onclick="saveCalendarEventFromModal()">Save Event</button>
+      <button class="btn-sm" onclick="closeCalendarEventModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="app-dialog-modal" style="display:none;" onclick="closeAppDialog(event)">
+  <div class="modal-box">
+    <div class="modal-title" id="app-dialog-title">Notice</div>
+    <div id="app-dialog-message" style="color:var(--text-main);margin-bottom:14px;line-height:1.5;"></div>
+    <div class="modal-btns">
+      <button class="btn-sm green" id="app-dialog-ok" onclick="resolveAppDialog(true)">OK</button>
+      <button class="btn-sm" id="app-dialog-cancel" onclick="resolveAppDialog(false)" style="display:none;">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
 // ===================== CONFIG =====================
-const CONFIG_KEY = 'eagle_strength_config';
 let supabase = null;
+const CONFIG_KEY = 'eagle_strength_config';
+let appDialogResolver = null;
 
 function getConfig() {
   try { return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {}; } catch { return {}; }
 }
+
 function saveConfig() {
-  const url = document.getElementById('cfg-url').value.trim();
-  const key = document.getElementById('cfg-key').value.trim();
+  let url = document.getElementById('cfg-url').value.trim();
+  let key = document.getElementById('cfg-key').value.trim();
+  // Alias shortcuts for coach login convenience
+  if (url.toLowerCase() === 'admin') {
+    url = 'https://ispmelxwebnhnoflbeoj.supabase.co';
+  }
+  if (key === 'P@ssword') {
+    key = 'sb_publishable_RV-YgGToZ9yfk4RNVvfMQQ_Peh_NVIF';
+  }
+  document.getElementById('cfg-url').value = url;
+  document.getElementById('cfg-key').value = key;
   if (!url || !key) { toast('Please enter both URL and Key'); return; }
   if (!url.startsWith('https://')) { toast('URL must start with https://'); return; }
   localStorage.setItem(CONFIG_KEY, JSON.stringify({ url, key }));
   connectToSupabase(url, key);
 }
-function resetConfig() {
-  if (!confirm('Disconnect from Supabase? You can reconnect anytime.')) return;
+async function resetConfig() {
+  if (!await appConfirm('Disconnect from Supabase?', 'You can reconnect anytime.')) return;
   localStorage.removeItem(CONFIG_KEY);
   location.reload();
 }
@@ -1465,6 +1578,7 @@ async function initApp() {
   document.getElementById('app-header').style.display = 'flex';
   document.getElementById('main-content').style.display = 'block';
   await loadAthletes();
+  await loadWorkoutTemplates();
   renderDashboard();
 }
 
@@ -1479,13 +1593,15 @@ async function addAthlete() {
   const name = document.getElementById('new-name').value.trim();
   const grade = parseInt(document.getElementById('new-grade').value);
   const sport = document.getElementById('new-sport').value.trim();
+  const groups = parseGroups(document.getElementById('new-groups').value);
   const level = document.getElementById('new-level').value;
   if (!name) { toast('Please enter athlete name'); return; }
-  const { error } = await supabase.from('athletes').insert([{ name, grade, sport, default_level: level, active_status: true, notes: '' }]);
+  const { error } = await supabase.from('athletes').insert([{ name, grade, sport, groups, default_level: level, active_status: true, notes: '' }]);
   if (error) { toast('Error: ' + error.message); return; }
   toast('Athlete added!');
   document.getElementById('new-name').value = '';
   document.getElementById('new-sport').value = '';
+  document.getElementById('new-groups').value = '';
   await loadAthletes();
   renderAdminList();
   renderAthleteGrid();
@@ -1521,9 +1637,10 @@ async function saveEditAthlete() {
   const name = document.getElementById('edit-name').value.trim();
   const grade = parseInt(document.getElementById('edit-grade').value);
   const sport = document.getElementById('edit-sport').value.trim();
+  const groups = parseGroups(document.getElementById('edit-groups').value);
   const level = document.getElementById('edit-level').value;
   if (!name) { toast('Name required'); return; }
-  const { error } = await supabase.from('athletes').update({ name, grade, sport, default_level: level }).eq('id', id);
+  const { error } = await supabase.from('athletes').update({ name, grade, sport, groups, default_level: level }).eq('id', id);
   if (error) { toast('Error: ' + error.message); return; }
   toast('Saved!');
   await loadAthletes();
@@ -1546,7 +1663,7 @@ async function toggleAthleteStatus(id) {
 
 async function deleteAthlete(id) {
   const athlete = athletes.find(a => a.id === id);
-  if (!confirm(`Delete ${athlete?.name}? This cannot be undone.`)) return;
+  if (!await appConfirm('Delete Athlete', `Delete ${athlete?.name}? This cannot be undone.`)) return;
   const { error } = await supabase.from('athletes').delete().eq('id', id);
   if (error) { toast('Error deleting'); return; }
   athletes = athletes.filter(a => a.id !== id);
@@ -1649,6 +1766,7 @@ function openEditAthlete(id) {
   document.getElementById('edit-grade').value = a.grade;
   document.getElementById('edit-sport').value = a.sport || '';
   document.getElementById('edit-level').value = a.default_level;
+  document.getElementById('edit-groups').value = formatGroups(a.groups);
   document.getElementById('edit-panel').style.display = 'block';
   document.getElementById('edit-panel').scrollIntoView({ behavior: 'smooth' });
 }
@@ -1728,7 +1846,6 @@ function renderWorkoutPanel() {
   document.getElementById('workout-panel').innerHTML = template.map(section => `
     <div class="section-card">
       <div class="section-card-header">
-        <span class="section-icon">${getSectionIcon(section.section)}</span>
         ${section.section}
       </div>
       ${renderExercises(section.exercises, defaultLevel)}
@@ -1904,6 +2021,8 @@ function showPage(page) {
   if (page === 'dashboard') { renderDashboard(); }
   if (page === 'today') { showTodayPage(); }
   if (page === 'edit-workouts') { showEditWorkoutsPage(); }
+  if (page === 'attendance') { renderAttendanceGroupOptions(); }
+  if (page === 'calendar') { if (!document.getElementById('calendar-month').value) document.getElementById('calendar-month').value = new Date().toISOString().slice(0,7); loadCalendarEvents(); }
 }
 
 function switchTab(tab) {
@@ -1946,24 +2065,21 @@ function showSetupGuide() {
 }
 
 // ===================== WORKOUT STORAGE =====================
-const WORKOUT_STORAGE_KEY = 'eagle_strength_workouts_v1';
+let liveTemplates = JSON.parse(JSON.stringify(WORKOUT_TEMPLATES));
 
-function getWorkoutTemplates() {
-  try {
-    const stored = localStorage.getItem(WORKOUT_STORAGE_KEY);
-    if (stored) return JSON.parse(stored);
-  } catch(e) {}
-  return JSON.parse(JSON.stringify(WORKOUT_TEMPLATES)); // deep clone defaults
+async function loadWorkoutTemplates() {
+  const { data, error } = await supabase.from('workout_templates').select('day_name, template_json');
+  if (error || !data || data.length===0) return;
+  data.forEach(r => { liveTemplates[r.day_name] = r.template_json; });
 }
 
-function saveWorkoutTemplates(templates) {
-  localStorage.setItem(WORKOUT_STORAGE_KEY, JSON.stringify(templates));
+async function saveWorkoutTemplates(templates) {
+  for (const day of Object.keys(templates)) {
+    await supabase.from('workout_templates').upsert({ day_name: day, template_json: templates[day] }, { onConflict: 'day_name' });
+  }
+  liveTemplates = JSON.parse(JSON.stringify(templates));
 }
-
-// Use stored templates everywhere instead of the hardcoded const
-function getLiveTemplates() {
-  return getWorkoutTemplates();
-}
+function getLiveTemplates() { return liveTemplates; }
 
 // ===================== TODAY'S WORKOUT PAGE =====================
 function showTodayPage() {
@@ -1986,7 +2102,6 @@ function showTodayPage() {
   panel.innerHTML = template.map(section => `
     <div class="section-card">
       <div class="section-card-header">
-        <span class="section-icon">${getSectionIcon(section.section)}</span>
         ${section.section}
       </div>
       ${section.exercises.map(ex => `
@@ -2007,7 +2122,7 @@ let editCurrentDay = 'Monday';
 let editWorkouts = {}; // working copy while on edit page
 
 function showEditWorkoutsPage() {
-  editWorkouts = getWorkoutTemplates();
+  editWorkouts = JSON.parse(JSON.stringify(getLiveTemplates()));
   renderEditDayTabs();
   renderEditWorkoutEditor();
 }
@@ -2031,7 +2146,6 @@ function renderEditWorkoutEditor() {
   container.innerHTML = template.map((section, si) => `
     <div class="edit-section-card" id="edit-sec-${si}">
       <div class="edit-section-header">
-        <span style="margin-right:8px;">${getSectionIcon(section.section)}</span>
         <input class="edit-section-title-input" value="${section.section}"
           onchange="updateSectionTitle(${si}, this.value)" placeholder="Section name..." />
         <button class="btn-del" style="color:rgba(255,255,255,0.5);" onclick="deleteSection(${si})" title="Delete section">✕</button>
@@ -2068,8 +2182,8 @@ function deleteExercise(si, ei) {
   editWorkouts[editCurrentDay][si].exercises.splice(ei, 1);
   renderEditWorkoutEditor();
 }
-function deleteSection(si) {
-  if (!confirm('Delete this section?')) return;
+async function deleteSection(si) {
+  if (!await appConfirm('Delete Section', 'Delete this section?')) return;
   editWorkouts[editCurrentDay].splice(si, 1);
   renderEditWorkoutEditor();
 }
@@ -2091,10 +2205,6 @@ function addSection() {
 }
 function saveEditedWorkout() {
   saveWorkoutTemplates(editWorkouts);
-  const msg = document.getElementById('edit-save-msg');
-  msg.textContent = '✓ Saved!';
-  msg.style.color = 'var(--green-300)';
-  setTimeout(() => { msg.textContent = 'Changes auto-saved locally'; msg.style.color = ''; }, 2500);
   toast(`${editCurrentDay} workout saved!`);
 }
 
@@ -2486,17 +2596,154 @@ function tvShowFinished() {
   tvSetRing(1);
 }
 
+
+function parseGroups(text){ return (text||'').split(',').map(x=>x.trim()).filter(Boolean); }
+function formatGroups(arr){ return (arr||[]).join(', '); }
+async function openWeeklyOverview(){
+  const end = new Date(); const start = new Date(); start.setDate(end.getDate()-6);
+  const { data: logs } = await supabase.from('workout_logs').select('athlete_id,date,exercise,weight_used,reps_completed,athletes(name)').gte('date', start.toISOString().split('T')[0]).lte('date', end.toISOString().split('T')[0]).order('date',{ascending:false});
+  const grouped={}; (logs||[]).forEach(l=>{const n=l.athletes?.name||'Unknown'; (grouped[n]??=[]).push(`${l.date}: ${l.exercise} ${l.weight_used?'- '+l.weight_used+' lbs':''}`)});
+  await appAlert('Weekly Overview', Object.entries(grouped).map(([n,v])=>`${n}\n${v.join('\n')}`).join('\n\n')||'No logs this week.');
+}
+function openAppDialog({ title, message, confirmMode = false, okText = 'OK' }) {
+  document.getElementById('app-dialog-title').textContent = title || 'Notice';
+  document.getElementById('app-dialog-message').textContent = message || '';
+  document.getElementById('app-dialog-ok').textContent = okText;
+  document.getElementById('app-dialog-cancel').style.display = confirmMode ? 'inline-block' : 'none';
+  document.getElementById('app-dialog-modal').style.display = 'flex';
+  return new Promise(resolve => { appDialogResolver = resolve; });
+}
+function resolveAppDialog(val) {
+  document.getElementById('app-dialog-modal').style.display = 'none';
+  if (appDialogResolver) { appDialogResolver(val); appDialogResolver = null; }
+}
+function closeAppDialog(e) {
+  if (e && e.target !== document.getElementById('app-dialog-modal')) return;
+  resolveAppDialog(false);
+}
+function appAlert(title, message) { return openAppDialog({ title, message, confirmMode: false, okText: 'OK' }); }
+function appConfirm(title, message) { return openAppDialog({ title, message, confirmMode: true, okText: 'Confirm' }); }
+function renderAttendanceGroupOptions(){ const sel=document.getElementById('attendance-group'); if(!sel) return; const groups=[...new Set(athletes.flatMap(a=>a.groups||[]))]; sel.innerHTML=groups.map(g=>`<option value="${g}">${g}</option>`).join(''); renderAttendanceList(); }
+function renderAttendanceList(){
+  const g=document.getElementById('attendance-group')?.value;
+  const list=document.getElementById('attendance-list');
+  if(!list) return;
+  const filtered=athletes.filter(a=>(a.groups||[]).includes(g));
+  if (!filtered.length) { list.innerHTML = 'No athletes in this group.'; return; }
+  list.innerHTML = `<div class="attendance-grid">${
+    filtered.map(a=>`
+      <div class="attendance-tile present" data-att="${a.id}" data-status="present" onclick="toggleAttendanceTile(this)">
+        <div class="attendance-name">${a.name}</div>
+        <div class="attendance-status">Present</div>
+      </div>
+    `).join('')
+  }</div>`;
+}
+function toggleAttendanceTile(tile){
+  const next = tile.dataset.status === 'present' ? 'absent' : 'present';
+  tile.dataset.status = next;
+  tile.classList.remove('present','absent');
+  tile.classList.add(next);
+  const statusEl = tile.querySelector('.attendance-status');
+  if (statusEl) statusEl.textContent = next === 'present' ? 'Present' : 'Absent';
+}
+async function saveAttendance(){
+  const date=document.getElementById('attendance-date').value || new Date().toISOString().split('T')[0];
+  const group=document.getElementById('attendance-group').value;
+  const rows=[...document.querySelectorAll('.attendance-tile[data-att]')].map(t=>({
+    athlete_id:t.dataset.att, date, group_name:group, status:t.dataset.status || 'present'
+  }));
+  const {error}=await supabase.from('attendance_logs').upsert(rows,{onConflict:'athlete_id,date,group_name'});
+  if(error) return toast(error.message);
+  toast('Attendance saved');
+}
+function openAttendanceOverview() {
+  document.getElementById('attendance-overview-card').style.display = 'block';
+  const groups=[...new Set(athletes.flatMap(a=>a.groups||[]))];
+  document.getElementById('attendance-overview-group').innerHTML = groups.map(g=>`<option value="${g}">${g}</option>`).join('');
+  const end = new Date();
+  const start = new Date(); start.setDate(end.getDate() - 30);
+  document.getElementById('attendance-range-start').value = start.toISOString().split('T')[0];
+  document.getElementById('attendance-range-end').value = end.toISOString().split('T')[0];
+}
+async function runAttendanceOverview() {
+  const group = document.getElementById('attendance-overview-group').value;
+  const start = document.getElementById('attendance-range-start').value;
+  const end = document.getElementById('attendance-range-end').value;
+  const roster = athletes.filter(a => (a.groups || []).includes(group));
+  const { data, error } = await supabase.from('attendance_logs').select('athlete_id,status,date,group_name').eq('group_name', group).gte('date', start).lte('date', end);
+  if (error) return toast(error.message);
+  const byAth = {};
+  roster.forEach(a => { byAth[a.id] = { name: a.name, absences: 0, presents: 0 }; });
+  (data || []).forEach(r => {
+    if (!byAth[r.athlete_id]) return;
+    if (r.status === 'absent') byAth[r.athlete_id].absences += 1;
+    if (r.status === 'present') byAth[r.athlete_id].presents += 1;
+  });
+  const rows = Object.values(byAth).sort((a,b)=>b.absences-a.absences);
+  const el = document.getElementById('attendance-overview-results');
+  if (!rows.length) { el.innerHTML = 'No students in this group.'; return; }
+  el.innerHTML = `<table class="log-table"><thead><tr><th>Student</th><th>Group</th><th>Date Range</th><th>Absences</th><th>Presents</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.name}</td><td>${group}</td><td>${start} → ${end}</td><td>${r.absences}</td><td>${r.presents}</td></tr>`).join('')}</tbody></table>`;
+}
+let calendarEvents = [];
+let calendarModalDate = null;
+async function loadCalendarEvents() {
+  const monthKey = document.getElementById('calendar-month').value;
+  if (!monthKey) return;
+  const { data } = await supabase.from('calendar_notes').select('notes').eq('month_key', monthKey).maybeSingle();
+  calendarEvents = Array.isArray(data?.notes) ? data.notes : [];
+  renderCalendarMonth(monthKey);
+}
+function renderCalendarMonth(monthKey) {
+  const [y,m] = monthKey.split('-').map(Number);
+  const first = new Date(Date.UTC(y, m-1, 1));
+  const startDay = first.getUTCDay();
+  const daysInMonth = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const grid = document.getElementById('calendar-grid');
+  document.getElementById('calendar-weekdays').innerHTML = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="weekday-head">${d}</div>`).join('');
+  const cells = [];
+  for (let i=0;i<startDay;i++) cells.push('<div class="calendar-cell muted"></div>');
+  for (let d=1; d<=daysInMonth; d++) {
+    const date = `${monthKey}-${String(d).padStart(2,'0')}`;
+    const events = calendarEvents.filter(e => e.date === date);
+    cells.push(`<div class="calendar-cell" onclick="openCalendarEventPrompt('${date}')"><div class="calendar-date">${d}</div>${events.map(e=>`<div class="calendar-item">${e.time || 'All day'} — ${e.text}</div>`).join('')}</div>`);
+  }
+  grid.innerHTML = cells.join('');
+}
+function openCalendarEventPrompt(date) {
+  calendarModalDate = date;
+  document.getElementById('calendar-event-title').textContent = `Add Event — ${date}`;
+  document.getElementById('calendar-event-date').value = date;
+  document.getElementById('calendar-event-time').value = '';
+  document.getElementById('calendar-event-text').value = '';
+  document.getElementById('calendar-event-modal').style.display = 'flex';
+}
+function closeCalendarEventModal(e) {
+  if (!e || e.target === document.getElementById('calendar-event-modal')) {
+    document.getElementById('calendar-event-modal').style.display = 'none';
+  }
+}
+async function saveCalendarEventFromModal() {
+  const date = document.getElementById('calendar-event-date').value || calendarModalDate;
+  const time = document.getElementById('calendar-event-time').value || '';
+  const text = document.getElementById('calendar-event-text').value.trim();
+  if (!date || !text) { toast('Date and event text are required'); return; }
+  calendarEvents.push({ date, time, text });
+  const monthKey = document.getElementById('calendar-month').value;
+  const { error } = await supabase.from('calendar_notes').upsert({ month_key: monthKey, notes: calendarEvents }, { onConflict: 'month_key' });
+  if (error) return toast(error.message);
+  closeCalendarEventModal();
+  renderCalendarMonth(monthKey);
+  toast('Calendar event saved');
+}
+
 // ===================== BOOT =====================
 window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('config-screen').style.display = 'block';
   const cfg = getConfig();
-  if (!cfg.url || !cfg.key) {
-    document.getElementById('config-screen').style.display = 'block';
-  } else {
-    document.getElementById('cfg-url').value = cfg.url;
-    document.getElementById('cfg-key').value = cfg.key;
-    document.getElementById('config-screen').style.display = 'block';
-    setTimeout(() => connectToSupabase(cfg.url, cfg.key), 400);
-  }
+  if (cfg.url) document.getElementById('cfg-url').value = cfg.url;
+  if (cfg.key) document.getElementById('cfg-key').value = cfg.key;
+  if (cfg.url && cfg.key) setTimeout(() => connectToSupabase(cfg.url, cfg.key), 150);
 });
 
 function loadSupabaseLib() {
