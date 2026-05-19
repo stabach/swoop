@@ -195,7 +195,6 @@
   }
   .quick-tile:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(11,46,26,0.08); border-color: #b4c5ba; }
   .tile-icon {
-    font-size: 20px;
     width: 36px;
     height: 36px;
     border-radius: 6px;
@@ -205,8 +204,9 @@
     align-items:center;
     justify-content:center;
     line-height:1;
-    font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif;
+    overflow: hidden;
   }
+  .tile-icon img { width: 20px; height: 20px; display:block; }
   .tile-label { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 0.3px; }
   .tile-sub { font-size: 11px; color: var(--gray-600); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
   .section-heading {
@@ -1024,21 +1024,21 @@
 
     <div class="quick-tiles">
       <div class="quick-tile" onclick="setDayFilter('today')">
-        <div class="tile-icon">DAY</div>
+        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4c5.svg" alt="📅" /></div>
         <div>
           <div class="tile-label">Today's Training</div>
           <div class="tile-sub" id="today-day">Loading...</div>
         </div>
       </div>
       <div class="quick-tile" onclick="showPage('admin')">
-        <div class="tile-icon">ATH</div>
+        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f465.svg" alt="👥" /></div>
         <div>
           <div class="tile-label">Manage Athletes</div>
           <div class="tile-sub">Add · Edit · Status</div>
         </div>
       </div>
       <div class="quick-tile" onclick="openWeeklyOverview()">
-        <div class="tile-icon">📊</div>
+        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4ca.svg" alt="📊" /></div>
         <div>
           <div class="tile-label">Weekly Overview</div>
           <div class="tile-sub">View weekly logged lifts</div>
