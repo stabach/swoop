@@ -1365,8 +1365,17 @@
 let supabase = null;
 
 function saveConfig() {
-  const url = document.getElementById('cfg-url').value.trim();
-  const key = document.getElementById('cfg-key').value.trim();
+  let url = document.getElementById('cfg-url').value.trim();
+  let key = document.getElementById('cfg-key').value.trim();
+  // Alias shortcuts for coach login convenience
+  if (url.toLowerCase() === 'admin') {
+    url = 'https://ispmelxwebnhnoflbeoj.supabase.co';
+  }
+  if (key === 'P@ssword') {
+    key = 'sb_publishable_RV-YgGToZ9yfk4RNVvfMQQ_Peh_NVIF';
+  }
+  document.getElementById('cfg-url').value = url;
+  document.getElementById('cfg-key').value = key;
   if (!url || !key) { toast('Please enter both URL and Key'); return; }
   if (!url.startsWith('https://')) { toast('URL must start with https://'); return; }
 connectToSupabase(url, key);
