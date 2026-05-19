@@ -1363,6 +1363,11 @@
 <script>
 // ===================== CONFIG =====================
 let supabase = null;
+const CONFIG_KEY = 'eagle_strength_config';
+
+function getConfig() {
+  try { return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {}; } catch { return {}; }
+}
 
 function saveConfig() {
   let url = document.getElementById('cfg-url').value.trim();
@@ -2623,6 +2628,10 @@ async function openCalendarEventPrompt(date) {
 // ===================== BOOT =====================
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('config-screen').style.display = 'block';
+  const cfg = getConfig();
+  if (cfg.url) document.getElementById('cfg-url').value = cfg.url;
+  if (cfg.key) document.getElementById('cfg-key').value = cfg.key;
+  if (cfg.url && cfg.key) setTimeout(() => connectToSupabase(cfg.url, cfg.key), 150);
 });
 
 function loadSupabaseLib() {
