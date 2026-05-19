@@ -194,7 +194,7 @@
     gap: 12px;
   }
   .quick-tile:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(11,46,26,0.08); border-color: #b4c5ba; }
-  .tile-icon { font-size: 11px; width: 34px; height: 34px; border-radius: 6px; background: #f1f5f2; color: var(--green-700); display:flex; align-items:center; justify-content:center; font-weight:700; letter-spacing:0.4px; }
+  .tile-icon { font-size: 18px; width: 36px; height: 36px; border-radius: 6px; background: #f1f5f2; color: var(--green-700); display:flex; align-items:center; justify-content:center; line-height:1; }
   .tile-label { font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 700; letter-spacing: 0.3px; }
   .tile-sub { font-size: 11px; color: var(--gray-600); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
   .section-heading {
@@ -1833,7 +1833,6 @@ function renderWorkoutPanel() {
   document.getElementById('workout-panel').innerHTML = template.map(section => `
     <div class="section-card">
       <div class="section-card-header">
-        <span class="section-icon">${getSectionIcon(section.section)}</span>
         ${section.section}
       </div>
       ${renderExercises(section.exercises, defaultLevel)}
