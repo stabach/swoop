@@ -930,6 +930,12 @@
   .tv-queue-item.done:hover { opacity: 0.6; background: rgba(255,255,255,0.06); cursor: pointer; }
   .tv-queue-item-name { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; color: white; }
   .tv-queue-item-detail { font-size: 12px; color: var(--green-300); margin-top: 2px; }
+  .calendar-grid { display:grid; grid-template-columns: repeat(7, minmax(120px,1fr)); gap:8px; }
+  .calendar-cell { background:#fff; border:1px solid var(--border); border-radius:8px; min-height:120px; padding:8px; cursor:pointer; }
+  .calendar-cell.muted { opacity:0.45; }
+  .calendar-date { font-weight:700; font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+  .calendar-item { font-size:12px; margin-bottom:4px; background:var(--green-100); border-radius:4px; padding:3px 6px; }
+  .weekday-head { font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); text-align:center; margin-bottom:8px; }
 </style>
 </head>
 <body>
@@ -1239,16 +1245,27 @@
       <button class="btn-sm" style="margin-top:8px;" onclick="openAttendanceOverview()">Attendance Overview</button>
       <div id="attendance-list" style="margin-top:12px;"></div>
     </div>
+    <div class="admin-card" id="attendance-overview-card" style="display:none;margin-top:12px;">
+      <div class="admin-title">Attendance Overview by Student</div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:8px;">
+        <div><label class="form-label">Group</label><select id="attendance-overview-group" class="form-input"></select></div>
+        <div><label class="form-label">Start Date</label><input id="attendance-range-start" type="date" class="form-input" /></div>
+        <div><label class="form-label">End Date</label><input id="attendance-range-end" type="date" class="form-input" /></div>
+      </div>
+      <button class="btn-sm green" style="margin-top:8px;" onclick="runAttendanceOverview()">Run Overview</button>
+      <div id="attendance-overview-results" style="margin-top:10px;"></div>
+    </div>
   </div>
 
   <div id="page-calendar" class="page">
     <div class="nav-row"><button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button></div>
     <div class="dash-heading" style="margin-bottom:16px;">🗓 Calendar</div>
     <div class="admin-card">
-      <input type="month" id="calendar-month" class="form-input" onchange="loadCalendarNotes()" />
-      <button class="btn-sm" style="margin-top:8px;" onclick="addCalendarField()">+ Add Text Field</button>
-      <div id="calendar-fields" style="margin-top:10px;"></div>
-      <button class="btn-sm green" style="margin-top:8px;" onclick="saveCalendarNotes()">Save Calendar Notes</button>
+      <div style="display:flex;gap:8px;align-items:end;max-width:480px;">
+        <div style="flex:1;"><label class="form-label">Month</label><input type="month" id="calendar-month" class="form-input" onchange="loadCalendarEvents()" /></div>
+      </div>
+      <div id="calendar-weekdays" style="margin-top:10px;"></div>
+      <div id="calendar-grid" class="calendar-grid" style="margin-top:8px;"></div>
     </div>
   </div>
 
@@ -1937,7 +1954,7 @@ function showPage(page) {
   if (page === 'today') { showTodayPage(); }
   if (page === 'edit-workouts') { showEditWorkoutsPage(); }
   if (page === 'attendance') { renderAttendanceGroupOptions(); }
-  if (page === 'calendar') { if (!document.getElementById('calendar-month').value) document.getElementById('calendar-month').value = new Date().toISOString().slice(0,7); loadCalendarNotes(); }
+  if (page === 'calendar') { if (!document.getElementById('calendar-month').value) document.getElementById('calendar-month').value = new Date().toISOString().slice(0,7); loadCalendarEvents(); }
 }
 
 function switchTab(tab) {
@@ -2529,10 +2546,70 @@ async function openWeeklyOverview(){
 function renderAttendanceGroupOptions(){ const sel=document.getElementById('attendance-group'); if(!sel) return; const groups=[...new Set(athletes.flatMap(a=>a.groups||[]))]; sel.innerHTML=groups.map(g=>`<option value="${g}">${g}</option>`).join(''); renderAttendanceList(); }
 function renderAttendanceList(){ const g=document.getElementById('attendance-group')?.value; const list=document.getElementById('attendance-list'); if(!list) return; const filtered=athletes.filter(a=>(a.groups||[]).includes(g)); list.innerHTML=filtered.map(a=>`<label style="display:block;"><input type="checkbox" data-att="${a.id}" checked /> ${a.name}</label>`).join('')||'No athletes in this group.'; }
 async function saveAttendance(){ const date=document.getElementById('attendance-date').value || new Date().toISOString().split('T')[0]; const group=document.getElementById('attendance-group').value; const rows=[...document.querySelectorAll('[data-att]')].map(c=>({athlete_id:c.dataset.att, date, group_name:group, status:c.checked?'present':'absent'})); const {error}=await supabase.from('attendance_logs').upsert(rows,{onConflict:'athlete_id,date,group_name'}); if(error) return toast(error.message); toast('Attendance saved'); }
-async function openAttendanceOverview(){ const {data}=await supabase.from('attendance_logs').select('date,status,group_name,athletes(name)').order('date',{ascending:false}).limit(300); alert((data||[]).map(r=>`${r.date} | ${r.group_name} | ${r.athletes?.name} | ${r.status}`).join('\n')||'No attendance logged.'); }
-function addCalendarField(val=''){ const wrap=document.getElementById('calendar-fields'); const i=document.createElement('textarea'); i.className='form-input'; i.style.marginTop='8px'; i.value=val; wrap.appendChild(i);}
-async function loadCalendarNotes(){ const m=document.getElementById('calendar-month').value; if(!m) return; const {data}=await supabase.from('calendar_notes').select('notes').eq('month_key',m).maybeSingle(); const wrap=document.getElementById('calendar-fields'); wrap.innerHTML=''; (data?.notes||['']).forEach(addCalendarField);}
-async function saveCalendarNotes(){ const m=document.getElementById('calendar-month').value; const notes=[...document.querySelectorAll('#calendar-fields textarea')].map(x=>x.value); const {error}=await supabase.from('calendar_notes').upsert({month_key:m, notes},{onConflict:'month_key'}); if(error) return toast(error.message); toast('Calendar saved'); }
+function openAttendanceOverview() {
+  document.getElementById('attendance-overview-card').style.display = 'block';
+  const groups=[...new Set(athletes.flatMap(a=>a.groups||[]))];
+  document.getElementById('attendance-overview-group').innerHTML = groups.map(g=>`<option value="${g}">${g}</option>`).join('');
+  const end = new Date();
+  const start = new Date(); start.setDate(end.getDate() - 30);
+  document.getElementById('attendance-range-start').value = start.toISOString().split('T')[0];
+  document.getElementById('attendance-range-end').value = end.toISOString().split('T')[0];
+}
+async function runAttendanceOverview() {
+  const group = document.getElementById('attendance-overview-group').value;
+  const start = document.getElementById('attendance-range-start').value;
+  const end = document.getElementById('attendance-range-end').value;
+  const roster = athletes.filter(a => (a.groups || []).includes(group));
+  const { data, error } = await supabase.from('attendance_logs').select('athlete_id,status,date,group_name').eq('group_name', group).gte('date', start).lte('date', end);
+  if (error) return toast(error.message);
+  const byAth = {};
+  roster.forEach(a => { byAth[a.id] = { name: a.name, absences: 0, presents: 0 }; });
+  (data || []).forEach(r => {
+    if (!byAth[r.athlete_id]) return;
+    if (r.status === 'absent') byAth[r.athlete_id].absences += 1;
+    if (r.status === 'present') byAth[r.athlete_id].presents += 1;
+  });
+  const rows = Object.values(byAth).sort((a,b)=>b.absences-a.absences);
+  const el = document.getElementById('attendance-overview-results');
+  if (!rows.length) { el.innerHTML = 'No students in this group.'; return; }
+  el.innerHTML = `<table class="log-table"><thead><tr><th>Student</th><th>Group</th><th>Date Range</th><th>Absences</th><th>Presents</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.name}</td><td>${group}</td><td>${start} → ${end}</td><td>${r.absences}</td><td>${r.presents}</td></tr>`).join('')}</tbody></table>`;
+}
+let calendarEvents = [];
+async function loadCalendarEvents() {
+  const monthKey = document.getElementById('calendar-month').value;
+  if (!monthKey) return;
+  const { data } = await supabase.from('calendar_notes').select('notes').eq('month_key', monthKey).maybeSingle();
+  calendarEvents = Array.isArray(data?.notes) ? data.notes : [];
+  renderCalendarMonth(monthKey);
+}
+function renderCalendarMonth(monthKey) {
+  const [y,m] = monthKey.split('-').map(Number);
+  const first = new Date(Date.UTC(y, m-1, 1));
+  const startDay = first.getUTCDay();
+  const daysInMonth = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const grid = document.getElementById('calendar-grid');
+  document.getElementById('calendar-weekdays').innerHTML = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="weekday-head">${d}</div>`).join('');
+  const cells = [];
+  for (let i=0;i<startDay;i++) cells.push('<div class="calendar-cell muted"></div>');
+  for (let d=1; d<=daysInMonth; d++) {
+    const date = `${monthKey}-${String(d).padStart(2,'0')}`;
+    const events = calendarEvents.filter(e => e.date === date);
+    cells.push(`<div class="calendar-cell" onclick="openCalendarEventPrompt('${date}')"><div class="calendar-date">${d}</div>${events.map(e=>`<div class="calendar-item">${e.time || 'All day'} — ${e.text}</div>`).join('')}</div>`);
+  }
+  grid.innerHTML = cells.join('');
+}
+async function openCalendarEventPrompt(date) {
+  const time = prompt(`Time for ${date} (HH:MM, optional):`, '15:00');
+  if (time === null) return;
+  const text = prompt(`Event text for ${date}:`, '');
+  if (!text) return;
+  calendarEvents.push({ date, time: time || '', text });
+  const monthKey = document.getElementById('calendar-month').value;
+  const { error } = await supabase.from('calendar_notes').upsert({ month_key: monthKey, notes: calendarEvents }, { onConflict: 'month_key' });
+  if (error) return toast(error.message);
+  renderCalendarMonth(monthKey);
+  toast('Calendar event saved');
+}
 
 // ===================== BOOT =====================
 window.addEventListener('DOMContentLoaded', () => {
