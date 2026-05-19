@@ -1407,13 +1407,11 @@ function saveConfig() {
   document.getElementById('cfg-key').value = key;
   if (!url || !key) { toast('Please enter both URL and Key'); return; }
   if (!url.startsWith('https://')) { toast('URL must start with https://'); return; }
-  localStorage.setItem(CONFIG_KEY, JSON.stringify({ url, key }));
-  connectToSupabase(url, key);
+connectToSupabase(url, key);
 }
 function resetConfig() {
   if (!confirm('Disconnect from Supabase? You can reconnect anytime.')) return;
-  localStorage.removeItem(CONFIG_KEY);
-  location.reload();
+location.reload();
 }
 
 // ===================== WORKOUT DATA =====================
