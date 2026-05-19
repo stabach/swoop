@@ -1026,7 +1026,7 @@
         </div>
       </div>
       <div class="quick-tile" onclick="openWeeklyOverview()">
-        <div class="tile-icon">WK</div>
+        <div class="tile-icon">📊</div>
         <div>
           <div class="tile-label">Weekly Overview</div>
           <div class="tile-sub">View weekly logged lifts</div>
@@ -1386,6 +1386,16 @@
     </div>
   </div>
 </div>
+<div class="modal-overlay" id="app-dialog-modal" style="display:none;" onclick="closeAppDialog(event)">
+  <div class="modal-box">
+    <div class="modal-title" id="app-dialog-title">Notice</div>
+    <div id="app-dialog-message" style="color:var(--text-main);margin-bottom:14px;line-height:1.5;"></div>
+    <div class="modal-btns">
+      <button class="btn-sm green" id="app-dialog-ok" onclick="resolveAppDialog(true)">OK</button>
+      <button class="btn-sm" id="app-dialog-cancel" onclick="resolveAppDialog(false)" style="display:none;">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
@@ -1394,6 +1404,7 @@
 // ===================== CONFIG =====================
 let supabase = null;
 const CONFIG_KEY = 'eagle_strength_config';
+let appDialogResolver = null;
 
 function getConfig() {
   try { return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {}; } catch { return {}; }
@@ -1415,9 +1426,10 @@ function saveConfig() {
   if (!url.startsWith('https://')) { toast('URL must start with https://'); return; }
 connectToSupabase(url, key);
 }
-function resetConfig() {
-  if (!confirm('Disconnect from Supabase? You can reconnect anytime.')) return;
-location.reload();
+async function resetConfig() {
+  if (!await appConfirm('Disconnect from Supabase?', 'You can reconnect anytime.')) return;
+  localStorage.removeItem(CONFIG_KEY);
+  location.reload();
 }
 
 // ===================== WORKOUT DATA =====================
@@ -1638,7 +1650,7 @@ async function toggleAthleteStatus(id) {
 
 async function deleteAthlete(id) {
   const athlete = athletes.find(a => a.id === id);
-  if (!confirm(`Delete ${athlete?.name}? This cannot be undone.`)) return;
+  if (!await appConfirm('Delete Athlete', `Delete ${athlete?.name}? This cannot be undone.`)) return;
   const { error } = await supabase.from('athletes').delete().eq('id', id);
   if (error) { toast('Error deleting'); return; }
   athletes = athletes.filter(a => a.id !== id);
@@ -2158,8 +2170,8 @@ function deleteExercise(si, ei) {
   editWorkouts[editCurrentDay][si].exercises.splice(ei, 1);
   renderEditWorkoutEditor();
 }
-function deleteSection(si) {
-  if (!confirm('Delete this section?')) return;
+async function deleteSection(si) {
+  if (!await appConfirm('Delete Section', 'Delete this section?')) return;
   editWorkouts[editCurrentDay].splice(si, 1);
   renderEditWorkoutEditor();
 }
@@ -2579,8 +2591,26 @@ async function openWeeklyOverview(){
   const end = new Date(); const start = new Date(); start.setDate(end.getDate()-6);
   const { data: logs } = await supabase.from('workout_logs').select('athlete_id,date,exercise,weight_used,reps_completed,athletes(name)').gte('date', start.toISOString().split('T')[0]).lte('date', end.toISOString().split('T')[0]).order('date',{ascending:false});
   const grouped={}; (logs||[]).forEach(l=>{const n=l.athletes?.name||'Unknown'; (grouped[n]??=[]).push(`${l.date}: ${l.exercise} ${l.weight_used?'- '+l.weight_used+' lbs':''}`)});
-  alert(Object.entries(grouped).map(([n,v])=>`${n}\n${v.join('\n')}`).join('\n\n')||'No logs this week.');
+  await appAlert('Weekly Overview', Object.entries(grouped).map(([n,v])=>`${n}\n${v.join('\n')}`).join('\n\n')||'No logs this week.');
 }
+function openAppDialog({ title, message, confirmMode = false, okText = 'OK' }) {
+  document.getElementById('app-dialog-title').textContent = title || 'Notice';
+  document.getElementById('app-dialog-message').textContent = message || '';
+  document.getElementById('app-dialog-ok').textContent = okText;
+  document.getElementById('app-dialog-cancel').style.display = confirmMode ? 'inline-block' : 'none';
+  document.getElementById('app-dialog-modal').style.display = 'flex';
+  return new Promise(resolve => { appDialogResolver = resolve; });
+}
+function resolveAppDialog(val) {
+  document.getElementById('app-dialog-modal').style.display = 'none';
+  if (appDialogResolver) { appDialogResolver(val); appDialogResolver = null; }
+}
+function closeAppDialog(e) {
+  if (e && e.target !== document.getElementById('app-dialog-modal')) return;
+  resolveAppDialog(false);
+}
+function appAlert(title, message) { return openAppDialog({ title, message, confirmMode: false, okText: 'OK' }); }
+function appConfirm(title, message) { return openAppDialog({ title, message, confirmMode: true, okText: 'Confirm' }); }
 function renderAttendanceGroupOptions(){ const sel=document.getElementById('attendance-group'); if(!sel) return; const groups=[...new Set(athletes.flatMap(a=>a.groups||[]))]; sel.innerHTML=groups.map(g=>`<option value="${g}">${g}</option>`).join(''); renderAttendanceList(); }
 function renderAttendanceList(){
   const g=document.getElementById('attendance-group')?.value;
