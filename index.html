@@ -1012,14 +1012,14 @@
 
     <div class="quick-tiles">
       <div class="quick-tile" onclick="setDayFilter('today')">
-        <div class="tile-icon">📅</div>
+        <div class="tile-icon">DAY</div>
         <div>
           <div class="tile-label">Today's Training</div>
           <div class="tile-sub" id="today-day">Loading...</div>
         </div>
       </div>
       <div class="quick-tile" onclick="showPage('admin')">
-        <div class="tile-icon">👥</div>
+        <div class="tile-icon">ATH</div>
         <div>
           <div class="tile-label">Manage Athletes</div>
           <div class="tile-sub">Add · Edit · Status</div>
@@ -1424,8 +1424,7 @@ function saveConfig() {
   document.getElementById('cfg-key').value = key;
   if (!url || !key) { toast('Please enter both URL and Key'); return; }
   if (!url.startsWith('https://')) { toast('URL must start with https://'); return; }
-  localStorage.setItem(CONFIG_KEY, JSON.stringify({ url, key }));
-  connectToSupabase(url, key);
+connectToSupabase(url, key);
 }
 async function resetConfig() {
   if (!await appConfirm('Disconnect from Supabase?', 'You can reconnect anytime.')) return;
