@@ -2140,6 +2140,18 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+// Defensive cleanup in case stray CSS text nodes ever make it into body HTML.
+function removeStrayCssTextNodes() {
+  const marker = 'dashboard-kpis {';
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const toRemove = [];
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (node.nodeValue && node.nodeValue.includes(marker)) toRemove.push(node);
+  }
+  toRemove.forEach(n => n.parentNode && n.parentNode.removeChild(n));
+}
+
 function showSetupGuide() {
   toast('See the Setup Guide document included with the app!');
 }
@@ -2820,6 +2832,7 @@ async function saveCalendarEventFromModal() {
 // ===================== BOOT =====================
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('config-screen').style.display = 'block';
+  removeStrayCssTextNodes();
   const cfg = getConfig();
   if (cfg.url) document.getElementById('cfg-url').value = cfg.url;
   if (cfg.key) document.getElementById('cfg-key').value = cfg.key;
