@@ -33,6 +33,12 @@
     --border: #d0dcd3;
     --radius: 10px;
     --radius-lg: 16px;
+    --surface-1: #ffffff;
+    --surface-2: #f8fbf9;
+    --surface-3: #edf4ef;
+    --focus-ring: 0 0 0 3px rgba(46, 170, 80, 0.28);
+    --shadow-1: 0 2px 10px rgba(11,46,26,0.08);
+    --shadow-2: 0 10px 28px rgba(11,46,26,0.12);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -41,7 +47,10 @@
     color: var(--text-main);
     min-height: 100vh;
     font-size: 15px;
+    line-height: 1.45;
+    background-image: radial-gradient(circle at 20% -20%, rgba(78,203,113,0.15), transparent 45%), linear-gradient(180deg, #f7fbf8 0%, var(--page-bg) 45%);
   }
+  *:focus-visible { outline: none; box-shadow: var(--focus-ring); }
   /* ---- HEADER ---- */
   #app-header {
     background: var(--green-900);
@@ -171,10 +180,27 @@
     border-radius: var(--radius);
     font-family: 'Barlow', sans-serif;
     font-size: 14px;
-    width: 220px;
+    width: 300px;
     background: white;
+    min-height: 42px;
   }
   .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-400); font-size: 14px; }
+  .dashboard-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(170px, 1fr));
+    gap: 12px;
+    margin: 0 0 18px;
+  }
+  .kpi-card {
+    background: linear-gradient(180deg, var(--surface-1) 0%, var(--surface-2) 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow-1);
+  }
+  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; }
+  .kpi-value { font-family: 'Barlow Condensed', sans-serif; font-size: 30px; color: var(--green-900); font-weight: 800; line-height: 1.1; margin-top: 6px; }
+  .kpi-sub { font-size: 12px; color: var(--gray-600); margin-top: 4px; }
   .quick-tiles {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -188,12 +214,12 @@
     border-radius: 12px;
     padding: 16px 18px;
     cursor: pointer;
-    transition: box-shadow 0.15s, transform 0.1s, border-color 0.15s;
+    transition: box-shadow 0.2s, transform 0.15s, border-color 0.15s;
     display: flex;
     align-items: center;
     gap: 12px;
   }
-  .quick-tile:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(11,46,26,0.08); border-color: #b4c5ba; }
+  .quick-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: #b4c5ba; }
   .tile-icon {
     width: 36px;
     height: 36px;
@@ -226,7 +252,7 @@
     gap: 12px;
   }
   .athlete-card {
-    background: white;
+    background: linear-gradient(180deg, var(--surface-1) 0%, var(--surface-2) 100%);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 16px;
@@ -250,7 +276,7 @@
     margin-bottom: 10px;
   }
   .athlete-name { font-weight: 600; font-size: 15px; color: var(--text-main); margin-bottom: 3px; }
-  .athlete-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+  .athlete-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
   .level-badge {
     display: inline-block;
     padding: 2px 10px;
@@ -336,9 +362,10 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.12s;
+    transition: background 0.12s, transform 0.12s;
+    min-height: 40px;
   }
-  .btn-sm:hover { background: var(--gray-100); }
+  .btn-sm:hover { background: var(--gray-100); transform: translateY(-1px); }
   .btn-sm.green { background: var(--green-800); color: white; border-color: var(--green-800); }
   .btn-sm.green:hover { background: var(--green-700); }
   .btn-sm.danger { background: var(--danger-light); color: var(--danger); border-color: var(--danger); }
@@ -365,8 +392,9 @@
     cursor: pointer;
     transition: all 0.12s;
     letter-spacing: 0.5px;
+    min-height: 40px;
   }
-  .day-btn.active { background: var(--green-800); color: white; border-color: var(--green-800); }
+  .day-btn.active { background: var(--green-800); color: white; border-color: var(--green-800); box-shadow: 0 0 0 2px rgba(46,170,80,0.2) inset; }
   .day-btn:hover:not(.active) { border-color: var(--green-400); color: var(--green-700); }
   .date-input {
     padding: 7px 12px;
@@ -378,7 +406,7 @@
   }
   /* ---- WORKOUT PANEL ---- */
   .section-card {
-    background: white;
+    background: linear-gradient(180deg, var(--surface-1) 0%, var(--surface-2) 100%);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     margin-bottom: 10px;
@@ -407,6 +435,7 @@
     flex-wrap: wrap;
   }
   .exercise-row:last-child { border-bottom: none; }
+  .exercise-row:nth-child(even) { background: #fbfdfb; }
   .exercise-name { flex: 1; font-weight: 600; font-size: 14px; min-width: 120px; }
   .exercise-detail { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   .level-toggle { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
@@ -436,9 +465,10 @@
     letter-spacing: 0.5px;
     transition: background 0.12s;
     white-space: nowrap;
+    min-height: 36px;
   }
   .log-btn:hover { background: #b8860d; }
-  .logged-indicator { font-size: 11px; color: var(--green-500); font-weight: 600; }
+  .logged-indicator { font-size: 11px; color: var(--green-700); font-weight: 700; background: var(--green-100); border-radius: 999px; padding: 4px 8px; }
   /* ---- LOG MODAL ---- */
   .modal-overlay {
     position: fixed; inset: 0;
@@ -498,7 +528,7 @@
   .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media (max-width: 600px) { .admin-grid { grid-template-columns: 1fr; } }
   .admin-card {
-    background: white;
+    background: linear-gradient(180deg, var(--surface-1) 0%, var(--surface-2) 100%);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 20px;
@@ -531,10 +561,11 @@
   .btn-icon.danger:hover { background: var(--danger-light); color: var(--danger); }
   /* ---- WORKOUT LOG TABLE ---- */
   .log-table { width: 100%; font-size: 13px; border-collapse: collapse; }
-  .log-table th { background: var(--green-900); color: white; padding: 8px 12px; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; }
+  .log-table th { background: var(--green-900); color: white; padding: 8px 12px; text-align: left; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 2; }
   .log-table td { padding: 8px 12px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
   .log-table tr:last-child td { border-bottom: none; }
   .log-table tr:hover td { background: var(--page-bg); }
+  .log-table tr:nth-child(even) td { background: #fbfdfb; }
   .overflow-table { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
   /* ---- MISC ---- */
   .toast {
@@ -723,7 +754,7 @@
 
   /* ---- TODAY'S WORKOUT PAGE ---- */
   .today-header {
-    background: var(--green-900);
+    background: linear-gradient(135deg, var(--green-900), #114528 70%);
     border-radius: var(--radius-lg);
     padding: 20px 24px;
     margin-bottom: 20px;
@@ -862,6 +893,8 @@
   }
   .tv-phase-label.work { color: var(--gold-light); }
   .tv-phase-label.rest { color: var(--green-300); }
+  #tv-display.high-contrast .tv-phase-label.work { color: #ffd85f; }
+  #tv-display.high-contrast .tv-phase-label.rest { color: #8de8a9; }
   .tv-progress-bar-wrap {
     position: absolute;
     bottom: 100px;
@@ -1019,6 +1052,24 @@
           <span class="search-icon">⌕</span>
           <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
         </div>
+      </div>
+    </div>
+
+    <div class="dashboard-kpis">
+      <div class="kpi-card">
+        <div class="kpi-label">Athletes Today</div>
+        <div class="kpi-value" id="kpi-athletes">0</div>
+        <div class="kpi-sub" id="kpi-athletes-sub">0 active rostered</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Sessions Logged</div>
+        <div class="kpi-value" id="kpi-logs">0</div>
+        <div class="kpi-sub">Entries in last 7 days</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Completion Rate</div>
+        <div class="kpi-value" id="kpi-completion">0%</div>
+        <div class="kpi-sub">Active athletes who logged this week</div>
       </div>
     </div>
 
@@ -1715,7 +1766,42 @@ function renderDashboard() {
   document.getElementById('dash-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const todayName = now.toLocaleDateString('en-US', { weekday: 'long' });
   document.getElementById('today-day').textContent = todayName + ' Workout';
+  updateDashboardKpis();
   renderAthleteGrid();
+}
+
+async function updateDashboardKpis() {
+  const activeCount = athletes.filter(a => a.active_status !== false).length;
+  document.getElementById('kpi-athletes').textContent = athletes.length;
+  document.getElementById('kpi-athletes-sub').textContent = `${activeCount} active rostered`;
+
+  const weekStart = new Date();
+  weekStart.setDate(weekStart.getDate() - 6);
+  const from = weekStart.toISOString().split('T')[0];
+  const to = new Date().toISOString().split('T')[0];
+  const { data, error } = await supabase
+    .from('workout_logs')
+    .select('athlete_id,date')
+    .gte('date', from)
+    .lte('date', to);
+
+  if (error) {
+    document.getElementById('kpi-logs').textContent = '—';
+    document.getElementById('kpi-completion').textContent = '—';
+    return;
+  }
+
+  const weeklyLogs = data || [];
+  const uniqueSessions = new Set(
+    weeklyLogs
+      .filter(x => x.athlete_id && x.date)
+      .map(x => `${x.athlete_id}__${x.date}`)
+  );
+  document.getElementById('kpi-logs').textContent = uniqueSessions.size;
+  const athletesWithLogs = new Set(weeklyLogs.filter(x => x.athlete_id).map(x => x.athlete_id));
+  const denom = Math.max(activeCount, 1);
+  const pct = Math.round((athletesWithLogs.size / denom) * 100);
+  document.getElementById('kpi-completion').textContent = `${Math.min(pct, 100)}%`;
 }
 
 function renderAthleteGrid() {
@@ -2057,6 +2143,18 @@ function toast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Defensive cleanup in case stray CSS text nodes ever make it into body HTML.
+function removeStrayCssTextNodes() {
+  const marker = 'dashboard-kpis {';
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const toRemove = [];
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (node.nodeValue && node.nodeValue.includes(marker)) toRemove.push(node);
+  }
+  toRemove.forEach(n => n.parentNode && n.parentNode.removeChild(n));
 }
 
 function showSetupGuide() {
@@ -2600,13 +2698,49 @@ function parseGroups(text){ return (text||'').split(',').map(x=>x.trim()).filter
 function formatGroups(arr){ return (arr||[]).join(', '); }
 async function openWeeklyOverview(){
   const end = new Date(); const start = new Date(); start.setDate(end.getDate()-6);
-  const { data: logs } = await supabase.from('workout_logs').select('athlete_id,date,exercise,weight_used,reps_completed,athletes(name)').gte('date', start.toISOString().split('T')[0]).lte('date', end.toISOString().split('T')[0]).order('date',{ascending:false});
-  const grouped={}; (logs||[]).forEach(l=>{const n=l.athletes?.name||'Unknown'; (grouped[n]??=[]).push(`${l.date}: ${l.exercise} ${l.weight_used?'- '+l.weight_used+' lbs':''}`)});
-  await appAlert('Weekly Overview', Object.entries(grouped).map(([n,v])=>`${n}\n${v.join('\n')}`).join('\n\n')||'No logs this week.');
+  const { data: logs } = await supabase
+    .from('workout_logs')
+    .select('athlete_id,date,exercise,weight_used,reps_completed,athletes(name)')
+    .gte('date', start.toISOString().split('T')[0])
+    .lte('date', end.toISOString().split('T')[0])
+    .order('date',{ascending:false});
+
+  const grouped = {};
+  (logs || []).forEach(l => {
+    const name = l.athletes?.name || 'Unknown Athlete';
+    if (!grouped[name]) grouped[name] = { sessions: new Set(), entries: 0, days: {} };
+    grouped[name].entries += 1;
+    if (l.date) grouped[name].sessions.add(l.date);
+    if (!grouped[name].days[l.date]) grouped[name].days[l.date] = [];
+    grouped[name].days[l.date].push(l);
+  });
+
+  const names = Object.keys(grouped).sort((a,b)=>a.localeCompare(b));
+  if (!names.length) return appAlert('Weekly Overview', 'No logs this week.');
+
+  const blocks = names.map(name => {
+    const g = grouped[name];
+    const dayRows = Object.entries(g.days)
+      .sort((a,b)=>b[0].localeCompare(a[0]))
+      .map(([day, entries]) => `<div style="display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px solid var(--gray-100);"><span>${day}</span><strong>${entries.length} lifts</strong></div>`)
+      .join('');
+    return `
+      <div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:10px;background:white;">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+          <div style="font-weight:700;">${name}</div>
+          <div style="font-size:12px;color:var(--text-muted);">${g.sessions.size} sessions · ${g.entries} lifts</div>
+        </div>
+        <div style="margin-top:8px;font-size:13px;">${dayRows}</div>
+      </div>`;
+  }).join('');
+
+  await appAlert('Weekly Overview (By Athlete)', blocks, true);
 }
-function openAppDialog({ title, message, confirmMode = false, okText = 'OK' }) {
+function openAppDialog({ title, message, confirmMode = false, okText = 'OK', asHtml = false }) {
   document.getElementById('app-dialog-title').textContent = title || 'Notice';
-  document.getElementById('app-dialog-message').textContent = message || '';
+  const messageEl = document.getElementById('app-dialog-message');
+  if (asHtml) messageEl.innerHTML = message || '';
+  else messageEl.textContent = message || '';
   document.getElementById('app-dialog-ok').textContent = okText;
   document.getElementById('app-dialog-cancel').style.display = confirmMode ? 'inline-block' : 'none';
   document.getElementById('app-dialog-modal').style.display = 'flex';
@@ -2620,7 +2754,7 @@ function closeAppDialog(e) {
   if (e && e.target !== document.getElementById('app-dialog-modal')) return;
   resolveAppDialog(false);
 }
-function appAlert(title, message) { return openAppDialog({ title, message, confirmMode: false, okText: 'OK' }); }
+function appAlert(title, message, asHtml = false) { return openAppDialog({ title, message, confirmMode: false, okText: 'OK', asHtml }); }
 function appConfirm(title, message) { return openAppDialog({ title, message, confirmMode: true, okText: 'Confirm' }); }
 function renderAttendanceGroupOptions(){ const sel=document.getElementById('attendance-group'); if(!sel) return; const groups=[...new Set(athletes.flatMap(a=>a.groups||[]))]; sel.innerHTML=groups.map(g=>`<option value="${g}">${g}</option>`).join(''); renderAttendanceList(); }
 function renderAttendanceList(){
@@ -2739,6 +2873,7 @@ async function saveCalendarEventFromModal() {
 // ===================== BOOT =====================
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('config-screen').style.display = 'block';
+  removeStrayCssTextNodes();
   const cfg = getConfig();
   if (cfg.url) document.getElementById('cfg-url').value = cfg.url;
   if (cfg.key) document.getElementById('cfg-key').value = cfg.key;
