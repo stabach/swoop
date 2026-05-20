@@ -1651,6 +1651,7 @@ let logModalExercise = null;
 let logModalLevel = null;
 let workoutLogs = {};
 let progressionChart = null;
+let loggedExercisesForDate = new Set();
 
 // ===================== INIT =====================
 async function initApp() {
@@ -1768,7 +1769,24 @@ async function submitLog() {
   const notes = document.getElementById('log-notes').value;
   const date = currentDate || new Date().toISOString().split('T')[0];
 
-  const { error } = await supabase.from('workout_logs').insert([{
+  const existing = await supabase.from('workout_logs')
+    .select('id')
+    .eq('athlete_id', currentAthleteId)
+    .eq('date', date)
+    .eq('exercise', logModalExercise)
+    .limit(1);
+
+  let error = null;
+  if (existing.data && existing.data.length > 0) {
+    ({ error } = await supabase.from('workout_logs').update({
+      sets_completed: parseInt(sets) || null,
+      reps_completed: parseInt(reps) || null,
+      weight_used: parseFloat(weight) || null,
+      level_used: level,
+      performance_notes: notes
+    }).eq('id', existing.data[0].id));
+  } else {
+    ({ error } = await supabase.from('workout_logs').insert([{
     athlete_id: currentAthleteId,
     date: date,
     exercise: logModalExercise,
@@ -1777,18 +1795,15 @@ async function submitLog() {
     weight_used: parseFloat(weight) || null,
     level_used: level,
     performance_notes: notes
-  }]);
+    }]));
+  }
 
   if (error) { toast('Error saving log: ' + error.message); return; }
   document.getElementById('log-modal').style.display = 'none';
-  toast('Lift logged! ✓');
+  toast(existing.data && existing.data.length > 0 ? 'Workout log updated! ✓' : 'Lift logged! ✓');
 
-  // Mark logged in UI
-  const btn = document.querySelector(`[data-log-exercise="${logModalExercise}"]`);
-  if (btn) {
-    btn.textContent = '✓ Logged';
-    btn.style.background = 'var(--green-700)';
-  }
+  await refreshLoggedExercisesForCurrentDate();
+  updateWorkoutLogButtons();
 }
 
 // ===================== RENDER =====================
@@ -1965,6 +1980,8 @@ function renderDaySelector() {
 
 function selectDay(day) {
   currentDay = day;
+  currentDate = getDateForWeekday(day);
+  document.getElementById('workout-date').value = currentDate;
   renderDaySelector();
   renderWorkoutPanel();
 }
@@ -2004,6 +2021,44 @@ function renderWorkoutPanel() {
       ${renderExercises(section.exercises, defaultLevel)}
     </div>
   `).join('');
+  refreshLoggedExercisesForCurrentDate().then(updateWorkoutLogButtons);
+}
+
+function getMondayOfCurrentWeek(baseDate = new Date()) {
+  const monday = new Date(baseDate);
+  const day = monday.getDay();
+  const shift = day === 0 ? -6 : 1 - day;
+  monday.setDate(monday.getDate() + shift);
+  monday.setHours(12, 0, 0, 0);
+  return monday;
+}
+
+function getDateForWeekday(dayName) {
+  const idx = DAYS.indexOf(dayName);
+  if (idx < 0) return new Date().toISOString().split('T')[0];
+  const monday = getMondayOfCurrentWeek(new Date(currentDate || new Date().toISOString().split('T')[0]));
+  monday.setDate(monday.getDate() + idx);
+  return monday.toISOString().split('T')[0];
+}
+
+async function refreshLoggedExercisesForCurrentDate() {
+  if (!currentAthleteId || !currentDate) { loggedExercisesForDate = new Set(); return; }
+  const { data, error } = await supabase
+    .from('workout_logs')
+    .select('exercise')
+    .eq('athlete_id', currentAthleteId)
+    .eq('date', currentDate);
+  if (error) { loggedExercisesForDate = new Set(); return; }
+  loggedExercisesForDate = new Set((data || []).map(x => x.exercise));
+}
+
+function updateWorkoutLogButtons() {
+  document.querySelectorAll('.log-btn[data-log-exercise]').forEach(btn => {
+    const ex = btn.getAttribute('data-log-exercise');
+    const isLogged = loggedExercisesForDate.has(ex);
+    btn.textContent = isLogged ? 'Edit' : 'Log';
+    btn.style.background = isLogged ? 'var(--green-700)' : 'var(--gold)';
+  });
 }
 
 function renderExercises(exercises, defaultLevel) {
