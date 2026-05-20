@@ -277,6 +277,37 @@
   }
   .athlete-name { font-weight: 600; font-size: 15px; color: var(--text-main); margin-bottom: 3px; }
   .athlete-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
+  .athlete-week {
+    display: flex;
+    gap: 5px;
+    margin: 6px 0 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .week-pill {
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    background: #fff;
+    color: var(--gray-600);
+  }
+  .week-pill.logged {
+    background: var(--green-100);
+    color: var(--green-800);
+    border-color: var(--green-300);
+  }
+  .week-pill.missed {
+    background: #fde8e6;
+    color: #9f2f24;
+    border-color: #f0b5ad;
+  }
   .level-badge {
     display: inline-block;
     padding: 2px 10px;
@@ -1804,7 +1835,7 @@ async function updateDashboardKpis() {
   document.getElementById('kpi-completion').textContent = `${Math.min(pct, 100)}%`;
 }
 
-function renderAthleteGrid() {
+async function renderAthleteGrid() {
   const query = (document.getElementById('search-input')?.value || '').toLowerCase();
   const filtered = athletes.filter(a => a.name.toLowerCase().includes(query) || (a.sport || '').toLowerCase().includes(query));
   document.getElementById('athlete-count').textContent = `(${filtered.length})`;
@@ -1814,12 +1845,49 @@ function renderAthleteGrid() {
     return;
   }
 
+  const now = new Date();
+  const monday = new Date(now);
+  const day = monday.getDay();
+  const mondayShift = day === 0 ? -6 : 1 - day;
+  monday.setDate(monday.getDate() + mondayShift);
+  const friday = new Date(monday);
+  friday.setDate(monday.getDate() + 4);
+  const from = monday.toISOString().split('T')[0];
+  const to = friday.toISOString().split('T')[0];
+  const { data: weekLogs } = await supabase
+    .from('workout_logs')
+    .select('athlete_id,date')
+    .gte('date', from)
+    .lte('date', to);
+
+  const weekdayKeys = ['M','T','W','TH','F'];
+  const dateKeyOrder = {};
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    dateKeyOrder[d.toISOString().split('T')[0]] = i;
+  }
+  const logsByAthlete = {};
+  (weekLogs || []).forEach(l => {
+    if (!l?.athlete_id || !l?.date) return;
+    const idx = dateKeyOrder[l.date];
+    if (idx === undefined) return;
+    if (!logsByAthlete[l.athlete_id]) logsByAthlete[l.athlete_id] = new Set();
+    logsByAthlete[l.athlete_id].add(idx);
+  });
+
   document.getElementById('athlete-grid').innerHTML = filtered.map(a => `
     <div class="athlete-card" onclick="openAthleteProfile('${a.id}')">
       ${!a.active_status ? '<span class="inactive-badge">Inactive</span>' : ''}
       <div class="athlete-avatar">${getInitials(a.name)}</div>
       <div class="athlete-name">${a.name}</div>
       <div class="athlete-meta">Grade ${a.grade || '—'} · ${a.sport || 'No sport'}</div>
+      <div class="athlete-week">
+        ${weekdayKeys.map((k, idx) => {
+          const didLog = logsByAthlete[a.id]?.has(idx);
+          return `<span class="week-pill ${didLog ? 'logged' : 'missed'}">${k}</span>`;
+        }).join('')}
+      </div>
       <span class="level-badge level-${a.default_level}">${a.default_level}</span>
     </div>
   `).join('');
