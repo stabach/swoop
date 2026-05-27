@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Edit Workouts Section Notes</title></head>
+<body>
+  <!--
+    EDITING NOTES (Edit Workouts)
+    - Page ID: page-edit-workouts
+    - Day tabs container: edit-day-tabs (Mon-Thu from DAYS array).
+    - Editable form container: edit-workout-editor.
+    - Save button calls saveEditedWorkout() and persists templates.
+    - Data flow:
+      1) showEditWorkoutsPage() clones getLiveTemplates() into editWorkouts.
+      2) renderEditDayTabs() builds day buttons from DAYS.
+      3) renderEditWorkoutEditor() renders each section/exercise row.
+    - To change exercise fields, edit updateExField()/renderEditWorkoutEditor().
+  -->
+  <div id="page-edit-workouts" class="page"></div>
+</body>
+</html>
