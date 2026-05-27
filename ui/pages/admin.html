@@ -1,3 +1,24 @@
+<!--
+  ADMIN / ATHLETE MANAGEMENT PAGE NOTES
+  ---------------------------------------------------------------------------
+  This page owns roster CRUD (create/read/update) UI for athletes.
+  Edit this file when changing:
+  - Add-athlete form fields, labels, or ordering.
+  - Athlete list container positioning.
+  - Edit panel field layout/buttons.
+
+  DATA FLOW OVERVIEW:
+  - Add form fields (#new-*) are read by addAthlete().
+  - Athlete list container (#admin-athlete-list) is painted by renderAdminList().
+  - Edit panel fields (#edit-*) are filled by openEditAthlete().
+  - Save button calls saveEditAthlete(); cancel hides #edit-panel.
+
+  KEY ID GROUPS:
+  - Add form: #new-name #new-grade #new-sport #new-groups #new-level
+  - Edit panel: #edit-panel #edit-id #edit-name #edit-grade #edit-sport
+               #edit-groups #edit-level
+  ---------------------------------------------------------------------------
+-->
 <div id="page-admin" class="page">
     <div class="nav-row">
       <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>

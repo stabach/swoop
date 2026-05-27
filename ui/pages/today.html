@@ -1,3 +1,22 @@
+<!--
+  TODAY'S WORKOUT PAGE NOTES
+  ---------------------------------------------------------------------------
+  This page presents the currently selected day's workout in a simplified
+  coach-facing layout (useful for quick floor checks and TV mode launch).
+
+  Edit this file when changing:
+  - Header layout for day/date + TV button.
+  - Today panel placement/loading placeholder.
+
+  KEY IDs + JS LINKS:
+  - #today-page-day / #today-page-date:
+      Set by showTodayPage() using system date.
+  - #today-workout-panel:
+      Filled by showTodayPage() from getLiveTemplates()[current weekday].
+  - TV button:
+      Calls openTVDisplay() for fullscreen guided session mode.
+  ---------------------------------------------------------------------------
+-->
 <div id="page-today" class="page">
     <div class="nav-row">
       <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>

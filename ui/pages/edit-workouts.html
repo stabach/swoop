@@ -1,3 +1,24 @@
+<!--
+  EDIT WORKOUTS PAGE NOTES
+  ---------------------------------------------------------------------------
+  This page is the template editor for workout programming.
+  It edits the working in-memory object (editWorkouts) and then persists
+  all edited templates via saveEditedWorkout().
+
+  Edit this file when changing:
+  - Day tab placement/style hooks.
+  - Editor container placement.
+  - Save bar/button UX text and position.
+
+  KEY IDs + JS LINKS:
+  - #edit-day-tabs:
+      Built by renderEditDayTabs() from DAYS (currently Mon-Thu).
+  - #edit-workout-editor:
+      Filled by renderEditWorkoutEditor() with sections/exercises controls.
+  - Save button:
+      Calls saveEditedWorkout() to persist templates and refresh live usage.
+  ---------------------------------------------------------------------------
+-->
 <div id="page-edit-workouts" class="page">
     <div class="nav-row">
       <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>

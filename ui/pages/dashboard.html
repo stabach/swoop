@@ -1,3 +1,30 @@
+<!--
+  DASHBOARD PAGE NOTES
+  ---------------------------------------------------------------------------
+  This page is the coach's at-a-glance home screen.
+  Edit this file when changing:
+  - Dashboard header layout/title.
+  - Week navigation arrows and date label placement.
+  - Search bar placement and behavior wiring.
+  - KPI card markup labels/order.
+  - Quick tile card content/actions.
+  - Athlete grid container placement.
+
+  KEY IDs + JS LINKS:
+  - #dash-prev-week-btn / #dash-next-week-btn:
+      Click handlers call shiftDashboardWeek(-1|1), which changes week offset.
+  - #dash-date:
+      Populated by renderDashboard() using getDashboardAnchorDate() (Thursday anchor).
+  - #search-input:
+      oninput triggers filterAthletes() -> renderAthleteGrid().
+  - #kpi-athletes, #kpi-athletes-sub, #kpi-logs, #kpi-completion:
+      Updated by updateDashboardKpis().
+  - #today-day:
+      Updated by renderDashboard() quick tile subtitle.
+  - #athlete-count, #athlete-grid:
+      Updated by renderAthleteGrid() with filtered athletes and M/T/W/TH pills.
+  ---------------------------------------------------------------------------
+-->
 <div id="page-dashboard" class="page active">
     <div class="dash-top">
       <div>
@@ -16,6 +43,7 @@
       </div>
     </div>
 
+    <!-- KPI ROW: numeric high-level metrics for coaches -->
     <div class="dashboard-kpis">
       <div class="kpi-card">
         <div class="kpi-label">Athletes Today</div>
@@ -34,6 +62,7 @@
       </div>
     </div>
 
+    <!-- QUICK ACTION TILES: jump shortcuts into common coach workflows -->
     <div class="quick-tiles">
       <div class="quick-tile" onclick="setDayFilter('today')">
         <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4c5.svg" alt="📅" /></div>
