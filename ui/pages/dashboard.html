@@ -1,0 +1,67 @@
+<div id="page-dashboard" class="page active">
+    <div class="dash-top">
+      <div>
+        <div class="dash-heading">Coaching Dashboard</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn-sm" id="dash-prev-week-btn" onclick="shiftDashboardWeek(-1)" title="Previous Week">←</button>
+          <div class="dash-date" id="dash-date"></div>
+          <button class="btn-sm" id="dash-next-week-btn" onclick="shiftDashboardWeek(1)" title="Next Week">→</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-kpis">
+      <div class="kpi-card">
+        <div class="kpi-label">Athletes Today</div>
+        <div class="kpi-value" id="kpi-athletes">0</div>
+        <div class="kpi-sub" id="kpi-athletes-sub">0 active rostered</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Sessions Logged</div>
+        <div class="kpi-value" id="kpi-logs">0</div>
+        <div class="kpi-sub">Entries in last 7 days</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Completion Rate</div>
+        <div class="kpi-value" id="kpi-completion">0%</div>
+        <div class="kpi-sub">Active athletes who logged this week</div>
+      </div>
+    </div>
+
+    <div class="quick-tiles">
+      <div class="quick-tile" onclick="setDayFilter('today')">
+        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4c5.svg" alt="📅" /></div>
+        <div>
+          <div class="tile-label">Today's Training</div>
+          <div class="tile-sub" id="today-day">Loading...</div>
+        </div>
+      </div>
+      <div class="quick-tile" onclick="showPage('admin')">
+        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f465.svg" alt="👥" /></div>
+        <div>
+          <div class="tile-label">Manage Athletes</div>
+          <div class="tile-sub">Add · Edit · Status</div>
+        </div>
+      </div>
+      <div class="quick-tile" onclick="openWeeklyOverview()">
+        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4ca.svg" alt="📊" /></div>
+        <div>
+          <div class="tile-label">Weekly Overview</div>
+          <div class="tile-sub">View weekly logged lifts</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-heading">
+      Athletes <span style="font-size:13px;font-weight:500;color:var(--text-muted);" id="athlete-count"></span>
+    </div>
+    <div class="athlete-grid" id="athlete-grid">
+      <div class="empty-state"><span class="empty-icon">⏳</span>Loading athletes...</div>
+    </div>
+  </div>
