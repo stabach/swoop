@@ -1038,14 +1038,13 @@
     </div>
     <div class="form-group">
       <label class="form-label">Username</label>
-      <input type="text" id="login-username" class="form-input" placeholder="Mike" />
+      <input type="text" id="login-username" class="form-input" placeholder="username" />
     </div>
     <div class="form-group">
       <label class="form-label">Password</label>
-      <input type="password" id="login-password" class="form-input" placeholder="••••••" />
+      <input type="password" id="login-password" class="form-input" placeholder="password" />
     </div>
     <button class="btn-primary" onclick="loginCoach()">Sign In →</button>
-    <p class="config-hint">Your actions are tracked with your coach login and timestamp in an audit table.</p>
   </div>
 </div>
 
@@ -1064,7 +1063,7 @@
     <button class="header-nav-btn" onclick="showPage('admin')">⚙ Manage Athletes</button>
     <button class="header-nav-btn" onclick="showPage('attendance')">✅ Attendance</button>
     <button class="header-nav-btn" onclick="showPage('calendar')">🗓 Calendar</button>
-    <button class="header-nav-btn" onclick="resetConfig()" style="opacity:0.6;font-size:12px;">Disconnect</button>
+    <button class="header-nav-btn" onclick="logoutCoach()" style="color:#ff6b6b;font-size:12px;">Logout</button>
   </div>
 </div>
 
@@ -1340,6 +1339,16 @@ async function loginCoach() {
   await loadAthletes();
   renderDashboard();
   await auditAction('login', 'Coach signed in');
+}
+
+async function logoutCoach() {
+  if (currentCoach) await auditAction('logout', 'Coach signed out');
+  currentCoach = null;
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('app-header').style.display = 'none';
+  document.getElementById('main-content').style.display = 'none';
+  document.getElementById('config-screen').style.display = 'block';
 }
 
 async function auditAction(action, details = '') {
