@@ -1722,7 +1722,7 @@ function openEditAthlete(id) {
 
 async function openAthleteProfile(id) {
   currentAthleteId = id;
-  const a = athletes.find(x => x.id === id);
+  const a = athletes.find(x => String(x.id) === String(id));
   if (!a) return;
 
   document.getElementById('profile-avatar').textContent = getInitials(a.name);
@@ -1734,7 +1734,7 @@ async function openAthleteProfile(id) {
   // Jump select
   const jumpSel = document.getElementById('jump-select');
   jumpSel.innerHTML = '<option value="">Jump to athlete...</option>' +
-    athletes.map(x => `<option value="${x.id}" ${x.id === id ? 'selected' : ''}>${x.name}</option>`).join('');
+    athletes.map(x => `<option value="${x.id}" ${String(x.id) === String(id) ? 'selected' : ''}>${x.name}</option>`).join('');
 
   // Set today's day
   const now = new Date();
