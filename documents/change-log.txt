@@ -1,0 +1,19 @@
+Eagle Strength Change Log Notes
+==============================
+This project now tracks coach actions in Supabase table: public.coach_audit_logs
+instead of writing to a local server file.
+
+Why:
+- This app runs in the browser, so writing a persistent server-side text file from
+  client JS is not reliable/safe.
+- Database audit logs are queryable, timestamped, and tied to coach usernames.
+
+How to view logs in Supabase:
+- Table Editor -> coach_audit_logs
+- Order by created_at descending
+
+Fields:
+- coach_username
+- action
+- details
+- created_at
