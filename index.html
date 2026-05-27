@@ -1685,6 +1685,9 @@ async function renderAthleteGrid() {
       </div>
     </div>
   `).join('');
+  document.querySelectorAll('.athlete-card[data-athlete-id]').forEach(card => {
+    card.onclick = () => openAthleteProfile(card.getAttribute('data-athlete-id'));
+  });
 }
 
 function renderAdminList() {
