@@ -1,96 +1,89 @@
-<!--
-  DASHBOARD PAGE NOTES
-  ---------------------------------------------------------------------------
-  This page is the coach's at-a-glance home screen.
-  Edit this file when changing:
-  - Dashboard header layout/title.
-  - Week navigation arrows and date label placement.
-  - Search bar placement and behavior wiring.
-  - KPI card markup labels/order.
-  - Quick tile card content/actions.
-  - Athlete grid container placement.
-
-  KEY IDs + JS LINKS:
-  - #dash-prev-week-btn / #dash-next-week-btn:
-      Click handlers call shiftDashboardWeek(-1|1), which changes week offset.
-  - #dash-date:
-      Populated by renderDashboard() using getDashboardAnchorDate() (Thursday anchor).
-  - #search-input:
-      oninput triggers filterAthletes() -> renderAthleteGrid().
-  - #kpi-athletes, #kpi-athletes-sub, #kpi-logs, #kpi-completion:
-      Updated by updateDashboardKpis().
-  - #today-day:
-      Updated by renderDashboard() quick tile subtitle.
-  - #athlete-count, #athlete-grid:
-      Updated by renderAthleteGrid() with filtered athletes and M/T/W/TH pills.
-  ---------------------------------------------------------------------------
--->
 <div id="page-dashboard" class="page active">
-    <div class="dash-top">
-      <div>
-        <div class="dash-heading">Coaching Dashboard</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <button class="btn-sm" id="dash-prev-week-btn" onclick="shiftDashboardWeek(-1)" title="Previous Week">←</button>
-          <div class="dash-date" id="dash-date"></div>
-          <button class="btn-sm" id="dash-next-week-btn" onclick="shiftDashboardWeek(1)" title="Next Week">→</button>
-        </div>
-      </div>
+  <!-- SEGMENT: Dashboard header row (title + week navigation + search).
+       Edit here when changing the top layout, heading text, week arrows,
+       or search field placement/behavior wiring. -->
+  <div class="dash-top">
+    <!-- SEGMENT: Left side header block (title + selected week anchor date).
+         Date text is populated by renderDashboard() into #dash-date. -->
+    <div>
+      <div class="dash-heading">Coaching Dashboard</div>
+
+      <!-- SEGMENT: Week navigation controls.
+           ←/→ call shiftDashboardWeek() to move backward/forward by 1 week.
+           The center #dash-date shows the currently selected Thursday anchor. -->
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <div class="search-wrap">
-          <span class="search-icon">⌕</span>
-          <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
-        </div>
+        <button class="btn-sm" id="dash-prev-week-btn" onclick="shiftDashboardWeek(-1)" title="Previous Week">←</button>
+        <div class="dash-date" id="dash-date"></div>
+        <button class="btn-sm" id="dash-next-week-btn" onclick="shiftDashboardWeek(1)" title="Next Week">→</button>
       </div>
     </div>
 
-    <!-- KPI ROW: numeric high-level metrics for coaches -->
-    <div class="dashboard-kpis">
-      <div class="kpi-card">
-        <div class="kpi-label">Athletes Today</div>
-        <div class="kpi-value" id="kpi-athletes">0</div>
-        <div class="kpi-sub" id="kpi-athletes-sub">0 active rostered</div>
+    <!-- SEGMENT: Right side utility tools.
+         Search input filters athlete cards via filterAthletes(). -->
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Sessions Logged</div>
-        <div class="kpi-value" id="kpi-logs">0</div>
-        <div class="kpi-sub">Entries in last 7 days</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Completion Rate</div>
-        <div class="kpi-value" id="kpi-completion">0%</div>
-        <div class="kpi-sub">Active athletes who logged this week</div>
-      </div>
-    </div>
-
-    <!-- QUICK ACTION TILES: jump shortcuts into common coach workflows -->
-    <div class="quick-tiles">
-      <div class="quick-tile" onclick="setDayFilter('today')">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4c5.svg" alt="📅" /></div>
-        <div>
-          <div class="tile-label">Today's Training</div>
-          <div class="tile-sub" id="today-day">Loading...</div>
-        </div>
-      </div>
-      <div class="quick-tile" onclick="showPage('admin')">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f465.svg" alt="👥" /></div>
-        <div>
-          <div class="tile-label">Manage Athletes</div>
-          <div class="tile-sub">Add · Edit · Status</div>
-        </div>
-      </div>
-      <div class="quick-tile" onclick="openWeeklyOverview()">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4ca.svg" alt="📊" /></div>
-        <div>
-          <div class="tile-label">Weekly Overview</div>
-          <div class="tile-sub">View weekly logged lifts</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-heading">
-      Athletes <span style="font-size:13px;font-weight:500;color:var(--text-muted);" id="athlete-count"></span>
-    </div>
-    <div class="athlete-grid" id="athlete-grid">
-      <div class="empty-state"><span class="empty-icon">⏳</span>Loading athletes...</div>
     </div>
   </div>
+
+  <!-- SEGMENT: KPI cards row.
+       Each value is filled by updateDashboardKpis().
+       Edit here to change KPI card ordering, labels, or displayed text. -->
+  <div class="dashboard-kpis">
+    <div class="kpi-card">
+      <div class="kpi-label">Athletes Today</div>
+      <div class="kpi-value" id="kpi-athletes">0</div>
+      <div class="kpi-sub" id="kpi-athletes-sub">0 active rostered</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Sessions Logged</div>
+      <div class="kpi-value" id="kpi-logs">0</div>
+      <div class="kpi-sub">Entries in last 7 days</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Completion Rate</div>
+      <div class="kpi-value" id="kpi-completion">0%</div>
+      <div class="kpi-sub">Active athletes who logged this week</div>
+    </div>
+  </div>
+
+  <!-- SEGMENT: Quick action tiles.
+       Edit here to add/remove shortcut cards and change click destinations. -->
+  <div class="quick-tiles">
+    <div class="quick-tile" onclick="setDayFilter('today')">
+      <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4c5.svg" alt="📅" /></div>
+      <div>
+        <div class="tile-label">Today's Training</div>
+        <div class="tile-sub" id="today-day">Loading...</div>
+      </div>
+    </div>
+    <div class="quick-tile" onclick="showPage('admin')">
+      <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f465.svg" alt="👥" /></div>
+      <div>
+        <div class="tile-label">Manage Athletes</div>
+        <div class="tile-sub">Add · Edit · Status</div>
+      </div>
+    </div>
+    <div class="quick-tile" onclick="openWeeklyOverview()">
+      <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4ca.svg" alt="📊" /></div>
+      <div>
+        <div class="tile-label">Weekly Overview</div>
+        <div class="tile-sub">View weekly logged lifts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEGMENT: Athlete section heading and results count.
+       #athlete-count is updated by renderAthleteGrid(). -->
+  <div class="section-heading">
+    Athletes <span style="font-size:13px;font-weight:500;color:var(--text-muted);" id="athlete-count"></span>
+  </div>
+
+  <!-- SEGMENT: Athlete card grid mount point.
+       renderAthleteGrid() writes athlete cards and M/T/W/TH pills here. -->
+  <div class="athlete-grid" id="athlete-grid">
+    <div class="empty-state"><span class="empty-icon">⏳</span>Loading athletes...</div>
+  </div>
+</div>
