@@ -1672,7 +1672,7 @@ async function renderAthleteGrid() {
   });
 
   document.getElementById('athlete-grid').innerHTML = filtered.map(a => `
-    <div class="athlete-card" onclick="openAthleteProfile('${a.id}')">
+    <div class="athlete-card" data-athlete-id="${a.id}" style="cursor:pointer;">
       ${!a.active_status ? '<span class="inactive-badge">Inactive</span>' : ''}
       <div class="athlete-avatar">${getInitials(a.name)}</div>
       <div class="athlete-name">${a.name}</div>
@@ -1685,6 +1685,9 @@ async function renderAthleteGrid() {
       </div>
     </div>
   `).join('');
+  document.querySelectorAll('.athlete-card[data-athlete-id]').forEach(card => {
+    card.onclick = () => openAthleteProfile(card.getAttribute('data-athlete-id'));
+  });
 }
 
 function renderAdminList() {
