@@ -1665,7 +1665,7 @@ async function renderAthleteGrid() {
   });
 
   document.getElementById('athlete-grid').innerHTML = filtered.map(a => `
-    <button type="button" class="athlete-card" data-athlete-id="${a.id}" onclick="openAthleteProfile('${a.id}')" style="cursor:pointer;text-align:left;">
+    <div class="athlete-card" data-athlete-id="${a.id}" style="cursor:pointer;text-align:left;" role="button" tabindex="0">
       ${!a.active_status ? '<span class="inactive-badge">Inactive</span>' : ''}
       <div class="athlete-avatar">${getInitials(a.name)}</div>
       <div class="athlete-name">${a.name}</div>
@@ -1676,9 +1676,10 @@ async function renderAthleteGrid() {
           return `<span class="week-pill ${didLog ? 'logged' : 'missed'}">${k}</span>`;
         }).join('')}
       </div>
-    </button>
+    </div>
   `).join('');
-  document.querySelectorAll('.athlete-card[data-athlete-id]').forEach(card => {
+  const grid = document.getElementById('athlete-grid');
+  grid.querySelectorAll('.athlete-card[data-athlete-id]').forEach(card => {
     const id = card.getAttribute('data-athlete-id');
     card.addEventListener('click', () => id && openAthleteProfile(id));
     card.addEventListener('keydown', (e) => {
