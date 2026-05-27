@@ -1835,19 +1835,19 @@ async function renderAthleteGrid() {
   const day = monday.getDay();
   const mondayShift = day === 0 ? -6 : 1 - day;
   monday.setDate(monday.getDate() + mondayShift);
-  const friday = new Date(monday);
-  friday.setDate(monday.getDate() + 4);
+  const thursday = new Date(monday);
+  thursday.setDate(monday.getDate() + 3);
   const from = monday.toISOString().split('T')[0];
-  const to = friday.toISOString().split('T')[0];
+  const to = thursday.toISOString().split('T')[0];
   const { data: weekLogs } = await supabase
     .from('workout_logs')
     .select('athlete_id,date')
     .gte('date', from)
     .lte('date', to);
 
-  const weekdayKeys = ['M','T','W','TH','F'];
+  const weekdayKeys = ['M','T','W','TH'];
   const dateKeyOrder = {};
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 4; i++) {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
     dateKeyOrder[d.toISOString().split('T')[0]] = i;
