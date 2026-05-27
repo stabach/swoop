@@ -1072,73 +1072,7 @@
 <div id="main-content" style="display:none;">
 
   <!-- DASHBOARD -->
-  <div id="page-dashboard" class="page active">
-    <div class="dash-top">
-      <div>
-        <div class="dash-heading">Coaching Dashboard</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <button class="btn-sm" id="dash-prev-week-btn" onclick="shiftDashboardWeek(-1)" title="Previous Week">←</button>
-          <div class="dash-date" id="dash-date"></div>
-          <button class="btn-sm" id="dash-next-week-btn" onclick="shiftDashboardWeek(1)" title="Next Week">→</button>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <div class="search-wrap">
-          <span class="search-icon">⌕</span>
-          <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
-        </div>
-      </div>
-    </div>
-
-    <div class="dashboard-kpis">
-      <div class="kpi-card">
-        <div class="kpi-label">Athletes Today</div>
-        <div class="kpi-value" id="kpi-athletes">0</div>
-        <div class="kpi-sub" id="kpi-athletes-sub">0 active rostered</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Sessions Logged</div>
-        <div class="kpi-value" id="kpi-logs">0</div>
-        <div class="kpi-sub">Entries in last 7 days</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Completion Rate</div>
-        <div class="kpi-value" id="kpi-completion">0%</div>
-        <div class="kpi-sub">Active athletes who logged this week</div>
-      </div>
-    </div>
-
-    <div class="quick-tiles">
-      <div class="quick-tile" onclick="setDayFilter('today')">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4c5.svg" alt="📅" /></div>
-        <div>
-          <div class="tile-label">Today's Training</div>
-          <div class="tile-sub" id="today-day">Loading...</div>
-        </div>
-      </div>
-      <div class="quick-tile" onclick="showPage('admin')">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f465.svg" alt="👥" /></div>
-        <div>
-          <div class="tile-label">Manage Athletes</div>
-          <div class="tile-sub">Add · Edit · Status</div>
-        </div>
-      </div>
-      <div class="quick-tile" onclick="openWeeklyOverview()">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4ca.svg" alt="📊" /></div>
-        <div>
-          <div class="tile-label">Weekly Overview</div>
-          <div class="tile-sub">View weekly logged lifts</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-heading">
-      Athletes <span style="font-size:13px;font-weight:500;color:var(--text-muted);" id="athlete-count"></span>
-    </div>
-    <div class="athlete-grid" id="athlete-grid">
-      <div class="empty-state"><span class="empty-icon">⏳</span>Loading athletes...</div>
-    </div>
-  </div>
+  <!-- include:page-dashboard --><div data-include="ui/pages/dashboard.html"></div><!-- /include:page-dashboard -->
 
   <!-- ATHLETE PROFILE -->
   <div id="page-profile" class="page">
@@ -1219,126 +1153,13 @@
   </div>
 
   <!-- ADMIN PAGE -->
-  <div id="page-admin" class="page">
-    <div class="nav-row">
-      <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
-    </div>
-    <div class="dash-heading" style="margin-bottom:20px;">⚙ Athlete Management</div>
-    <div class="admin-grid">
-      <!-- Add Athlete -->
-      <div class="admin-card">
-        <div class="admin-title">Add New Athlete</div>
-        <div class="form-group">
-          <label class="form-label">Full Name</label>
-          <input type="text" id="new-name" class="form-input" placeholder="First Last" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Grade</label>
-          <select id="new-grade" class="form-input">
-            <option value="6">6th Grade</option>
-            <option value="7">7th Grade</option>
-            <option value="8">8th Grade</option>
-            <option value="9">9th Grade</option>
-            <option value="10" selected>10th Grade</option>
-            <option value="11">11th Grade</option>
-            <option value="12">12th Grade</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Sport</label>
-          <input type="text" id="new-sport" class="form-input" placeholder="Football, Basketball, etc." />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Groups (comma separated)</label>
-          <input type="text" id="new-groups" class="form-input" placeholder="Varsity, Morning, Rehab" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Default Level</label>
-          <select id="new-level" class="form-input">
-            <option value="L3" selected>L3 — Performance (Default)</option>
-            <option value="L2">L2 — Moderate</option>
-            <option value="L1">L1 — Foundation</option>
-          </select>
-        </div>
-        <button class="btn-primary" onclick="addAthlete()">Add Athlete</button>
-      </div>
-
-      <!-- Athlete List -->
-      <div class="admin-card">
-        <div class="admin-title">All Athletes</div>
-        <div id="admin-athlete-list">
-          <div class="empty-state"><span class="empty-icon">⏳</span>Loading...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Edit Modal (inline) -->
-    <div id="edit-panel" style="display:none;margin-top:16px;" class="admin-card">
-      <div class="admin-title">Edit Athlete</div>
-      <input type="hidden" id="edit-id" />
-      <div class="admin-grid">
-        <div class="form-group">
-          <label class="form-label">Name</label>
-          <input type="text" id="edit-name" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Grade</label>
-          <select id="edit-grade" class="form-input">
-            <option value="6">6th</option><option value="7">7th</option><option value="8">8th</option>
-            <option value="9">9th</option><option value="10">10th</option><option value="11">11th</option><option value="12">12th</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Sport</label>
-          <input type="text" id="edit-sport" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Groups (comma separated)</label>
-          <input type="text" id="edit-groups" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Default Level</label>
-          <select id="edit-level" class="form-input">
-            <option value="L3">L3</option><option value="L2">L2</option><option value="L1">L1</option>
-          </select>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <button class="btn-sm green" onclick="saveEditAthlete()">Save Changes</button>
-        <button class="btn-sm" onclick="document.getElementById('edit-panel').style.display='none'">Cancel</button>
-      </div>
-    </div>
-  </div>
+  <!-- include:page-admin --><div data-include="ui/pages/admin.html"></div><!-- /include:page-admin -->
 
   <!-- TODAY'S WORKOUT PAGE -->
-  <div id="page-today" class="page">
-    <div class="nav-row">
-      <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
-    </div>
-    <div class="today-header">
-      <div>
-        <div class="today-day-name" id="today-page-day">Monday</div>
-        <div class="today-date-str" id="today-page-date"></div>
-      </div>
-      <button class="btn-display" onclick="openTVDisplay()">📺 Display on TV</button>
-    </div>
-    <div id="today-workout-panel">
-      <div class="empty-state"><span class="empty-icon">⏳</span>Loading today's workout...</div>
-    </div>
-  </div>
+  <!-- include:page-today --><div data-include="ui/pages/today.html"></div><!-- /include:page-today -->
 
   <!-- EDIT WORKOUTS PAGE -->
-  <div id="page-edit-workouts" class="page">
-    <div class="nav-row">
-      <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
-    </div>
-    <div class="dash-heading" style="margin-bottom:16px;">Edit Workouts</div>
-    <div class="edit-day-tabs" id="edit-day-tabs"></div>
-    <div id="edit-workout-editor"></div>
-    <div class="edit-save-bar">
-      <button class="btn-save-workout" onclick="saveEditedWorkout()">💾 Save Day</button>
-    </div>
-  </div>
+  <!-- include:page-edit-workouts --><div data-include="ui/pages/edit-workouts.html"></div><!-- /include:page-edit-workouts -->
 
   <div id="page-attendance" class="page">
     <div class="nav-row"><button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button></div>
@@ -2988,7 +2809,23 @@ async function saveCalendarEventFromModal() {
 }
 
 // ===================== BOOT =====================
-window.addEventListener('DOMContentLoaded', () => {
+async function loadHtmlPartials() {
+  const partialNodes = Array.from(document.querySelectorAll('[data-include]'));
+  await Promise.all(partialNodes.map(async (node) => {
+    const src = node.getAttribute('data-include');
+    if (!src) return;
+    try {
+      const res = await fetch(src);
+      const html = await res.text();
+      node.outerHTML = html;
+    } catch (e) {
+      node.outerHTML = `<div class="empty-state"><span class="empty-icon">⚠️</span>Failed to load partial: ${src}</div>`;
+    }
+  }));
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadHtmlPartials();
   document.getElementById('config-screen').style.display = 'block';
   removeStrayCssTextNodes();
   const cfg = getConfig();
