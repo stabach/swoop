@@ -2093,10 +2093,19 @@ async function loadWorkoutTemplates() {
 }
 
 async function saveWorkoutTemplates(templates) {
-  for (const day of Object.keys(templates)) {
-    await supabase.from('workout_templates').upsert({ day_name: day, template_json: templates[day] }, { onConflict: 'day_name' });
+  const rows = Object.keys(templates).map(day => ({
+    day_name: day,
+    template_json: JSON.parse(JSON.stringify(templates[day]))
+  }));
+  const { error } = await supabase
+    .from('workout_templates')
+    .upsert(rows, { onConflict: 'day_name' });
+  if (error) {
+    toast('Error saving workout templates: ' + error.message);
+    return false;
   }
   liveTemplates = JSON.parse(JSON.stringify(templates));
+  return true;
 }
 function getLiveTemplates() { return liveTemplates; }
 
@@ -2259,8 +2268,9 @@ function addSection() {
   ]});
   renderEditWorkoutEditor();
 }
-function saveEditedWorkout() {
-  saveWorkoutTemplates(editWorkouts);
+async function saveEditedWorkout() {
+  const ok = await saveWorkoutTemplates(editWorkouts);
+  if (!ok) return;
   auditAction('save_workout_templates', `Saved templates for ${editCurrentDay}`);
   toast(`${editCurrentDay} workout saved!`);
 }
