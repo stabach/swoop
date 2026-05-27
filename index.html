@@ -1987,24 +1987,29 @@ async function renderProgressionChart() {
   document.getElementById('chart-empty').style.display = 'none';
   document.getElementById('progression-chart').style.display = 'block';
 
+  const trackedLogs = logs.filter(l => l.weight_used && normTracked.includes(normLiftName(l.exercise)));
+  const allDates = [...new Set(trackedLogs.map(l => l.date))].sort((a, b) => a.localeCompare(b));
   const colors = ['#22883f','#D4A017','#c0392b'];
   const datasets = tracked.map((ex, i) => {
-    const exLogs = logs
-      .filter(l => normLiftName(l.exercise) === normLiftName(ex) && l.weight_used)
+    const exLogs = trackedLogs
+      .filter(l => normLiftName(l.exercise) === normLiftName(ex))
       .sort((a, b) => a.date.localeCompare(b.date));
+    const byDate = {};
+    exLogs.forEach(l => { byDate[l.date] = Math.max(byDate[l.date] || 0, Number(l.weight_used) || 0); });
     return {
       label: ex,
-      data: exLogs.map(l => ({ x: l.date, y: l.weight_used })),
+      data: allDates.map(d => (byDate[d] ? byDate[d] : null)),
       borderColor: colors[i % colors.length],
       backgroundColor: colors[i % colors.length] + '20',
       tension: 0.3,
       pointRadius: 4,
+      spanGaps: false,
     };
   });
 
   progressionChart = new Chart(ctx, {
     type: 'line',
-    data: { datasets },
+    data: { labels: allDates, datasets },
     options: {
       responsive: true,
       scales: {
