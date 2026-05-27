@@ -690,7 +690,7 @@
   .edit-section-title-input::placeholder { color: rgba(255,255,255,0.5); }
   .edit-exercise-row {
     display: grid;
-    grid-template-columns: 1fr 60px 60px 70px 70px 70px 70px 36px;
+    grid-template-columns: 1fr 60px 240px 240px 80px 90px 36px;
     gap: 6px;
     padding: 8px 12px;
     border-bottom: 1px solid var(--gray-100);
@@ -717,10 +717,11 @@
     padding: 4px 12px;
     background: var(--page-bg);
     display: grid;
-    grid-template-columns: 1fr 60px 60px 70px 70px 70px 70px 36px;
+    grid-template-columns: 1fr 60px 240px 240px 80px 90px 36px;
     gap: 6px;
     border-bottom: 1px solid var(--border);
   }
+  .set-box-wrap { display:flex; gap:6px; flex-wrap:nowrap; overflow-x:auto; }
   .btn-del { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--gray-400); padding: 2px; border-radius: 4px; }
   .btn-del:hover { color: var(--danger); background: var(--danger-light); }
   .add-exercise-btn {
@@ -1372,23 +1373,23 @@ async function auditAction(action, details = '') {
 // ===================== WORKOUT DATA =====================
 const WORKOUT_TEMPLATES = {
   Monday: [{ section: 'Monday', exercises: [
-    { name: 'BENCH PRESS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'INCLINE PRESS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'SEATED BARBELL PUSH PRESS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'UPRIGHT ROWS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'DUMBELL SHRUGS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
-    { name: 'CURLS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
+    { name: 'Bench Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'Incline Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'Seated Barbell Push Press', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'Upright Rows', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'Dumbell Shrugs', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
+    { name: 'Curls', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
   ]}],
   Tuesday: [{ section: 'Tuesday', exercises: [
-    { name: 'FRONT SQUAT', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
-    { name: 'HAMSTRING DEAD LIFTS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
-    { name: 'POWER CLEAN (MS- Deadlifts)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
+    { name: 'Front Squat', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
+    { name: 'Hamstring Dead Lifts', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
+    { name: 'Power Clean (M.S- Deadlifts)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
     { name: 'LEG EXPLOSIONS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
     { name: 'CALF RAISERS DB', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
   ]}],
   Wednesday: [{ section: 'Wednesday', exercises: [
-    { name: 'BENCH PRESS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'INCLINE PRESS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'Bench Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'Incline Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
     { name: 'DB PUSH PRESS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
     { name: 'BARBELL PULL TO CHIN', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
     { name: 'PUSH JERK (MS- Landmines)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
@@ -1429,7 +1430,7 @@ const LOGGABLE_LIFTS = ['BENCH PRESS', 'BACK SQUAT', 'POWER CLEAN (M.S- DEADLIFT
 function normLiftName(n){ return String(n||'').toUpperCase().replace(/[-_.]/g,' ').replace(/\s+/g,' ').trim(); }
 function canLogExercise(name){
   const n = normLiftName(name);
-  return n === 'BENCH PRESS' || n === 'BACK SQUATS' || n === 'BACK SQUAT' || n === 'POWER CLEAN (MS DEADLIFTS)' || n === 'POWER CLEAN (M S DEADLIFTS)' || n === 'POWER CLEAN (M.S DEADLIFTS)';
+  return n === 'BENCH PRESS' || n === 'BACK SQUATS' || n === 'BACK SQUAT' || n === 'POWER CLEAN (M.S DEADLIFTS)';
 }
 let dashboardWeekOffset = 0;
 
@@ -1765,8 +1766,8 @@ async function renderEstimated1RM() {
   const logs = await loadWorkoutLogs(currentAthleteId);
   const lifts = [
     { key: 'rm-bench', names: ['BENCH PRESS'] },
-    { key: 'rm-squat', names: ['BACK SQUAT','BACK SQUATS'] },
-    { key: 'rm-clean', names: ['POWER CLEAN (M.S- DEADLIFTS)','POWER CLEAN (MS- DEADLIFTS)','POWER CLEAN (MS DEADLIFTS)'] },
+    { key: 'rm-squat', names: ['BACK SQUATS'] },
+    { key: 'rm-clean', names: ['POWER CLEAN (M.S- DEADLIFTS)'] },
   ];
   lifts.forEach(l => { const el=document.getElementById(l.key); if (el) el.textContent = 'N/A'; });
   lifts.forEach(lift => {
@@ -2120,14 +2121,14 @@ function renderEditWorkoutEditor() {
         <button class="btn-del" style="color:rgba(255,255,255,0.5);" onclick="deleteSection(${si})" title="Delete section">✕</button>
       </div>
       <div class="edit-col-header">
-        <span>Exercise Name</span><span>Sets</span><span>Reps by Set</span><span>% Lift by Set</span><span>Rest</span><span>Work Time</span><span></span>
+        <span>Exercise Name</span><span>Sets</span><span>Reps</span><span>% Lift<br><span style="display:block;text-align:center;">Set</span></span><span>Rest</span><span>Work Time</span><span></span>
       </div>
       ${section.exercises.map((ex, ei) => `
         <div class="edit-exercise-row">
           <input class="edit-input" value="${ex.name}" onchange="updateExField(${si},${ei},'name',this.value)" placeholder="Exercise name" />
           <input class="edit-input" value="${ex.sets}" onchange="updateExField(${si},${ei},'sets',this.value)" placeholder="3" />
-          <div class="edit-input" style="display:flex;gap:4px;flex-wrap:wrap;">${buildSetBoxes(ex.sets, ex.reps, si, ei, 'reps')}</div>
-          <div class="edit-input" style="display:flex;gap:4px;flex-wrap:wrap;">${buildSetBoxes(ex.sets, ex.tempo || '', si, ei, 'tempo')}</div>
+          <div class="edit-input set-box-wrap">${buildSetBoxes(ex.sets, ex.reps, si, ei, 'reps')}</div>
+          <div class="edit-input set-box-wrap">${buildSetBoxes(ex.sets, ex.tempo || '', si, ei, 'tempo')}</div>
           <input class="edit-input" value="${ex.rest || '—'}" onchange="updateExField(${si},${ei},'rest',this.value)" placeholder="60s" />
           <input class="edit-input" value="${ex.workTime || ''}" onchange="updateExField(${si},${ei},'workTime',this.value)" placeholder="30s" title="Work countdown duration (e.g. 30s, 2min). Leave blank for manual advance." />
           <button class="btn-del" onclick="deleteExercise(${si},${ei})">🗑</button>
