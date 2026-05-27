@@ -1906,19 +1906,61 @@ async function renderLogTable() {
     wrap.innerHTML = `<div class="empty-state"><span class="empty-icon">📝</span>No training logs yet — start logging workouts!</div>`;
     return;
   }
+  const athlete = athletes.find(a => a.id === currentAthleteId);
+  const firstName = (athlete?.name || 'Athlete').split(' ')[0];
+  const findPlannedExercise = (log) => {
+    const d = new Date((log.date || '') + 'T12:00:00');
+    const dayName = d.toLocaleDateString('en-US', { weekday: 'long' });
+    const dayTpl = (getLiveTemplates()[dayName] || []).flatMap(s => s.exercises || []);
+    return dayTpl.find(ex => normLiftName(ex.name) === normLiftName(log.exercise));
+  };
+  const parseSetLog = (notes) => {
+    const m = String(notes || '').match(/\[Set Log\]\s*(\[.*\])$/);
+    if (!m) return [];
+    try { return JSON.parse(m[1]); } catch { return []; }
+  };
+  const estimate1RMForExercise = (exerciseName) => {
+    const candidates = logs
+      .filter(l => normLiftName(l.exercise) === normLiftName(exerciseName))
+      .filter(l => l.weight_used && l.reps_completed);
+    let best = 0;
+    candidates.forEach(l => {
+      const w = parseFloat(l.weight_used) || 0;
+      const r = parseFloat(l.reps_completed) || 0;
+      if (w > 0 && r > 0) best = Math.max(best, w * (1 + r / 30));
+    });
+    return best > 0 ? `${Math.round(best)} lbs` : 'N/A';
+  };
+  const weightArrow = (log) => {
+    const prev = logs
+      .filter(x => normLiftName(x.exercise) === normLiftName(log.exercise))
+      .filter(x => x.date < log.date)
+      .sort((a,b)=>b.date.localeCompare(a.date))[0];
+    if (!prev || !prev.weight_used || !log.weight_used) return '⬆️';
+    return parseFloat(log.weight_used) > parseFloat(prev.weight_used) ? '⬆️' : '⬇️';
+  };
   wrap.innerHTML = `
     <table class="log-table">
       <thead><tr><th>Date</th><th>Exercise</th><th>Sets</th><th>Reps</th><th>Weight</th><th>Notes</th></tr></thead>
       <tbody>
         ${logs.map(l => `
-          <tr>
-            <td>${l.date}</td>
-            <td style="font-weight:600;">${l.exercise}</td>
-            <td>${l.sets_completed ?? '—'}</td>
-            <td>${l.reps_completed ?? '—'}</td>
-            <td>${l.weight_used ? l.weight_used + ' lbs' : '—'}</td>
-            <td style="color:var(--text-muted);font-size:12px;">${l.performance_notes || ''}</td>
-          </tr>
+          ${(() => {
+            const planned = findPlannedExercise(l);
+            const setLog = parseSetLog(l.performance_notes);
+            const plannedReps = splitSetValues(planned?.reps || '');
+            const setsOk = setLog.length >= 4 ? '✅' : '❌';
+            const repsOk = setLog.length > 0 && plannedReps.length > 0 && setLog.every((s, i) => (parseInt(s.reps) || 0) >= (parseInt(plannedReps[i] || 0) || 0)) ? '✅' : '❌';
+            const wArrow = weightArrow(l);
+            const note = `${firstName} has an estimated 1RM of ${estimate1RMForExercise(l.exercise)}`;
+            return `<tr>
+              <td>${l.date}</td>
+              <td style="font-weight:600;">${l.exercise}</td>
+              <td>${setsOk}</td>
+              <td>${repsOk}</td>
+              <td>${wArrow}</td>
+              <td style="color:var(--text-muted);font-size:12px;">${note}</td>
+            </tr>`;
+          })()}
         `).join('')}
       </tbody>
     </table>`;
