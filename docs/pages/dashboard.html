@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Dashboard Section Notes</title></head>
+<body>
+  <!--
+    EDITING NOTES (Dashboard)
+    =====================================================================
+    Purpose:
+    - This document mirrors the dashboard markup in index.html so you can
+      quickly find what to edit without scanning the full app file.
+
+    What this section controls:
+    - Coaching Dashboard title/date/week navigation controls.
+    - Athlete search input.
+    - KPI cards (athletes, sessions logged, completion rate).
+    - Quick-action tiles (Today's Training, Manage Athletes, Weekly Overview).
+    - Athlete card grid container.
+
+    Primary IDs used by JavaScript:
+    - dash-date: current selected Thursday snapshot date label.
+    - dash-prev-week-btn / dash-next-week-btn: week navigation arrows.
+    - search-input: athlete search filter text box.
+    - kpi-athletes / kpi-athletes-sub / kpi-logs / kpi-completion: KPI text.
+    - today-day: quick tile subtitle for today's training day name.
+    - athlete-count: athlete tally for current filter.
+    - athlete-grid: target container where athlete cards are rendered.
+
+    If you need to change behavior:
+    - Date and week navigation logic: see renderDashboard(),
+      getDashboardAnchorDate(), shiftDashboardWeek() in index.html script.
+    - Athlete red/green weekday pills: see renderAthleteGrid() and weekdayKeys.
+    =====================================================================
+  -->
+
+  <div id="page-dashboard" class="page active">
+    <div class="dash-top">
+      <div>
+        <div class="dash-heading">Coaching Dashboard</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn-sm" id="dash-prev-week-btn" onclick="shiftDashboardWeek(-1)" title="Previous Week">←</button>
+          <div class="dash-date" id="dash-date"></div>
+          <button class="btn-sm" id="dash-next-week-btn" onclick="shiftDashboardWeek(1)" title="Next Week">→</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
