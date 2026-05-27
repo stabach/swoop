@@ -1254,16 +1254,8 @@
     <div class="modal-title" id="log-modal-title">Log: Exercise</div>
     <div class="modal-grid">
       <div>
-        <label class="modal-label">Sets Completed</label>
-        <input type="number" id="log-sets" class="modal-input" placeholder="3" min="0" max="20" />
-      </div>
-      <div>
-        <label class="modal-label">Reps Completed</label>
-        <input type="number" id="log-reps" class="modal-input" placeholder="10" min="0" max="100" />
-      </div>
-      <div>
-        <label class="modal-label">Weight (lbs)</label>
-        <input type="number" id="log-weight" class="modal-input" placeholder="135" min="0" />
+        <label class="modal-label">Set-by-Set Log</label>
+        <div id="log-set-rows"></div>
       </div>
     </div>
     <div>
@@ -1430,7 +1422,7 @@ const LOGGABLE_LIFTS = ['BENCH PRESS', 'BACK SQUAT', 'POWER CLEAN (M.S- DEADLIFT
 function normLiftName(n){ return String(n||'').toUpperCase().replace(/[-_.]/g,' ').replace(/\s+/g,' ').trim(); }
 function canLogExercise(name){
   const n = normLiftName(name);
-  return n === 'BENCH PRESS' || n === 'BACK SQUATS' || n === 'BACK SQUAT' || n === 'POWER CLEAN (M.S DEADLIFTS)';
+  return n === 'BENCH PRESS' || n === 'BACK SQUATS' || n === 'BACK SQUAT' || n === 'POWER CLEAN (M S DEADLIFTS)';
 }
 let dashboardWeekOffset = 0;
 
@@ -1537,43 +1529,27 @@ async function loadWorkoutLogs(athleteId) {
 
 async function submitLog() {
   if (!logModalExercise || !currentAthleteId) return;
-  const sets = document.getElementById('log-sets').value;
-  const reps = document.getElementById('log-reps').value;
-  const weight = document.getElementById('log-weight').value;
   const notes = document.getElementById('log-notes').value;
   const date = currentDate || new Date().toISOString().split('T')[0];
-
-  const existing = await supabase.from('workout_logs')
-    .select('id')
-    .eq('athlete_id', currentAthleteId)
-    .eq('date', date)
-    .eq('exercise', logModalExercise)
-    .limit(1);
-
-  let error = null;
-  if (existing.data && existing.data.length > 0) {
-    ({ error } = await supabase.from('workout_logs').update({
-      sets_completed: parseInt(sets) || null,
-      reps_completed: parseInt(reps) || null,
-      weight_used: parseFloat(weight) || null,
-      performance_notes: notes
-    }).eq('id', existing.data[0].id));
-  } else {
-    ({ error } = await supabase.from('workout_logs').insert([{
+  const repsInputs = Array.from(document.querySelectorAll('.log-set-reps'));
+  const weightInputs = Array.from(document.querySelectorAll('.log-set-weight'));
+  const rows = repsInputs.map((r, i) => ({
     athlete_id: currentAthleteId,
-    date: date,
+    date,
     exercise: logModalExercise,
-    sets_completed: parseInt(sets) || null,
-    reps_completed: parseInt(reps) || null,
-    weight_used: parseFloat(weight) || null,
+    sets_completed: i + 1,
+    reps_completed: parseInt(r.value) || null,
+    weight_used: parseFloat(weightInputs[i]?.value) || null,
     performance_notes: notes
-    }]));
-  }
+  })).filter(x => x.reps_completed || x.weight_used);
+
+  await supabase.from('workout_logs').delete().eq('athlete_id', currentAthleteId).eq('date', date).eq('exercise', logModalExercise);
+  const { error } = rows.length ? await supabase.from('workout_logs').insert(rows) : { error: null };
 
   if (error) { toast('Error saving log: ' + error.message); return; }
   document.getElementById('log-modal').style.display = 'none';
   await auditAction('log_workout', `${logModalExercise} on ${date}`);
-  toast(existing.data && existing.data.length > 0 ? 'Workout log updated! ✓' : 'Lift logged! ✓');
+  toast('Lift logged! ✓');
 
   await refreshLoggedExercisesForCurrentDate();
   updateWorkoutLogButtons();
@@ -1767,7 +1743,7 @@ async function renderEstimated1RM() {
   const lifts = [
     { key: 'rm-bench', names: ['BENCH PRESS'] },
     { key: 'rm-squat', names: ['BACK SQUATS'] },
-    { key: 'rm-clean', names: ['POWER CLEAN (M.S- DEADLIFTS)'] },
+    { key: 'rm-clean', names: ['POWER CLEAN (M.S- DEADLIFTS)','POWER CLEAN (M S DEADLIFTS)'] },
   ];
   lifts.forEach(l => { const el=document.getElementById(l.key); if (el) el.textContent = 'N/A'; });
   lifts.forEach(lift => {
@@ -1890,9 +1866,17 @@ function openLogModal(exercise, level) {
   logModalExercise = exercise;
   logModalLevel = level;
   document.getElementById('log-modal-title').textContent = 'Log: ' + exercise;
-  document.getElementById('log-sets').value = '';
-  document.getElementById('log-reps').value = '';
-  document.getElementById('log-weight').value = '';
+  const template = (getLiveTemplates()[currentDay] || []).flatMap(s => s.exercises || []);
+  const ex = template.find(x => x.name === exercise);
+  const setCount = Math.max(parseInt(ex?.sets) || 1, 1);
+  const repTargets = splitSetValues(ex?.reps || '');
+  document.getElementById('log-set-rows').innerHTML = Array.from({length:setCount}, (_,i)=>`
+    <div style="display:grid;grid-template-columns:70px 1fr 1fr;gap:8px;margin-bottom:6px;align-items:center;">
+      <div style="font-weight:700;font-size:12px;">Set ${i+1}</div>
+      <input type="number" class="modal-input log-set-reps" data-idx="${i}" placeholder="${repTargets[i] || 'reps'}" min="0" max="100" />
+      <input type="number" class="modal-input log-set-weight" data-idx="${i}" placeholder="weight" min="0" />
+    </div>
+  `).join('');
   document.getElementById('log-notes').value = '';
   document.getElementById('log-modal').style.display = 'flex';
 }
