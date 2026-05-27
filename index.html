@@ -1366,33 +1366,33 @@ async function auditAction(action, details = '') {
 // ===================== WORKOUT DATA =====================
 const WORKOUT_TEMPLATES = {
   Monday: [{ section: 'Monday', exercises: [
-    { name: 'Bench Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'Incline Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'Seated Barbell Push Press', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'Upright Rows', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'Dumbell Shrugs', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
-    { name: 'Curls', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
+    { name: 'Bench Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Incline Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Seated Barbell Push Press', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Upright Rows', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Dumbell Shrugs', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Curls', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
   ]}],
   Tuesday: [{ section: 'Tuesday', exercises: [
-    { name: 'Front Squat', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
-    { name: 'Hamstring Dead Lifts', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
-    { name: 'Power Clean (M.S- Deadlifts)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
-    { name: 'LEG EXPLOSIONS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'CALF RAISERS DB', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
+    { name: 'Front Squat', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Hamstring Dead Lifts', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Power Clean (M.S- Deadlifts)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Leg Explosions', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Calf Raisers Db', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
   ]}],
   Wednesday: [{ section: 'Wednesday', exercises: [
-    { name: 'Bench Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'Incline Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'DB PUSH PRESS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'BARBELL PULL TO CHIN', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'PUSH JERK (MS- Landmines)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'Bench Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Incline Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Db Push Press', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Barbell Pull To Chin', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'PUSH JERK (MS- Landmines)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
   ]}],
   Thursday: [{ section: 'Thursday', exercises: [
-    { name: 'BACK SQUATS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
-    { name: 'LATERAL DUMBBELL LUNGES', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
-    { name: 'STRAIGHT LEG DEAD-LIFTS (MS- TBD)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
-    { name: 'LEG EXPLOSIONS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
-    { name: 'DUMBELL KNEE RAISE STEP UPS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'Back Squats', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Lateral Dumbbell Lunges', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Straight Leg DEAD-LIFTS (MS- TBD)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Leg Explosions', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Dumbell Knee Raise Step Ups', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
   ]}],
 };
 
@@ -1419,11 +1419,11 @@ let logModalLevel = null;
 let workoutLogs = {};
 let progressionChart = null;
 let loggedExercisesForDate = new Set();
-const LOGGABLE_LIFTS = ['BENCH PRESS', 'BACK SQUAT', 'POWER CLEAN (M.S- DEADLIFTS)'];
+const LOGGABLE_LIFTS = ['Bench Press', 'BACK SQUAT', 'Power Clean (M.S- DEADLIFTS)'];
 function normLiftName(n){ return String(n||'').toUpperCase().replace(/[-_.]/g,' ').replace(/\s+/g,' ').trim(); }
 function canLogExercise(name){
   const n = normLiftName(name);
-  return n === 'BENCH PRESS' || n === 'BACK SQUATS' || n === 'BACK SQUAT' || n === 'POWER CLEAN (M S DEADLIFTS)';
+  return n === 'Bench Press' || n === 'Back Squats' || n === 'BACK SQUAT' || n === 'POWER CLEAN (M S DEADLIFTS)';
 }
 let dashboardWeekOffset = 0;
 
@@ -1753,9 +1753,9 @@ async function openAthleteProfile(id) {
 async function renderEstimated1RM() {
   const logs = await loadWorkoutLogs(currentAthleteId);
   const lifts = [
-    { key: 'rm-bench', names: ['BENCH PRESS'] },
-    { key: 'rm-squat', names: ['BACK SQUATS'] },
-    { key: 'rm-clean', names: ['POWER CLEAN (M.S- DEADLIFTS)','POWER CLEAN (M S DEADLIFTS)'] },
+    { key: 'rm-bench', names: ['Bench Press'] },
+    { key: 'rm-squat', names: ['Back Squats'] },
+    { key: 'rm-clean', names: ['Power Clean (M.S- DEADLIFTS)','POWER CLEAN (M S DEADLIFTS)'] },
   ];
   lifts.forEach(l => { const el=document.getElementById(l.key); if (el) el.textContent = 'N/A'; });
   lifts.forEach(lift => {
@@ -2161,8 +2161,7 @@ function renderEditWorkoutEditor() {
   container.innerHTML = template.map((section, si) => `
     <div class="edit-section-card" id="edit-sec-${si}">
       <div class="edit-section-header">
-        <input class="edit-section-title-input" value="${section.section}"
-          onchange="updateSectionTitle(${si}, this.value)" placeholder="Section name..." />
+        <div class="edit-section-title-input" style="border-bottom:none;padding:2px 4px;">${section.section}</div>
         <button class="btn-del" style="color:rgba(255,255,255,0.5);" onclick="deleteSection(${si})" title="Delete section">✕</button>
       </div>
       <div class="edit-col-header">
@@ -2242,7 +2241,7 @@ async function deleteSection(si) {
   renderEditWorkoutEditor();
 }
 function addExercise(si) {
-  editWorkouts[editCurrentDay][si].exercises.push({ name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '60s', workTime: '60s' });
+  editWorkouts[editCurrentDay][si].exercises.push({ name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' });
   renderEditWorkoutEditor();
   // scroll to bottom of section
   setTimeout(() => {
@@ -2253,7 +2252,7 @@ function addExercise(si) {
 function addSection() {
   if (!editWorkouts[editCurrentDay]) editWorkouts[editCurrentDay] = [];
   editWorkouts[editCurrentDay].push({ section: 'New Section', exercises: [
-    { name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '60s', workTime: '60s' }
+    { name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' }
   ]});
   renderEditWorkoutEditor();
 }
