@@ -1076,7 +1076,10 @@
     <div class="dash-top">
       <div>
         <div class="dash-heading">Coaching Dashboard</div>
-        <div class="dash-date" id="dash-date"></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <div class="dash-date" id="dash-date"></div>
+          <button class="btn-sm" id="dash-last-week-btn" onclick="toggleDashboardWeekView()">Last Week</button>
+        </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <div class="search-wrap">
@@ -1622,6 +1625,7 @@ let logModalLevel = null;
 let workoutLogs = {};
 let progressionChart = null;
 let loggedExercisesForDate = new Set();
+let dashboardViewMode = 'current';
 
 // ===================== INIT =====================
 async function initApp() {
@@ -1778,12 +1782,37 @@ async function submitLog() {
 
 // ===================== RENDER =====================
 function renderDashboard() {
+  const anchorDate = getDashboardAnchorDate();
   const now = new Date();
-  document.getElementById('dash-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('dash-date').textContent = anchorDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const btn = document.getElementById('dash-last-week-btn');
+  btn.textContent = dashboardViewMode === 'current' ? 'Last Week' : 'This Week';
   const todayName = now.toLocaleDateString('en-US', { weekday: 'long' });
   document.getElementById('today-day').textContent = todayName + ' Workout';
   updateDashboardKpis();
   renderAthleteGrid();
+}
+
+function getDashboardAnchorDate() {
+  const now = new Date();
+  now.setHours(12, 0, 0, 0);
+  const day = now.getDay();
+  const mondayShift = day === 0 ? -6 : 1 - day;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + mondayShift);
+  const thursday = new Date(monday);
+  thursday.setDate(monday.getDate() + 3);
+  if (dashboardViewMode === 'last') {
+    const lastThursday = new Date(thursday);
+    lastThursday.setDate(thursday.getDate() - 7);
+    return lastThursday;
+  }
+  return thursday;
+}
+
+function toggleDashboardWeekView() {
+  dashboardViewMode = dashboardViewMode === 'current' ? 'last' : 'current';
+  renderDashboard();
 }
 
 async function updateDashboardKpis() {
@@ -1830,8 +1859,8 @@ async function renderAthleteGrid() {
     return;
   }
 
-  const now = new Date();
-  const monday = new Date(now);
+  const anchorDate = getDashboardAnchorDate();
+  const monday = new Date(anchorDate);
   const day = monday.getDay();
   const mondayShift = day === 0 ? -6 : 1 - day;
   monday.setDate(monday.getDate() + mondayShift);
