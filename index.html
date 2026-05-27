@@ -1026,26 +1026,25 @@
 
 
 
-<!-- CONFIG SCREEN (shown if no Supabase creds) -->
+<!-- LOGIN SCREEN -->
 <div id="config-screen">
   <div class="config-card">
     <div class="config-logo">
       <img src="eagle.png" class="eagle-icon" />
       <div>
         <div class="config-title">Eagle Strength</div>
-        <div class="config-sub">Coaching Platform Setup</div>
+        <div class="config-sub">Coach Login</div>
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Supabase Project URL</label>
-      <input type="text" id="cfg-url" class="form-input" placeholder="https://xxxxxxxxxxxx.supabase.co" />
+      <label class="form-label">Username</label>
+      <input type="text" id="login-username" class="form-input" placeholder="username" />
     </div>
     <div class="form-group">
-      <label class="form-label">Supabase Anon / Publishable Key</label>
-      <input type="text" id="cfg-key" class="form-input" placeholder="eyJhbGci... or sb_publishable_..." />
+      <label class="form-label">Password</label>
+      <input type="password" id="login-password" class="form-input" placeholder="password" />
     </div>
-    <button class="btn-primary" onclick="saveConfig()">Connect to Supabase →</button>
-    <p class="config-hint">Credentials are used for this live session only and are never stored locally. Both legacy <code>anon</code> keys and new <code>sb_publishable_...</code> keys are supported.<br>See the <a href="#" onclick="showSetupGuide()">Setup Guide</a> for step-by-step instructions.</p>
+    <button class="btn-primary" onclick="loginCoach()">Sign In →</button>
   </div>
 </div>
 
@@ -1064,7 +1063,7 @@
     <button class="header-nav-btn" onclick="showPage('admin')">⚙ Manage Athletes</button>
     <button class="header-nav-btn" onclick="showPage('attendance')">✅ Attendance</button>
     <button class="header-nav-btn" onclick="showPage('calendar')">🗓 Calendar</button>
-    <button class="header-nav-btn" onclick="resetConfig()" style="opacity:0.6;font-size:12px;">Disconnect</button>
+    <button class="header-nav-btn" onclick="logoutCoach()" style="color:#ff6b6b;font-size:12px;">Logout</button>
   </div>
 </div>
 
@@ -1072,69 +1071,7 @@
 <div id="main-content" style="display:none;">
 
   <!-- DASHBOARD -->
-  <div id="page-dashboard" class="page active">
-    <div class="dash-top">
-      <div>
-        <div class="dash-heading">Coaching Dashboard</div>
-        <div class="dash-date" id="dash-date"></div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <div class="search-wrap">
-          <span class="search-icon">⌕</span>
-          <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
-        </div>
-      </div>
-    </div>
-
-    <div class="dashboard-kpis">
-      <div class="kpi-card">
-        <div class="kpi-label">Athletes Today</div>
-        <div class="kpi-value" id="kpi-athletes">0</div>
-        <div class="kpi-sub" id="kpi-athletes-sub">0 active rostered</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Sessions Logged</div>
-        <div class="kpi-value" id="kpi-logs">0</div>
-        <div class="kpi-sub">Entries in last 7 days</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Completion Rate</div>
-        <div class="kpi-value" id="kpi-completion">0%</div>
-        <div class="kpi-sub">Active athletes who logged this week</div>
-      </div>
-    </div>
-
-    <div class="quick-tiles">
-      <div class="quick-tile" onclick="setDayFilter('today')">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4c5.svg" alt="📅" /></div>
-        <div>
-          <div class="tile-label">Today's Training</div>
-          <div class="tile-sub" id="today-day">Loading...</div>
-        </div>
-      </div>
-      <div class="quick-tile" onclick="showPage('admin')">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f465.svg" alt="👥" /></div>
-        <div>
-          <div class="tile-label">Manage Athletes</div>
-          <div class="tile-sub">Add · Edit · Status</div>
-        </div>
-      </div>
-      <div class="quick-tile" onclick="openWeeklyOverview()">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4ca.svg" alt="📊" /></div>
-        <div>
-          <div class="tile-label">Weekly Overview</div>
-          <div class="tile-sub">View weekly logged lifts</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-heading">
-      Athletes <span style="font-size:13px;font-weight:500;color:var(--text-muted);" id="athlete-count"></span>
-    </div>
-    <div class="athlete-grid" id="athlete-grid">
-      <div class="empty-state"><span class="empty-icon">⏳</span>Loading athletes...</div>
-    </div>
-  </div>
+  <!-- include:page-dashboard --><div data-include="ui/pages/dashboard.html"></div><!-- /include:page-dashboard -->
 
   <!-- ATHLETE PROFILE -->
   <div id="page-profile" class="page">
@@ -1215,126 +1152,13 @@
   </div>
 
   <!-- ADMIN PAGE -->
-  <div id="page-admin" class="page">
-    <div class="nav-row">
-      <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
-    </div>
-    <div class="dash-heading" style="margin-bottom:20px;">⚙ Athlete Management</div>
-    <div class="admin-grid">
-      <!-- Add Athlete -->
-      <div class="admin-card">
-        <div class="admin-title">Add New Athlete</div>
-        <div class="form-group">
-          <label class="form-label">Full Name</label>
-          <input type="text" id="new-name" class="form-input" placeholder="First Last" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Grade</label>
-          <select id="new-grade" class="form-input">
-            <option value="6">6th Grade</option>
-            <option value="7">7th Grade</option>
-            <option value="8">8th Grade</option>
-            <option value="9">9th Grade</option>
-            <option value="10" selected>10th Grade</option>
-            <option value="11">11th Grade</option>
-            <option value="12">12th Grade</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Sport</label>
-          <input type="text" id="new-sport" class="form-input" placeholder="Football, Basketball, etc." />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Groups (comma separated)</label>
-          <input type="text" id="new-groups" class="form-input" placeholder="Varsity, Morning, Rehab" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Default Level</label>
-          <select id="new-level" class="form-input">
-            <option value="L3" selected>L3 — Performance (Default)</option>
-            <option value="L2">L2 — Moderate</option>
-            <option value="L1">L1 — Foundation</option>
-          </select>
-        </div>
-        <button class="btn-primary" onclick="addAthlete()">Add Athlete</button>
-      </div>
-
-      <!-- Athlete List -->
-      <div class="admin-card">
-        <div class="admin-title">All Athletes</div>
-        <div id="admin-athlete-list">
-          <div class="empty-state"><span class="empty-icon">⏳</span>Loading...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Edit Modal (inline) -->
-    <div id="edit-panel" style="display:none;margin-top:16px;" class="admin-card">
-      <div class="admin-title">Edit Athlete</div>
-      <input type="hidden" id="edit-id" />
-      <div class="admin-grid">
-        <div class="form-group">
-          <label class="form-label">Name</label>
-          <input type="text" id="edit-name" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Grade</label>
-          <select id="edit-grade" class="form-input">
-            <option value="6">6th</option><option value="7">7th</option><option value="8">8th</option>
-            <option value="9">9th</option><option value="10">10th</option><option value="11">11th</option><option value="12">12th</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Sport</label>
-          <input type="text" id="edit-sport" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Groups (comma separated)</label>
-          <input type="text" id="edit-groups" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Default Level</label>
-          <select id="edit-level" class="form-input">
-            <option value="L3">L3</option><option value="L2">L2</option><option value="L1">L1</option>
-          </select>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <button class="btn-sm green" onclick="saveEditAthlete()">Save Changes</button>
-        <button class="btn-sm" onclick="document.getElementById('edit-panel').style.display='none'">Cancel</button>
-      </div>
-    </div>
-  </div>
+  <!-- include:page-admin --><div data-include="ui/pages/admin.html"></div><!-- /include:page-admin -->
 
   <!-- TODAY'S WORKOUT PAGE -->
-  <div id="page-today" class="page">
-    <div class="nav-row">
-      <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
-    </div>
-    <div class="today-header">
-      <div>
-        <div class="today-day-name" id="today-page-day">Monday</div>
-        <div class="today-date-str" id="today-page-date"></div>
-      </div>
-      <button class="btn-display" onclick="openTVDisplay()">📺 Display on TV</button>
-    </div>
-    <div id="today-workout-panel">
-      <div class="empty-state"><span class="empty-icon">⏳</span>Loading today's workout...</div>
-    </div>
-  </div>
+  <!-- include:page-today --><div data-include="ui/pages/today.html"></div><!-- /include:page-today -->
 
   <!-- EDIT WORKOUTS PAGE -->
-  <div id="page-edit-workouts" class="page">
-    <div class="nav-row">
-      <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
-    </div>
-    <div class="dash-heading" style="margin-bottom:16px;">Edit Workouts</div>
-    <div class="edit-day-tabs" id="edit-day-tabs"></div>
-    <div id="edit-workout-editor"></div>
-    <div class="edit-save-bar">
-      <button class="btn-save-workout" onclick="saveEditedWorkout()">💾 Save Day</button>
-    </div>
-  </div>
+  <!-- include:page-edit-workouts --><div data-include="ui/pages/edit-workouts.html"></div><!-- /include:page-edit-workouts -->
 
   <div id="page-attendance" class="page">
     <div class="nav-row"><button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button></div>
@@ -1497,33 +1321,39 @@
 <script>
 // ===================== CONFIG =====================
 let supabase = null;
-const CONFIG_KEY = 'eagle_strength_config';
+const SUPABASE_URL = 'https://ispmelxwebnhnoflbeoj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_RV-YgGToZ9yfk4RNVvfMQQ_Peh_NVIF';
+let currentCoach = null;
 let appDialogResolver = null;
-
-function getConfig() {
-  try { return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {}; } catch { return {}; }
+async function loginCoach() {
+  const username = (document.getElementById('login-username').value || '').trim();
+  const password = (document.getElementById('login-password').value || '').trim();
+  if (!username || !password) return toast('Enter username and password');
+  if (!supabase) await connectToSupabase(SUPABASE_URL, SUPABASE_KEY);
+  const { data, error } = await supabase.from('coach_users').select('username').eq('username', username).eq('password', password).maybeSingle();
+  if (error || !data) return toast('Invalid login');
+  currentCoach = data.username;
+  document.getElementById('config-screen').style.display = 'none';
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'block';
+  await loadAthletes();
+  renderDashboard();
+  await auditAction('login', 'Coach signed in');
 }
 
-function saveConfig() {
-  let url = document.getElementById('cfg-url').value.trim();
-  let key = document.getElementById('cfg-key').value.trim();
-  // Alias shortcuts for coach login convenience
-  if (url.toLowerCase() === 'admin') {
-    url = 'https://ispmelxwebnhnoflbeoj.supabase.co';
-  }
-  if (key === 'german') {
-    key = 'sb_publishable_RV-YgGToZ9yfk4RNVvfMQQ_Peh_NVIF';
-  }
-  document.getElementById('cfg-url').value = url;
-  document.getElementById('cfg-key').value = key;
-  if (!url || !key) { toast('Please enter both URL and Key'); return; }
-  if (!url.startsWith('https://')) { toast('URL must start with https://'); return; }
-connectToSupabase(url, key);
+async function logoutCoach() {
+  if (currentCoach) await auditAction('logout', 'Coach signed out');
+  currentCoach = null;
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('app-header').style.display = 'none';
+  document.getElementById('main-content').style.display = 'none';
+  document.getElementById('config-screen').style.display = 'block';
 }
-async function resetConfig() {
-  if (!await appConfirm('Disconnect from Supabase?', 'You can reconnect anytime.')) return;
-  localStorage.removeItem(CONFIG_KEY);
-  location.reload();
+
+async function auditAction(action, details = '') {
+  if (!supabase || !currentCoach) return;
+  await supabase.from('coach_audit_logs').insert([{ coach_username: currentCoach, action, details }]);
 }
 
 // ===================== WORKOUT DATA =====================
@@ -1597,39 +1427,9 @@ const WORKOUT_TEMPLATES = {
       { name: 'Tempo Runs', level: 'L1-L3', sets: '4', reps: '100m', tempo: '—', rest: '90s' },
     ]},
   ],
-  Friday: [
-    { section: 'Lower Body — Hinge', exercises: [
-      { name: 'Glute Bridge', level: 'L1', sets: 3, reps: '15', tempo: '2-2-1', rest: '60s' },
-      { name: 'DB Romanian Deadlift', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Trap Bar Deadlift', level: 'L3', sets: 4, reps: '5', tempo: '2-1-1', rest: '120s' },
-    ]},
-    { section: 'Upper Body — Pull', exercises: [
-      { name: 'Inverted Row', level: 'L1', sets: 3, reps: '12', tempo: '2-1-2', rest: '60s' },
-      { name: 'Lat Pulldown', level: 'L2', sets: 3, reps: '10', tempo: '3-1-2', rest: '75s' },
-      { name: 'Pull-Up', level: 'L3', sets: 4, reps: '6', tempo: '2-1-2', rest: '90s' },
-    ]},
-    { section: 'Accessory', exercises: [
-      { name: 'Step-Ups', level: 'L1-L3', sets: 3, reps: '10 each', tempo: '2-1-1', rest: '60s' },
-      { name: 'Face Pulls', level: 'L1-L3', sets: 3, reps: '15', tempo: '2-1-2', rest: '45s' },
-    ]},
-    { section: 'Conditioning', exercises: [
-      { name: 'Sprints (20 yards)', level: 'L1-L3', sets: '10', reps: '—', tempo: '—', rest: 'Full recovery' },
-    ]},
-  ],
-  Saturday: [
-    { section: 'Optional Conditioning', exercises: [
-      { name: 'Tempo Runs', level: 'L1-L3', sets: '4', reps: '200m', tempo: '—', rest: '90s' },
-      { name: 'Mobility Work', level: 'L1-L3', sets: 1, reps: '20 min', tempo: '—', rest: '—' },
-    ]},
-  ],
-  Sunday: [
-    { section: 'Rest Day', exercises: [
-      { name: 'Full Rest or Light Walk', level: 'L1-L3', sets: '—', reps: '—', tempo: '—', rest: '—' },
-    ]},
-  ],
 };
 
-const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday'];
 const SECTION_ICONS = {
   'Lower Body': '🦵', 'Upper Body': '💪', 'Core': '🎯', 'Conditioning': '⚡',
   'Accessory': '🔩', 'Active Recovery': '🧘', 'Optional': '🏃', 'Rest': '😴'
@@ -1652,6 +1452,7 @@ let logModalLevel = null;
 let workoutLogs = {};
 let progressionChart = null;
 let loggedExercisesForDate = new Set();
+let dashboardWeekOffset = 0;
 
 // ===================== INIT =====================
 async function initApp() {
@@ -1680,6 +1481,7 @@ async function addAthlete() {
   if (!name) { toast('Please enter athlete name'); return; }
   const { error } = await supabase.from('athletes').insert([{ name, grade, sport, groups, default_level: level, active_status: true, notes: '' }]);
   if (error) { toast('Error: ' + error.message); return; }
+  await auditAction('add_athlete', `Added athlete: ${name}`);
   toast('Athlete added!');
   document.getElementById('new-name').value = '';
   document.getElementById('new-sport').value = '';
@@ -1724,6 +1526,7 @@ async function saveEditAthlete() {
   if (!name) { toast('Name required'); return; }
   const { error } = await supabase.from('athletes').update({ name, grade, sport, groups, default_level: level }).eq('id', id);
   if (error) { toast('Error: ' + error.message); return; }
+  await auditAction('edit_athlete', `Edited athlete: ${name}`);
   toast('Saved!');
   await loadAthletes();
   renderAdminList();
@@ -1751,6 +1554,7 @@ async function deleteAthlete(id) {
   athletes = athletes.filter(a => a.id !== id);
   renderAdminList();
   renderAthleteGrid();
+  await auditAction('delete_athlete', `Deleted athlete id: ${id}`);
   toast('Athlete deleted');
 }
 
@@ -1800,6 +1604,7 @@ async function submitLog() {
 
   if (error) { toast('Error saving log: ' + error.message); return; }
   document.getElementById('log-modal').style.display = 'none';
+  await auditAction('log_workout', `${logModalExercise} on ${date}`);
   toast(existing.data && existing.data.length > 0 ? 'Workout log updated! ✓' : 'Lift logged! ✓');
 
   await refreshLoggedExercisesForCurrentDate();
@@ -1808,12 +1613,31 @@ async function submitLog() {
 
 // ===================== RENDER =====================
 function renderDashboard() {
+  const anchorDate = getDashboardAnchorDate();
   const now = new Date();
-  document.getElementById('dash-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('dash-date').textContent = anchorDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const todayName = now.toLocaleDateString('en-US', { weekday: 'long' });
   document.getElementById('today-day').textContent = todayName + ' Workout';
   updateDashboardKpis();
   renderAthleteGrid();
+}
+
+function getDashboardAnchorDate() {
+  const now = new Date();
+  now.setHours(12, 0, 0, 0);
+  const day = now.getDay();
+  const mondayShift = day === 0 ? -6 : 1 - day;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + mondayShift);
+  const thursday = new Date(monday);
+  thursday.setDate(monday.getDate() + 3);
+  thursday.setDate(thursday.getDate() + (dashboardWeekOffset * 7));
+  return thursday;
+}
+
+function shiftDashboardWeek(delta) {
+  dashboardWeekOffset += delta;
+  renderDashboard();
 }
 
 async function updateDashboardKpis() {
@@ -1860,24 +1684,24 @@ async function renderAthleteGrid() {
     return;
   }
 
-  const now = new Date();
-  const monday = new Date(now);
+  const anchorDate = getDashboardAnchorDate();
+  const monday = new Date(anchorDate);
   const day = monday.getDay();
   const mondayShift = day === 0 ? -6 : 1 - day;
   monday.setDate(monday.getDate() + mondayShift);
-  const friday = new Date(monday);
-  friday.setDate(monday.getDate() + 4);
+  const thursday = new Date(monday);
+  thursday.setDate(monday.getDate() + 3);
   const from = monday.toISOString().split('T')[0];
-  const to = friday.toISOString().split('T')[0];
+  const to = thursday.toISOString().split('T')[0];
   const { data: weekLogs } = await supabase
     .from('workout_logs')
     .select('athlete_id,date')
     .gte('date', from)
     .lte('date', to);
 
-  const weekdayKeys = ['M','T','W','TH','F'];
+  const weekdayKeys = ['M','T','W','TH'];
   const dateKeyOrder = {};
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 4; i++) {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
     dateKeyOrder[d.toISOString().split('T')[0]] = i;
@@ -2425,6 +2249,7 @@ function addSection() {
 }
 function saveEditedWorkout() {
   saveWorkoutTemplates(editWorkouts);
+  auditAction('save_workout_templates', `Saved templates for ${editCurrentDay}`);
   toast(`${editCurrentDay} workout saved!`);
 }
 
@@ -2911,6 +2736,7 @@ async function saveAttendance(){
   }));
   const {error}=await supabase.from('attendance_logs').upsert(rows,{onConflict:'athlete_id,date,group_name'});
   if(error) return toast(error.message);
+  await auditAction('save_attendance', `Saved attendance for ${date}`);
   toast('Attendance saved');
 }
 function openAttendanceOverview() {
@@ -2990,17 +2816,31 @@ async function saveCalendarEventFromModal() {
   if (error) return toast(error.message);
   closeCalendarEventModal();
   renderCalendarMonth(monthKey);
+  await auditAction('save_calendar_event', `Saved event for ${date}: ${text}`);
   toast('Calendar event saved');
 }
 
 // ===================== BOOT =====================
-window.addEventListener('DOMContentLoaded', () => {
+async function loadHtmlPartials() {
+  const partialNodes = Array.from(document.querySelectorAll('[data-include]'));
+  await Promise.all(partialNodes.map(async (node) => {
+    const src = node.getAttribute('data-include');
+    if (!src) return;
+    try {
+      const res = await fetch(src);
+      const html = await res.text();
+      node.outerHTML = html;
+    } catch (e) {
+      node.outerHTML = `<div class="empty-state"><span class="empty-icon">⚠️</span>Failed to load partial: ${src}</div>`;
+    }
+  }));
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadHtmlPartials();
+  await connectToSupabase(SUPABASE_URL, SUPABASE_KEY);
   document.getElementById('config-screen').style.display = 'block';
   removeStrayCssTextNodes();
-  const cfg = getConfig();
-  if (cfg.url) document.getElementById('cfg-url').value = cfg.url;
-  if (cfg.key) document.getElementById('cfg-key').value = cfg.key;
-  if (cfg.url && cfg.key) setTimeout(() => connectToSupabase(cfg.url, cfg.key), 150);
 });
 
 function loadSupabaseLib() {
@@ -3046,14 +2886,9 @@ async function connectToSupabase(url, key) {
     // Test the connection
     const { error } = await supabase.from('athletes').select('id').limit(1);
     if (error && error.code !== 'PGRST116') throw error;
-    // Success — show app
-    document.getElementById('config-screen').style.display = 'none';
-    document.getElementById('app-header').style.display = 'flex';
-    document.getElementById('main-content').style.display = 'block';
-    await loadAthletes();
-    renderDashboard();
+    if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
   } catch(e) {
-    if (btn) { btn.textContent = 'Connect to Supabase →'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
     toast('Connection failed: ' + (e.message || 'Check your URL and key'));
   }
 }
