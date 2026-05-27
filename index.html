@@ -1377,75 +1377,35 @@ async function auditAction(action, details = '') {
 
 // ===================== WORKOUT DATA =====================
 const WORKOUT_TEMPLATES = {
-  Monday: [
-    { section: 'Lower Body — Squat', exercises: [
-      { name: 'Bodyweight Squat', level: 'L1', sets: 3, reps: '12', tempo: '3-1-1', rest: '60s' },
-      { name: 'Goblet Squat', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Front Squat', level: 'L3', sets: 4, reps: '6', tempo: '3-1-1', rest: '90s' },
-    ]},
-    { section: 'Upper Body — Push', exercises: [
-      { name: 'Push-Up', level: 'L1', sets: 3, reps: '15', tempo: '2-1-1', rest: '60s' },
-      { name: 'DB Bench Press', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Bench Press', level: 'L3', sets: 4, reps: '6', tempo: '3-1-1', rest: '90s' },
-    ]},
-    { section: 'Core', exercises: [
-      { name: 'Plank', level: 'L1-L3', sets: 3, reps: '30-60s', tempo: '—', rest: '45s' },
-      { name: 'Dead Bug', level: 'L1-L3', sets: 3, reps: '8 each', tempo: '—', rest: '45s' },
-    ]},
-    { section: 'Conditioning', exercises: [
-      { name: 'Sprints (20 yards)', level: 'L1-L3', sets: '8-12', reps: '—', tempo: '—', rest: 'Full recovery' },
-    ]},
-  ],
-  Tuesday: [
-    { section: 'Lower Body — Hinge', exercises: [
-      { name: 'Glute Bridge', level: 'L1', sets: 3, reps: '15', tempo: '2-2-1', rest: '60s' },
-      { name: 'DB Romanian Deadlift', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Trap Bar Deadlift', level: 'L3', sets: 4, reps: '5', tempo: '2-1-1', rest: '120s' },
-    ]},
-    { section: 'Upper Body — Pull', exercises: [
-      { name: 'Inverted Row', level: 'L1', sets: 3, reps: '12', tempo: '2-1-2', rest: '60s' },
-      { name: 'Lat Pulldown', level: 'L2', sets: 3, reps: '10', tempo: '3-1-2', rest: '75s' },
-      { name: 'Pull-Up', level: 'L3', sets: 4, reps: '6', tempo: '2-1-2', rest: '90s' },
-    ]},
-    { section: 'Accessory', exercises: [
-      { name: 'Step-Ups', level: 'L1-L3', sets: 3, reps: '10 each', tempo: '2-1-1', rest: '60s' },
-      { name: 'Face Pulls', level: 'L1-L3', sets: 3, reps: '15', tempo: '2-1-2', rest: '45s' },
-      { name: 'Tibialis Raises', level: 'L1-L3', sets: 3, reps: '15', tempo: '—', rest: '30s' },
-    ]},
-    { section: 'Conditioning', exercises: [
-      { name: 'Shuttle Runs', level: 'L1-L3', sets: '6', reps: '—', tempo: '—', rest: 'Full recovery' },
-    ]},
-  ],
-  Wednesday: [
-    { section: 'Active Recovery / Mobility', exercises: [
-      { name: 'Hip Flexor Stretch', level: 'L1-L3', sets: 3, reps: '30s each', tempo: '—', rest: '—' },
-      { name: 'Thoracic Rotation', level: 'L1-L3', sets: 3, reps: '10 each', tempo: '—', rest: '—' },
-      { name: 'Foam Roll — Quads/Hams', level: 'L1-L3', sets: 1, reps: '2 min each', tempo: '—', rest: '—' },
-    ]},
-    { section: 'Core', exercises: [
-      { name: 'Plank Progressions', level: 'L1-L3', sets: 3, reps: '45s', tempo: '—', rest: '45s' },
-      { name: 'Pallof Press', level: 'L1-L3', sets: 3, reps: '10 each', tempo: '—', rest: '45s' },
-    ]},
-  ],
-  Thursday: [
-    { section: 'Lower Body — Squat', exercises: [
-      { name: 'Bodyweight Squat', level: 'L1', sets: 3, reps: '12', tempo: '3-1-1', rest: '60s' },
-      { name: 'Goblet Squat', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Front Squat', level: 'L3', sets: 4, reps: '6', tempo: '3-1-1', rest: '90s' },
-    ]},
-    { section: 'Upper Body — Push', exercises: [
-      { name: 'Push-Up', level: 'L1', sets: 3, reps: '15', tempo: '2-1-1', rest: '60s' },
-      { name: 'DB Bench Press', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Bench Press', level: 'L3', sets: 4, reps: '6', tempo: '3-1-1', rest: '90s' },
-    ]},
-    { section: 'Core', exercises: [
-      { name: 'Dead Bug', level: 'L1-L3', sets: 3, reps: '8 each', tempo: '—', rest: '45s' },
-      { name: 'Bird Dog', level: 'L1-L3', sets: 3, reps: '10 each', tempo: '—', rest: '45s' },
-    ]},
-    { section: 'Conditioning', exercises: [
-      { name: 'Tempo Runs', level: 'L1-L3', sets: '4', reps: '100m', tempo: '—', rest: '90s' },
-    ]},
-  ],
+  Monday: [{ section: 'Monday', exercises: [
+    { name: 'BENCH PRESS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'INCLINE PRESS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'SEATED BARBELL PUSH PRESS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'UPRIGHT ROWS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'DUMBELL SHRUGS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
+    { name: 'CURLS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
+  ]}],
+  Tuesday: [{ section: 'Tuesday', exercises: [
+    { name: 'FRONT SQUAT', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
+    { name: 'HAMSTRING DEAD LIFTS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
+    { name: 'POWER CLEAN (MS- Deadlifts)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
+    { name: 'LEG EXPLOSIONS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'CALF RAISERS DB', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '45s', workTime: '40s' },
+  ]}],
+  Wednesday: [{ section: 'Wednesday', exercises: [
+    { name: 'BENCH PRESS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'INCLINE PRESS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'DB PUSH PRESS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'BARBELL PULL TO CHIN', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'PUSH JERK (MS- Landmines)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+  ]}],
+  Thursday: [{ section: 'Thursday', exercises: [
+    { name: 'BACK SQUATS', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
+    { name: 'LATERAL DUMBBELL LUNGES', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
+    { name: 'STRAIGHT LEG DEAD-LIFTS (MS- TBD)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '75s', workTime: '50s' },
+    { name: 'LEG EXPLOSIONS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+    { name: 'DUMBELL KNEE RAISE STEP UPS', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '60s', workTime: '45s' },
+  ]}],
 };
 
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday'];
@@ -1930,7 +1890,7 @@ function renderExercises(exercises, defaultLevel) {
         <div class="exercise-row">
           <div style="flex:1">
             <div class="exercise-name">${ex.name}</div>
-            <div class="exercise-detail">${ex.sets} sets × ${ex.reps} · Tempo: ${ex.tempo} · Rest: ${ex.rest}</div>
+            <div class="exercise-detail">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo} · Rest: ${ex.rest}</div>
           </div>
           <span class="level-badge level-L3" style="font-size:10px;">All Levels</span>
           <button class="log-btn" data-log-exercise="${ex.name}" onclick="openLogModal('${ex.name}', 'L3')">Log</button>
@@ -1945,7 +1905,7 @@ function renderExercises(exercises, defaultLevel) {
         <div class="exercise-row" id="exrow-${exId}">
           <div style="flex:1">
             <div class="exercise-name" id="exname-${exId}">${active.name}</div>
-            <div class="exercise-detail" id="exdetail-${exId}">${active.sets} sets × ${active.reps} · Tempo: ${active.tempo} · Rest: ${active.rest}</div>
+            <div class="exercise-detail" id="exdetail-${exId}">${active.sets} sets × ${active.reps} · % Lift: ${active.tempo} · Rest: ${active.rest}</div>
           </div>
           <div class="level-toggle">
             ${group.map(e => `
@@ -1969,7 +1929,7 @@ function selectExerciseLevel(btn, exId, group, level) {
   btn.classList.add('active');
   // Update name/detail
   document.getElementById(`exname-${exId}`).textContent = ex.name;
-  document.getElementById(`exdetail-${exId}`).textContent = `${ex.sets} sets × ${ex.reps} · Tempo: ${ex.tempo} · Rest: ${ex.rest}`;
+  document.getElementById(`exdetail-${exId}`).textContent = `${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo} · Rest: ${ex.rest}`;
   // Update log button
   const logBtn = document.getElementById(`logbtn-${exId}`);
   logBtn.setAttribute('data-log-exercise', ex.name);
@@ -2171,7 +2131,7 @@ function showTodayPage() {
         <div class="exercise-row">
           <div style="flex:1">
             <div class="exercise-name">${ex.name}</div>
-            <div class="exercise-detail">${ex.sets} sets × ${ex.reps}${ex.tempo && ex.tempo !== '—' ? ' · Tempo: ' + ex.tempo : ''}${ex.rest && ex.rest !== '—' ? ' · Rest: ' + ex.rest : ''}</div>
+            <div class="exercise-detail">${ex.sets} sets × ${ex.reps}${ex.tempo && ex.tempo !== '—' ? ' · % Lift: ' + ex.tempo : ''}${ex.rest && ex.rest !== '—' ? ' · Rest: ' + ex.rest : ''}</div>
           </div>
           ${ex.level ? `<span class="level-badge level-${ex.level === 'L1-L3' ? 'L3' : ex.level}" style="font-size:10px;">${ex.level}</span>` : ''}
         </div>
@@ -2214,14 +2174,14 @@ function renderEditWorkoutEditor() {
         <button class="btn-del" style="color:rgba(255,255,255,0.5);" onclick="deleteSection(${si})" title="Delete section">✕</button>
       </div>
       <div class="edit-col-header">
-        <span>Exercise Name</span><span>Sets</span><span>Reps</span><span>Tempo</span><span>Rest</span><span>Work Time</span><span>Level</span><span></span>
+        <span>Exercise Name</span><span>Sets</span><span>Reps</span><span>% Lift</span><span>Rest</span><span>Work Time</span><span>Level</span><span></span>
       </div>
       ${section.exercises.map((ex, ei) => `
         <div class="edit-exercise-row">
           <input class="edit-input" value="${ex.name}" onchange="updateExField(${si},${ei},'name',this.value)" placeholder="Exercise name" />
           <input class="edit-input" value="${ex.sets}" onchange="updateExField(${si},${ei},'sets',this.value)" placeholder="3" />
           <input class="edit-input" value="${ex.reps}" onchange="updateExField(${si},${ei},'reps',this.value)" placeholder="10" />
-          <input class="edit-input" value="${ex.tempo || '—'}" onchange="updateExField(${si},${ei},'tempo',this.value)" placeholder="3-1-1" />
+          <input class="edit-input" value="${ex.tempo || '—'}" onchange="updateExField(${si},${ei},'tempo',this.value)" placeholder="60% 65% 70% 70%" />
           <input class="edit-input" value="${ex.rest || '—'}" onchange="updateExField(${si},${ei},'rest',this.value)" placeholder="60s" />
           <input class="edit-input" value="${ex.workTime || ''}" onchange="updateExField(${si},${ei},'workTime',this.value)" placeholder="30s" title="Work countdown duration (e.g. 30s, 2min). Leave blank for manual advance." />
           <select class="edit-input" onchange="updateExField(${si},${ei},'level',this.value)">
@@ -2233,6 +2193,29 @@ function renderEditWorkoutEditor() {
       <button class="add-exercise-btn" onclick="addExercise(${si})">+ Add Exercise</button>
     </div>
   `).join('') + `<button class="add-section-btn" onclick="addSection()">+ Add Section</button>`;
+  updateEditWorkoutTotalTime();
+}
+function parseDurationToSecs(v) {
+  const t = String(v || '').trim().toLowerCase();
+  if (!t || t === '—') return 0;
+  if (t.includes('min')) return Math.round(parseFloat(t) * 60) || 0;
+  if (t.endsWith('m')) return Math.round(parseFloat(t) * 60) || 0;
+  if (t.endsWith('s')) return Math.round(parseFloat(t)) || 0;
+  const n = parseFloat(t);
+  return Number.isFinite(n) ? Math.round(n) : 0;
+}
+function updateEditWorkoutTotalTime() {
+  const template = editWorkouts[editCurrentDay] || [];
+  let total = 0;
+  template.forEach(section => (section.exercises || []).forEach(ex => {
+    const sets = parseInt(ex.sets) || 0;
+    total += parseDurationToSecs(ex.workTime) * Math.max(sets, 1);
+    total += parseDurationToSecs(ex.rest) * Math.max((sets || 1) - 1, 0);
+  }));
+  const el = document.getElementById('edit-total-time');
+  if (!el) return;
+  const m = Math.floor(total / 60), s = total % 60;
+  el.textContent = `Total workout time: ${m}m ${String(s).padStart(2, '0')}s`;
 }
 
 function updateSectionTitle(si, val) {
@@ -2240,6 +2223,7 @@ function updateSectionTitle(si, val) {
 }
 function updateExField(si, ei, field, val) {
   editWorkouts[editCurrentDay][si].exercises[ei][field] = val;
+  updateEditWorkoutTotalTime();
 }
 function deleteExercise(si, ei) {
   editWorkouts[editCurrentDay][si].exercises.splice(ei, 1);
@@ -2322,22 +2306,56 @@ function openTVDisplay() {
   const now = new Date();
   const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
   document.getElementById('tv-day-label').textContent = dayName;
-  tvSteps = buildTVSteps(dayName);
-  if (tvSteps.length === 0) { toast('No workout for today!'); return; }
-  tvStepIndex = 0;
-  tvSetIndex = 0;
-  tvSkippedSets = {};
-  tvResetState();
+  const template = (getLiveTemplates()[dayName] || []);
+  const rows = [];
+  template.forEach(section => (section.exercises || []).forEach(ex => {
+    rows.push(`<div class="tv-queue-item"><div class="tv-queue-item-name">${ex.name}</div><div class="tv-queue-item-detail">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo || '—'}</div></div>`);
+  }));
+  document.getElementById('tv-main').innerHTML = `
+    <div class="tv-section-label">Workout List</div>
+    <div class="tv-exercise-name">${dayName}</div>
+    <div class="tv-set-info">
+      <div class="tv-stat"><div class="tv-stat-label">Stopwatch</div><div class="tv-stat-val" id="tv-stopwatch">00:00</div></div>
+      <div style="display:flex;gap:8px;">
+        <button class="tv-ctrl-btn primary" id="tv-sw-btn" onclick="tvToggleStopwatch()">Start</button>
+        <button class="tv-ctrl-btn" onclick="tvResetStopwatch()">Reset</button>
+      </div>
+    </div>`;
+  document.getElementById('tv-queue').innerHTML = rows.join('') || '<div class="tv-queue-item">No workout scheduled.</div>';
+  document.querySelector('.tv-controls').style.display = 'none';
+  document.getElementById('tv-progress-text').textContent = 'Workout list';
+  document.getElementById('tv-progress-pct').textContent = '';
+  document.getElementById('tv-progress-bar').style.width = '100%';
   document.getElementById('tv-display').classList.add('active');
   document.body.style.overflow = 'hidden';
-  tvRenderCurrent();
-  tvRenderQueue();
 }
 
 function closeTVDisplay() {
   document.getElementById('tv-display').classList.remove('active');
   document.body.style.overflow = '';
+  document.querySelector('.tv-controls').style.display = 'flex';
+  tvResetStopwatch();
   tvResetState();
+}
+let tvStopwatchSecs = 0;
+let tvStopwatchTimer = null;
+function tvToggleStopwatch() {
+  const btn = document.getElementById('tv-sw-btn');
+  if (tvStopwatchTimer) {
+    clearInterval(tvStopwatchTimer); tvStopwatchTimer = null; if (btn) btn.textContent = 'Start'; return;
+  }
+  tvStopwatchTimer = setInterval(() => {
+    tvStopwatchSecs += 1;
+    const m = Math.floor(tvStopwatchSecs / 60), s = tvStopwatchSecs % 60;
+    const el = document.getElementById('tv-stopwatch');
+    if (el) el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }, 1000);
+  if (btn) btn.textContent = 'Stop';
+}
+function tvResetStopwatch() {
+  clearInterval(tvStopwatchTimer); tvStopwatchTimer = null; tvStopwatchSecs = 0;
+  const el = document.getElementById('tv-stopwatch'); if (el) el.textContent = '00:00';
+  const btn = document.getElementById('tv-sw-btn'); if (btn) btn.textContent = 'Start';
 }
 
 // ---- RENDERING ----
