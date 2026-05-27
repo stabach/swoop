@@ -1038,11 +1038,11 @@
     </div>
     <div class="form-group">
       <label class="form-label">Username</label>
-      <input type="text" id="login-username" class="form-input" placeholder="username" />
+      <input type="text" id="login-username" class="form-input" placeholder="username" onkeydown="onLoginKeydown(event)" />
     </div>
     <div class="form-group">
       <label class="form-label">Password</label>
-      <input type="password" id="login-password" class="form-input" placeholder="password" />
+      <input type="password" id="login-password" class="form-input" placeholder="password" onkeydown="onLoginKeydown(event)" />
     </div>
     <button class="btn-primary" onclick="loginCoach()">Sign In →</button>
   </div>
@@ -1323,8 +1323,24 @@
 let supabase = null;
 const SUPABASE_URL = 'https://ispmelxwebnhnoflbeoj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RV-YgGToZ9yfk4RNVvfMQQ_Peh_NVIF';
+const COACH_SESSION_KEY = 'coach_session_username';
 let currentCoach = null;
 let appDialogResolver = null;
+function onLoginKeydown(event) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  loginCoach();
+}
+
+async function applyCoachSession(username) {
+  currentCoach = username;
+  document.getElementById('config-screen').style.display = 'none';
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'block';
+  await loadAthletes();
+  renderDashboard();
+}
+
 async function loginCoach() {
   const username = (document.getElementById('login-username').value || '').trim();
   const password = (document.getElementById('login-password').value || '').trim();
@@ -1338,18 +1354,15 @@ async function loginCoach() {
     .eq('password', password)
     .maybeSingle();
   if (error || !data) return toast('Invalid login');
-  currentCoach = data.username;
-  document.getElementById('config-screen').style.display = 'none';
-  document.getElementById('app-header').style.display = 'flex';
-  document.getElementById('main-content').style.display = 'block';
-  await loadAthletes();
-  renderDashboard();
+  localStorage.setItem(COACH_SESSION_KEY, data.username);
+  await applyCoachSession(data.username);
   await auditAction('login', 'Coach signed in');
 }
 
 async function logoutCoach() {
   if (currentCoach) await auditAction('logout', 'Coach signed out');
   currentCoach = null;
+  localStorage.removeItem(COACH_SESSION_KEY);
   document.getElementById('login-username').value = '';
   document.getElementById('login-password').value = '';
   document.getElementById('app-header').style.display = 'none';
@@ -2845,7 +2858,22 @@ async function loadHtmlPartials() {
 window.addEventListener('DOMContentLoaded', async () => {
   await loadHtmlPartials();
   await connectToSupabase(SUPABASE_URL, SUPABASE_KEY);
-  document.getElementById('config-screen').style.display = 'block';
+  const savedCoach = (localStorage.getItem(COACH_SESSION_KEY) || '').trim();
+  if (savedCoach && supabase) {
+    const { data } = await supabase
+      .from('coach_users')
+      .select('username')
+      .ilike('username', savedCoach.toLowerCase())
+      .maybeSingle();
+    if (data?.username) {
+      await applyCoachSession(data.username);
+    } else {
+      localStorage.removeItem(COACH_SESSION_KEY);
+      document.getElementById('config-screen').style.display = 'block';
+    }
+  } else {
+    document.getElementById('config-screen').style.display = 'block';
+  }
   removeStrayCssTextNodes();
 });
 
