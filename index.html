@@ -1327,6 +1327,7 @@ async function applyCoachSession(username) {
   document.getElementById('app-header').style.display = 'flex';
   document.getElementById('main-content').style.display = 'block';
   await loadAthletes();
+  await loadWorkoutTemplates();
   renderDashboard();
 }
 
@@ -1420,11 +1421,12 @@ let logModalLevel = null;
 let workoutLogs = {};
 let progressionChart = null;
 let loggedExercisesForDate = new Set();
-const LOGGABLE_LIFTS = ['Bench Press', 'BACK SQUAT', 'Power Clean (M.S- DEADLIFTS)'];
+const LOGGABLE_LIFTS = ['BENCHPRESS', 'BACKSQUAT', 'BACKSQUATS', 'POWERCLEANMSDEADLIFTS'];
 function normLiftName(n){ return String(n||'').toUpperCase().replace(/[-_.]/g,' ').replace(/\s+/g,' ').trim(); }
+function normLiftKey(n){ return String(n || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
 function canLogExercise(name){
-  const n = normLiftName(name);
-  return n === 'Bench Press' || n === 'Back Squats' || n === 'BACK SQUAT' || n === 'POWER CLEAN (M S DEADLIFTS)';
+  const key = normLiftKey(name);
+  return LOGGABLE_LIFTS.includes(key);
 }
 let dashboardAnchorDate = new Date();
 
