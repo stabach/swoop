@@ -1,0 +1,24 @@
+<div id="page-edit-workouts" class="page">
+  <!-- SEGMENT: Back navigation row. -->
+  <div class="nav-row">
+    <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
+  </div>
+
+  <!-- SEGMENT: Page title. -->
+  <div class="dash-heading" style="margin-bottom:16px;">Edit Workouts</div>
+
+  <!-- SEGMENT: Day tab strip.
+       renderEditDayTabs() populates tabs from DAYS (Mon-Thu). -->
+  <div class="edit-day-tabs" id="edit-day-tabs"></div>
+
+  <!-- SEGMENT: Workout editor mount point.
+       renderEditWorkoutEditor() injects sections/exercises editing controls. -->
+  <div id="edit-workout-editor"></div>
+
+  <!-- SEGMENT: Sticky save area.
+       saveEditedWorkout() persists the edited template set. -->
+  <div class="edit-save-bar">
+    <div class="save-msg" id="edit-total-time">Total workout time: —</div>
+    <button class="btn-save-workout" onclick="saveEditedWorkout()">💾 Save Day</button>
+  </div>
+</div>
