@@ -1091,14 +1091,6 @@
         <div class="profile-meta" id="profile-meta">Grade 10 · Basketball</div>
         <div class="profile-controls">
           <div>
-            <div style="font-size:11px;color:var(--green-200);margin-bottom:3px;font-weight:600;">DEFAULT LEVEL</div>
-            <select class="profile-select" id="profile-level-select" onchange="updateAthleteLevel(this.value)">
-              <option value="L3">L3 — Performance</option>
-              <option value="L2">L2 — Moderate</option>
-              <option value="L1">L1 — Foundation</option>
-            </select>
-          </div>
-          <div>
             <div style="font-size:11px;color:var(--green-200);margin-bottom:3px;font-weight:600;">STATUS</div>
             <select class="profile-select" id="profile-status-select" onchange="updateAthleteStatus(this.value)">
               <option value="true">Active</option>
@@ -1261,14 +1253,6 @@
       <div>
         <label class="modal-label">Weight (lbs)</label>
         <input type="number" id="log-weight" class="modal-input" placeholder="135" min="0" />
-      </div>
-      <div>
-        <label class="modal-label">Level Used</label>
-        <select id="log-level" class="modal-input">
-          <option value="L3">L3</option>
-          <option value="L2">L2</option>
-          <option value="L1">L1</option>
-        </select>
       </div>
     </div>
     <div>
@@ -1456,9 +1440,8 @@ async function addAthlete() {
   const grade = parseInt(document.getElementById('new-grade').value);
   const sport = document.getElementById('new-sport').value.trim();
   const groups = parseGroups(document.getElementById('new-groups').value);
-  const level = document.getElementById('new-level').value;
   if (!name) { toast('Please enter athlete name'); return; }
-  const { error } = await supabase.from('athletes').insert([{ name, grade, sport, groups, default_level: level, active_status: true, notes: '' }]);
+  const { error } = await supabase.from('athletes').insert([{ name, grade, sport, groups, active_status: true, notes: '' }]);
   if (error) { toast('Error: ' + error.message); return; }
   await auditAction('add_athlete', `Added athlete: ${name}`);
   toast('Athlete added!');
@@ -1470,13 +1453,6 @@ async function addAthlete() {
   renderAthleteGrid();
 }
 
-async function updateAthleteLevel(level) {
-  const { error } = await supabase.from('athletes').update({ default_level: level }).eq('id', currentAthleteId);
-  if (error) { toast('Error saving level'); return; }
-  const idx = athletes.findIndex(a => a.id === currentAthleteId);
-  if (idx >= 0) athletes[idx].default_level = level;
-  toast('Level updated');
-}
 
 async function updateAthleteStatus(val) {
   const active = val === 'true';
@@ -1501,9 +1477,8 @@ async function saveEditAthlete() {
   const grade = parseInt(document.getElementById('edit-grade').value);
   const sport = document.getElementById('edit-sport').value.trim();
   const groups = parseGroups(document.getElementById('edit-groups').value);
-  const level = document.getElementById('edit-level').value;
   if (!name) { toast('Name required'); return; }
-  const { error } = await supabase.from('athletes').update({ name, grade, sport, groups, default_level: level }).eq('id', id);
+  const { error } = await supabase.from('athletes').update({ name, grade, sport, groups }).eq('id', id);
   if (error) { toast('Error: ' + error.message); return; }
   await auditAction('edit_athlete', `Edited athlete: ${name}`);
   toast('Saved!');
@@ -1548,7 +1523,6 @@ async function submitLog() {
   const sets = document.getElementById('log-sets').value;
   const reps = document.getElementById('log-reps').value;
   const weight = document.getElementById('log-weight').value;
-  const level = document.getElementById('log-level').value;
   const notes = document.getElementById('log-notes').value;
   const date = currentDate || new Date().toISOString().split('T')[0];
 
@@ -1565,7 +1539,6 @@ async function submitLog() {
       sets_completed: parseInt(sets) || null,
       reps_completed: parseInt(reps) || null,
       weight_used: parseFloat(weight) || null,
-      level_used: level,
       performance_notes: notes
     }).eq('id', existing.data[0].id));
   } else {
@@ -1576,7 +1549,6 @@ async function submitLog() {
     sets_completed: parseInt(sets) || null,
     reps_completed: parseInt(reps) || null,
     weight_used: parseFloat(weight) || null,
-    level_used: level,
     performance_notes: notes
     }]));
   }
@@ -1706,7 +1678,6 @@ async function renderAthleteGrid() {
           return `<span class="week-pill ${didLog ? 'logged' : 'missed'}">${k}</span>`;
         }).join('')}
       </div>
-      <span class="level-badge level-${a.default_level}">${a.default_level}</span>
     </div>
   `).join('');
 }
@@ -1719,7 +1690,7 @@ function renderAdminList() {
   document.getElementById('admin-athlete-list').innerHTML = athletes.map(a => `
     <div class="athlete-list-item">
       <div class="athlete-avatar" style="width:32px;height:32px;font-size:13px;margin-bottom:0;">${getInitials(a.name)}</div>
-      <div class="athlete-list-name">${a.name} <span class="level-badge level-${a.default_level}" style="margin-left:4px;">${a.default_level}</span></div>
+      <div class="athlete-list-name">${a.name}</div>
       <div style="display:flex;gap:4px;">
         <button class="btn-icon" onclick="openEditAthlete('${a.id}')" title="Edit">✏️</button>
         <button class="btn-icon" onclick="toggleAthleteStatus('${a.id}')" title="${a.active_status ? 'Deactivate' : 'Activate'}">${a.active_status ? '🟢' : '⭕'}</button>
@@ -1736,7 +1707,6 @@ function openEditAthlete(id) {
   document.getElementById('edit-name').value = a.name;
   document.getElementById('edit-grade').value = a.grade;
   document.getElementById('edit-sport').value = a.sport || '';
-  document.getElementById('edit-level').value = a.default_level;
   document.getElementById('edit-groups').value = formatGroups(a.groups);
   document.getElementById('edit-panel').style.display = 'block';
   document.getElementById('edit-panel').scrollIntoView({ behavior: 'smooth' });
@@ -1750,7 +1720,6 @@ async function openAthleteProfile(id) {
   document.getElementById('profile-avatar').textContent = getInitials(a.name);
   document.getElementById('profile-name').textContent = a.name;
   document.getElementById('profile-meta').textContent = `Grade ${a.grade || '—'} · ${a.sport || 'No sport set'}`;
-  document.getElementById('profile-level-select').value = a.default_level;
   document.getElementById('profile-status-select').value = String(a.active_status !== false);
   document.getElementById('profile-notes').value = a.notes || '';
 
@@ -1813,15 +1782,13 @@ function renderWorkoutPanel() {
     return;
   }
 
-  const athlete = athletes.find(a => a.id === currentAthleteId);
-  const defaultLevel = athlete?.default_level || 'L3';
 
   document.getElementById('workout-panel').innerHTML = template.map(section => `
     <div class="section-card">
       <div class="section-card-header">
         ${section.section}
       </div>
-      ${renderExercises(section.exercises, defaultLevel)}
+      ${renderExercises(section.exercises)}
     </div>
   `).join('');
   refreshLoggedExercisesForCurrentDate().then(updateWorkoutLogButtons);
@@ -1864,77 +1831,17 @@ function updateWorkoutLogButtons() {
   });
 }
 
-function renderExercises(exercises, defaultLevel) {
-  const levelMap = { 'L1': 0, 'L2': 1, 'L3': 2 };
-
-  // Group L1/L2/L3 variants into one row if they share the same position
-  const groups = [];
-  exercises.forEach(ex => {
-    if (ex.level === 'L1-L3') {
-      groups.push([ex]);
-    } else {
-      // Check if there's already a group being built
-      const lastGroup = groups[groups.length - 1];
-      if (lastGroup && lastGroup.length < 3 && lastGroup[0].level !== 'L1-L3') {
-        lastGroup.push(ex);
-      } else {
-        groups.push([ex]);
-      }
-    }
-  });
-
-  return groups.map(group => {
-    if (group.length === 1 && group[0].level === 'L1-L3') {
-      const ex = group[0];
-      return `
-        <div class="exercise-row">
-          <div style="flex:1">
-            <div class="exercise-name">${ex.name}</div>
-            <div class="exercise-detail">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo} · Rest: ${ex.rest}</div>
-          </div>
-          <span class="level-badge level-L3" style="font-size:10px;">All Levels</span>
-          <button class="log-btn" data-log-exercise="${ex.name}" onclick="openLogModal('${ex.name}', 'L3')">Log</button>
-        </div>`;
-    } else {
-      // Multi-level group — show as one row with level toggle
-      const activeLevel = defaultLevel;
-      const active = group.find(e => e.level === activeLevel) || group[group.length - 1];
-      const exId = group.map(e => e.name).join('_').replace(/[^a-zA-Z0-9]/g, '');
-
-      return `
-        <div class="exercise-row" id="exrow-${exId}">
-          <div style="flex:1">
-            <div class="exercise-name" id="exname-${exId}">${active.name}</div>
-            <div class="exercise-detail" id="exdetail-${exId}">${active.sets} sets × ${active.reps} · % Lift: ${active.tempo} · Rest: ${active.rest}</div>
-          </div>
-          <div class="level-toggle">
-            ${group.map(e => `
-              <button class="level-toggle-btn ${e.level === activeLevel ? 'active' : ''}"
-                onclick="selectExerciseLevel(this, '${exId}', ${JSON.stringify(group).replace(/"/g, '&quot;')}, '${e.level}')">
-                ${e.level}
-              </button>
-            `).join('')}
-          </div>
-          <button class="log-btn" id="logbtn-${exId}" data-log-exercise="${active.name}" onclick="openLogModal('${active.name}', '${activeLevel}')">Log</button>
-        </div>`;
-    }
-  }).join('');
+function renderExercises(exercises) {
+  return exercises.map(ex => `
+    <div class="exercise-row">
+      <div style="flex:1">
+        <div class="exercise-name">${ex.name}</div>
+        <div class="exercise-detail">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo} · Rest: ${ex.rest}</div>
+      </div>
+      <button class="log-btn" data-log-exercise="${ex.name}" onclick="openLogModal('${ex.name}', '')">Log</button>
+    </div>`).join('');
 }
 
-function selectExerciseLevel(btn, exId, group, level) {
-  const ex = group.find(e => e.level === level);
-  if (!ex) return;
-  // Update toggle buttons
-  btn.parentElement.querySelectorAll('.level-toggle-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  // Update name/detail
-  document.getElementById(`exname-${exId}`).textContent = ex.name;
-  document.getElementById(`exdetail-${exId}`).textContent = `${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo} · Rest: ${ex.rest}`;
-  // Update log button
-  const logBtn = document.getElementById(`logbtn-${exId}`);
-  logBtn.setAttribute('data-log-exercise', ex.name);
-  logBtn.onclick = () => openLogModal(ex.name, level);
-}
 
 function openLogModal(exercise, level) {
   logModalExercise = exercise;
@@ -1943,7 +1850,6 @@ function openLogModal(exercise, level) {
   document.getElementById('log-sets').value = '';
   document.getElementById('log-reps').value = '';
   document.getElementById('log-weight').value = '';
-  document.getElementById('log-level').value = level;
   document.getElementById('log-notes').value = '';
   document.getElementById('log-modal').style.display = 'flex';
 }
@@ -1963,7 +1869,7 @@ async function renderLogTable() {
   }
   wrap.innerHTML = `
     <table class="log-table">
-      <thead><tr><th>Date</th><th>Exercise</th><th>Sets</th><th>Reps</th><th>Weight</th><th>Level</th><th>Notes</th></tr></thead>
+      <thead><tr><th>Date</th><th>Exercise</th><th>Sets</th><th>Reps</th><th>Weight</th><th>Notes</th></tr></thead>
       <tbody>
         ${logs.map(l => `
           <tr>
@@ -1972,7 +1878,6 @@ async function renderLogTable() {
             <td>${l.sets_completed ?? '—'}</td>
             <td>${l.reps_completed ?? '—'}</td>
             <td>${l.weight_used ? l.weight_used + ' lbs' : '—'}</td>
-            <td><span class="level-badge level-${l.level_used}">${l.level_used || '—'}</span></td>
             <td style="color:var(--text-muted);font-size:12px;">${l.performance_notes || ''}</td>
           </tr>
         `).join('')}
@@ -2133,7 +2038,6 @@ function showTodayPage() {
             <div class="exercise-name">${ex.name}</div>
             <div class="exercise-detail">${ex.sets} sets × ${ex.reps}${ex.tempo && ex.tempo !== '—' ? ' · % Lift: ' + ex.tempo : ''}${ex.rest && ex.rest !== '—' ? ' · Rest: ' + ex.rest : ''}</div>
           </div>
-          ${ex.level ? `<span class="level-badge level-${ex.level === 'L1-L3' ? 'L3' : ex.level}" style="font-size:10px;">${ex.level}</span>` : ''}
         </div>
       `).join('')}
     </div>
@@ -2174,19 +2078,16 @@ function renderEditWorkoutEditor() {
         <button class="btn-del" style="color:rgba(255,255,255,0.5);" onclick="deleteSection(${si})" title="Delete section">✕</button>
       </div>
       <div class="edit-col-header">
-        <span>Exercise Name</span><span>Sets</span><span>Reps</span><span>% Lift</span><span>Rest</span><span>Work Time</span><span>Level</span><span></span>
+        <span>Exercise Name</span><span>Sets</span><span>Reps by Set</span><span>% Lift by Set</span><span>Rest</span><span>Work Time</span><span></span>
       </div>
       ${section.exercises.map((ex, ei) => `
         <div class="edit-exercise-row">
           <input class="edit-input" value="${ex.name}" onchange="updateExField(${si},${ei},'name',this.value)" placeholder="Exercise name" />
           <input class="edit-input" value="${ex.sets}" onchange="updateExField(${si},${ei},'sets',this.value)" placeholder="3" />
-          <input class="edit-input" value="${ex.reps}" onchange="updateExField(${si},${ei},'reps',this.value)" placeholder="10" />
-          <input class="edit-input" value="${ex.tempo || '—'}" onchange="updateExField(${si},${ei},'tempo',this.value)" placeholder="60% 65% 70% 70%" />
+          <div class="edit-input" style="display:flex;gap:4px;flex-wrap:wrap;">${buildSetBoxes(ex.sets, ex.reps, si, ei, 'reps')}</div>
+          <div class="edit-input" style="display:flex;gap:4px;flex-wrap:wrap;">${buildSetBoxes(ex.sets, ex.tempo || '', si, ei, 'tempo')}</div>
           <input class="edit-input" value="${ex.rest || '—'}" onchange="updateExField(${si},${ei},'rest',this.value)" placeholder="60s" />
           <input class="edit-input" value="${ex.workTime || ''}" onchange="updateExField(${si},${ei},'workTime',this.value)" placeholder="30s" title="Work countdown duration (e.g. 30s, 2min). Leave blank for manual advance." />
-          <select class="edit-input" onchange="updateExField(${si},${ei},'level',this.value)">
-            ${['L3','L2','L1','L1-L3'].map(l => `<option value="${l}" ${ex.level===l?'selected':''}>${l}</option>`).join('')}
-          </select>
           <button class="btn-del" onclick="deleteExercise(${si},${ei})">🗑</button>
         </div>
       `).join('')}
@@ -2203,6 +2104,23 @@ function parseDurationToSecs(v) {
   if (t.endsWith('s')) return Math.round(parseFloat(t)) || 0;
   const n = parseFloat(t);
   return Number.isFinite(n) ? Math.round(n) : 0;
+}
+function splitSetValues(v) {
+  return String(v || '').split(/[-, ]+/).map(x => x.trim()).filter(Boolean);
+}
+function buildSetBoxes(sets, value, si, ei, field) {
+  const n = Math.max(parseInt(sets) || 0, 0);
+  const vals = splitSetValues(value);
+  return Array.from({ length: n }, (_, idx) => {
+    const val = vals[idx] || '';
+    return `<input class="edit-input" style="width:56px;padding:6px;" value="${val}" onchange="updateSetValue(${si},${ei},'${field}',${idx},this.value)" placeholder="${field === 'tempo' ? '%' : '#'}" />`;
+  }).join('');
+}
+function updateSetValue(si, ei, field, idx, val) {
+  const ex = editWorkouts[editCurrentDay][si].exercises[ei];
+  const arr = splitSetValues(ex[field]);
+  arr[idx] = val;
+  ex[field] = arr.filter(x => String(x).trim() !== '').join('-');
 }
 function updateEditWorkoutTotalTime() {
   const template = editWorkouts[editCurrentDay] || [];
@@ -2223,6 +2141,7 @@ function updateSectionTitle(si, val) {
 }
 function updateExField(si, ei, field, val) {
   editWorkouts[editCurrentDay][si].exercises[ei][field] = val;
+  if (field === 'sets') renderEditWorkoutEditor();
   updateEditWorkoutTotalTime();
 }
 function deleteExercise(si, ei) {
@@ -2235,7 +2154,7 @@ async function deleteSection(si) {
   renderEditWorkoutEditor();
 }
 function addExercise(si) {
-  editWorkouts[editCurrentDay][si].exercises.push({ name: '', sets: 3, reps: '10', tempo: '—', rest: '60s', workTime: '60s', level: 'L3' });
+  editWorkouts[editCurrentDay][si].exercises.push({ name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '60s', workTime: '60s' });
   renderEditWorkoutEditor();
   // scroll to bottom of section
   setTimeout(() => {
@@ -2246,7 +2165,7 @@ function addExercise(si) {
 function addSection() {
   if (!editWorkouts[editCurrentDay]) editWorkouts[editCurrentDay] = [];
   editWorkouts[editCurrentDay].push({ section: 'New Section', exercises: [
-    { name: '', sets: 3, reps: '10', tempo: '—', rest: '60s', workTime: '60s', level: 'L3' }
+    { name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '60s', workTime: '60s' }
   ]});
   renderEditWorkoutEditor();
 }
@@ -2312,10 +2231,10 @@ function openTVDisplay() {
     rows.push(`<div class="tv-queue-item"><div class="tv-queue-item-name">${ex.name}</div><div class="tv-queue-item-detail">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo || '—'}</div></div>`);
   }));
   document.getElementById('tv-main').innerHTML = `
-    <div class="tv-section-label">Workout List</div>
-    <div class="tv-exercise-name">${dayName}</div>
+    <div class="tv-section-label">Workout Breakdown</div>
+    <div class="tv-exercise-name">Coach Display</div>
     <div class="tv-set-info">
-      <div class="tv-stat"><div class="tv-stat-label">Stopwatch</div><div class="tv-stat-val" id="tv-stopwatch">00:00</div></div>
+      <div class="tv-stat"><div class="tv-stat-label">Stopwatch</div><div class="tv-stat-val" id="tv-stopwatch">00:00.00</div></div>
       <div style="display:flex;gap:8px;">
         <button class="tv-ctrl-btn primary" id="tv-sw-btn" onclick="tvToggleStopwatch()">Start</button>
         <button class="tv-ctrl-btn" onclick="tvResetStopwatch()">Reset</button>
@@ -2337,7 +2256,7 @@ function closeTVDisplay() {
   tvResetStopwatch();
   tvResetState();
 }
-let tvStopwatchSecs = 0;
+let tvStopwatchCenti = 0;
 let tvStopwatchTimer = null;
 function tvToggleStopwatch() {
   const btn = document.getElementById('tv-sw-btn');
@@ -2345,16 +2264,16 @@ function tvToggleStopwatch() {
     clearInterval(tvStopwatchTimer); tvStopwatchTimer = null; if (btn) btn.textContent = 'Start'; return;
   }
   tvStopwatchTimer = setInterval(() => {
-    tvStopwatchSecs += 1;
-    const m = Math.floor(tvStopwatchSecs / 60), s = tvStopwatchSecs % 60;
+    tvStopwatchCenti += 1;
+    const m = Math.floor(tvStopwatchCenti / 6000), s = Math.floor((tvStopwatchCenti % 6000) / 100), cs = tvStopwatchCenti % 100;
     const el = document.getElementById('tv-stopwatch');
-    if (el) el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  }, 1000);
+    if (el) el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+  }, 10);
   if (btn) btn.textContent = 'Stop';
 }
 function tvResetStopwatch() {
-  clearInterval(tvStopwatchTimer); tvStopwatchTimer = null; tvStopwatchSecs = 0;
-  const el = document.getElementById('tv-stopwatch'); if (el) el.textContent = '00:00';
+  clearInterval(tvStopwatchTimer); tvStopwatchTimer = null; tvStopwatchCenti = 0;
+  const el = document.getElementById('tv-stopwatch'); if (el) el.textContent = '00:00.00';
   const btn = document.getElementById('tv-sw-btn'); if (btn) btn.textContent = 'Start';
 }
 
