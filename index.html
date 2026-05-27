@@ -1045,7 +1045,7 @@
     </div>
     <div class="form-group">
       <label class="form-label">Username</label>
-      <input type="text" id="login-username" class="form-input" placeholder="username" onkeydown="onLoginKeydown(event)" />
+      <input type="text" id="login-username" class="form-input" placeholder="username" onkeydown="onLoginKeydown(event)" autofocus />
     </div>
     <div class="form-group">
       <label class="form-label">Password</label>
@@ -1672,7 +1672,7 @@ async function renderAthleteGrid() {
   });
 
   document.getElementById('athlete-grid').innerHTML = filtered.map(a => `
-    <div class="athlete-card" onclick="openAthleteProfile('${a.id}')" style="cursor:pointer;">
+    <div class="athlete-card" data-athlete-id="${a.id}" onclick="openAthleteProfile('${a.id}')" style="cursor:pointer;">
       ${!a.active_status ? '<span class="inactive-badge">Inactive</span>' : ''}
       <div class="athlete-avatar">${getInitials(a.name)}</div>
       <div class="athlete-name">${a.name}</div>
@@ -1685,9 +1685,13 @@ async function renderAthleteGrid() {
       </div>
     </div>
   `).join('');
-  document.querySelectorAll('.athlete-card[data-athlete-id]').forEach(card => {
-    card.onclick = () => openAthleteProfile(card.getAttribute('data-athlete-id'));
-  });
+  const grid = document.getElementById('athlete-grid');
+  grid.onclick = (e) => {
+    const card = e.target.closest('.athlete-card[data-athlete-id]');
+    if (!card) return;
+    const id = card.getAttribute('data-athlete-id');
+    if (id) openAthleteProfile(id);
+  };
 }
 
 function renderAdminList() {
@@ -2910,6 +2914,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   } else {
     document.getElementById('config-screen').style.display = 'block';
+    setTimeout(() => document.getElementById('login-username')?.focus(), 0);
   }
   removeStrayCssTextNodes();
 });
