@@ -1256,6 +1256,10 @@
     <div class="modal-grid">
       <div>
         <label class="modal-label">Set-by-Set Log</label>
+        <div style="margin-bottom:8px;">
+          <label class="modal-label">Log Date</label>
+          <input type="date" id="log-date" class="modal-input" />
+        </div>
         <div id="log-set-rows"></div>
       </div>
     </div>
@@ -1531,7 +1535,7 @@ async function loadWorkoutLogs(athleteId) {
 async function submitLog() {
   if (!logModalExercise || !currentAthleteId) return;
   const notes = document.getElementById('log-notes').value;
-  const date = currentDate || new Date().toISOString().split('T')[0];
+  const date = document.getElementById('log-date').value || currentDate || new Date().toISOString().split('T')[0];
   const repsInputs = Array.from(document.querySelectorAll('.log-set-reps'));
   const weightInputs = Array.from(document.querySelectorAll('.log-set-weight'));
   const setRows = repsInputs.map((r, i) => ({
@@ -1776,9 +1780,7 @@ async function renderEstimated1RM() {
 }
 
 function renderDaySelector() {
-  document.getElementById('day-selector').innerHTML = DAYS.map(d => `
-    <button class="day-btn ${d === currentDay ? 'active' : ''}" onclick="selectDay('${d}')">${d.substring(0,3)}</button>
-  `).join('');
+  document.getElementById('day-selector').innerHTML = '';
 }
 
 function selectDay(day) {
@@ -1882,11 +1884,12 @@ function openLogModal(exercise, level) {
   const ex = template.find(x => x.name === exercise);
   const setCount = Math.max(parseInt(ex?.sets) || 1, 1);
   const repTargets = splitSetValues(ex?.reps || '');
+  document.getElementById('log-date').value = currentDate || new Date().toISOString().split('T')[0];
   document.getElementById('log-set-rows').innerHTML = Array.from({length:setCount}, (_,i)=>`
     <div class="log-set-row">
       <div style="font-weight:700;font-size:12px;">Set ${i+1}</div>
       <input type="number" class="modal-input log-set-reps" data-idx="${i}" placeholder="${repTargets[i] || 'Reps'}" min="0" max="100" />
-      <input type="number" class="modal-input log-set-weight" data-idx="${i}" placeholder="Weight (lbs)" min="0" />
+      <input type="number" class="modal-input log-set-weight" data-idx="${i}" placeholder="Weight" min="0" />
     </div>
   `).join('');
   document.getElementById('log-notes').value = '';
@@ -1972,10 +1975,11 @@ async function renderProgressionChart() {
 
   if (progressionChart) { progressionChart.destroy(); progressionChart = null; }
 
-  // Group by date — track max weight per exercise
-  const exercises = [...new Set(logs.filter(l => l.weight_used).map(l => l.exercise))].slice(0, 5);
+  const tracked = ['Bench Press', 'Back Squats', 'Power Clean (M.S- Deadlifts)'];
+  const normTracked = tracked.map(normLiftName);
 
-  if (exercises.length === 0) {
+  const hasTrackedData = logs.some(l => l.weight_used && normTracked.includes(normLiftName(l.exercise)));
+  if (!hasTrackedData) {
     document.getElementById('chart-empty').style.display = 'block';
     document.getElementById('progression-chart').style.display = 'none';
     return;
@@ -1983,9 +1987,11 @@ async function renderProgressionChart() {
   document.getElementById('chart-empty').style.display = 'none';
   document.getElementById('progression-chart').style.display = 'block';
 
-  const colors = ['#22883f','#D4A017','#c0392b','#2980b9','#8e44ad'];
-  const datasets = exercises.map((ex, i) => {
-    const exLogs = logs.filter(l => l.exercise === ex && l.weight_used).sort((a, b) => a.date.localeCompare(b.date));
+  const colors = ['#22883f','#D4A017','#c0392b'];
+  const datasets = tracked.map((ex, i) => {
+    const exLogs = logs
+      .filter(l => normLiftName(l.exercise) === normLiftName(ex) && l.weight_used)
+      .sort((a, b) => a.date.localeCompare(b.date));
     return {
       label: ex,
       data: exLogs.map(l => ({ x: l.date, y: l.weight_used })),
