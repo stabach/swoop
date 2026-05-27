@@ -1129,6 +1129,7 @@
           <input type="date" class="date-input" id="workout-date" onchange="onDateChange()" />
         </div>
       </div>
+      <div class="day-selector" id="day-selector"></div>
       <div id="workout-panel">
         <div class="empty-state"><span class="empty-icon">📋</span>Select a day to load the workout</div>
       </div>
@@ -1665,7 +1666,7 @@ async function renderAthleteGrid() {
   });
 
   document.getElementById('athlete-grid').innerHTML = filtered.map(a => `
-    <div class="athlete-card" data-athlete-id="${a.id}" onclick="openAthleteProfile('${a.id}')" style="cursor:pointer;text-align:left;" role="button" tabindex="0">
+    <div class="athlete-card" data-athlete-id="${a.id}" style="cursor:pointer;text-align:left;" role="button" tabindex="0">
       ${!a.active_status ? '<span class="inactive-badge">Inactive</span>' : ''}
       <div class="athlete-avatar">${getInitials(a.name)}</div>
       <div class="athlete-name">${a.name}</div>
@@ -1678,15 +1679,22 @@ async function renderAthleteGrid() {
       </div>
     </div>
   `).join('');
-  document.querySelectorAll('.athlete-card[data-athlete-id]').forEach(card => {
+  const grid = document.getElementById('athlete-grid');
+  grid.onclick = (e) => {
+    const card = e.target.closest('.athlete-card[data-athlete-id]');
+    if (!card) return;
     const id = card.getAttribute('data-athlete-id');
-    card.addEventListener('keydown', (e) => {
-      if ((e.key === 'Enter' || e.key === ' ') && id) {
-        e.preventDefault();
-        openAthleteProfile(id);
-      }
-    });
-  });
+    if (id) openAthleteProfile(id);
+  };
+  grid.onkeydown = (e) => {
+    const card = e.target.closest('.athlete-card[data-athlete-id]');
+    if (!card) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      const id = card.getAttribute('data-athlete-id');
+      if (id) openAthleteProfile(id);
+    }
+  };
 }
 
 function renderAdminList() {
