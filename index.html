@@ -1678,6 +1678,16 @@ async function renderAthleteGrid() {
       </div>
     </button>
   `).join('');
+  document.querySelectorAll('.athlete-card[data-athlete-id]').forEach(card => {
+    const id = card.getAttribute('data-athlete-id');
+    card.addEventListener('click', () => id && openAthleteProfile(id));
+    card.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && id) {
+        e.preventDefault();
+        openAthleteProfile(id);
+      }
+    });
+  });
 }
 
 function renderAdminList() {
