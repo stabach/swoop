@@ -1330,7 +1330,13 @@ async function loginCoach() {
   const password = (document.getElementById('login-password').value || '').trim();
   if (!username || !password) return toast('Enter username and password');
   if (!supabase) await connectToSupabase(SUPABASE_URL, SUPABASE_KEY);
-  const { data, error } = await supabase.from('coach_users').select('username').eq('username', username).eq('password', password).maybeSingle();
+  const usernameNormalized = username.toLowerCase();
+  const { data, error } = await supabase
+    .from('coach_users')
+    .select('username')
+    .ilike('username', usernameNormalized)
+    .eq('password', password)
+    .maybeSingle();
   if (error || !data) return toast('Invalid login');
   currentCoach = data.username;
   document.getElementById('config-screen').style.display = 'none';
