@@ -768,6 +768,11 @@
     border-radius: 0;
   }
   .edit-save-bar .save-msg { color: var(--green-200); font-size: 13px; }
+  .edit-save-bar .save-msg.big { font-size: 20px; font-weight: 800; color: #fff; }
+  .rm-grid { display:grid; grid-template-columns:repeat(3,minmax(120px,1fr)); gap:8px; margin-top:8px; }
+  .rm-card { background: rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.25); border-radius:8px; padding:8px; color:#fff; }
+  .rm-lift { font-size:11px; opacity:.9; font-weight:700; }
+  .rm-val { font-size:18px; font-weight:800; }
   .btn-save-workout {
     padding: 10px 28px;
     background: var(--gold);
@@ -1099,6 +1104,11 @@
           </div>
         </div>
         <textarea class="profile-notes" id="profile-notes" placeholder="Athlete notes (injuries, goals, reminders)..." onblur="saveAthleteNotes()" rows="2"></textarea>
+        <div class="rm-grid">
+          <div class="rm-card"><div class="rm-lift">BENCH PRESS 1RM</div><div class="rm-val" id="rm-bench">N/A</div></div>
+          <div class="rm-card"><div class="rm-lift">BACK SQUAT 1RM</div><div class="rm-val" id="rm-squat">N/A</div></div>
+          <div class="rm-card"><div class="rm-lift">POWER CLEAN 1RM</div><div class="rm-val" id="rm-clean">N/A</div></div>
+        </div>
       </div>
     </div>
 
@@ -1415,6 +1425,12 @@ let logModalLevel = null;
 let workoutLogs = {};
 let progressionChart = null;
 let loggedExercisesForDate = new Set();
+const LOGGABLE_LIFTS = ['BENCH PRESS', 'BACK SQUAT', 'POWER CLEAN (M.S- DEADLIFTS)'];
+function normLiftName(n){ return String(n||'').toUpperCase().replace(/[-_.]/g,' ').replace(/\s+/g,' ').trim(); }
+function canLogExercise(name){
+  const n = normLiftName(name);
+  return n === 'BENCH PRESS' || n === 'BACK SQUATS' || n === 'BACK SQUAT' || n === 'POWER CLEAN (MS DEADLIFTS)' || n === 'POWER CLEAN (M S DEADLIFTS)' || n === 'POWER CLEAN (M.S DEADLIFTS)';
+}
 let dashboardWeekOffset = 0;
 
 // ===================== INIT =====================
@@ -1738,10 +1754,36 @@ async function openAthleteProfile(id) {
 
   renderDaySelector();
   renderWorkoutPanel();
+  renderEstimated1RM();
 
   // Switch to workout tab
   switchTab('workout');
   showPage('profile');
+}
+
+async function renderEstimated1RM() {
+  const logs = await loadWorkoutLogs(currentAthleteId);
+  const lifts = [
+    { key: 'rm-bench', names: ['BENCH PRESS'] },
+    { key: 'rm-squat', names: ['BACK SQUAT','BACK SQUATS'] },
+    { key: 'rm-clean', names: ['POWER CLEAN (M.S- DEADLIFTS)','POWER CLEAN (MS- DEADLIFTS)','POWER CLEAN (MS DEADLIFTS)'] },
+  ];
+  lifts.forEach(l => { const el=document.getElementById(l.key); if (el) el.textContent = 'N/A'; });
+  lifts.forEach(lift => {
+    const normalizedNames = lift.names.map(normLiftName);
+    const candidates = logs.filter(l => normalizedNames.includes(normLiftName(l.exercise))).filter(l => l.weight_used && l.reps_completed);
+    if (!candidates.length) return;
+    let best = 0;
+    candidates.forEach(l => {
+      const w = parseFloat(l.weight_used) || 0;
+      const r = parseFloat(l.reps_completed) || 0;
+      if (w <= 0 || r <= 0) return;
+      const epley = w * (1 + (r / 30));
+      if (epley > best) best = epley;
+    });
+    const el = document.getElementById(lift.key);
+    if (el && best > 0) el.textContent = `${Math.round(best)} lbs`;
+  });
 }
 
 function renderDaySelector() {
@@ -1838,7 +1880,7 @@ function renderExercises(exercises) {
         <div class="exercise-name">${ex.name}</div>
         <div class="exercise-detail">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo} · Rest: ${ex.rest}</div>
       </div>
-      <button class="log-btn" data-log-exercise="${ex.name}" onclick="openLogModal('${ex.name}', '')">Log</button>
+      ${canLogExercise(ex.name) ? `<button class="log-btn" data-log-exercise="${ex.name}" onclick="openLogModal('${ex.name}', '')">Log</button>` : ''}
     </div>`).join('');
 }
 
