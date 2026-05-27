@@ -1,0 +1,111 @@
+<!--
+  ADMIN / ATHLETE MANAGEMENT PAGE NOTES
+  ---------------------------------------------------------------------------
+  This page owns roster CRUD (create/read/update) UI for athletes.
+  Edit this file when changing:
+  - Add-athlete form fields, labels, or ordering.
+  - Athlete list container positioning.
+  - Edit panel field layout/buttons.
+
+  DATA FLOW OVERVIEW:
+  - Add form fields (#new-*) are read by addAthlete().
+  - Athlete list container (#admin-athlete-list) is painted by renderAdminList().
+  - Edit panel fields (#edit-*) are filled by openEditAthlete().
+  - Save button calls saveEditAthlete(); cancel hides #edit-panel.
+
+  KEY ID GROUPS:
+  - Add form: #new-name #new-grade #new-sport #new-groups #new-level
+  - Edit panel: #edit-panel #edit-id #edit-name #edit-grade #edit-sport
+               #edit-groups #edit-level
+  ---------------------------------------------------------------------------
+-->
+<div id="page-admin" class="page">
+    <div class="nav-row">
+      <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
+    </div>
+    <div class="dash-heading" style="margin-bottom:20px;">⚙ Athlete Management</div>
+    <div class="admin-grid">
+      <!-- Add Athlete -->
+      <div class="admin-card">
+        <div class="admin-title">Add New Athlete</div>
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="new-name" class="form-input" placeholder="First Last" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Grade</label>
+          <select id="new-grade" class="form-input">
+            <option value="6">6th Grade</option>
+            <option value="7">7th Grade</option>
+            <option value="8">8th Grade</option>
+            <option value="9">9th Grade</option>
+            <option value="10" selected>10th Grade</option>
+            <option value="11">11th Grade</option>
+            <option value="12">12th Grade</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sport</label>
+          <input type="text" id="new-sport" class="form-input" placeholder="Football, Basketball, etc." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Groups (comma separated)</label>
+          <input type="text" id="new-groups" class="form-input" placeholder="Varsity, Morning, Rehab" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Default Level</label>
+          <select id="new-level" class="form-input">
+            <option value="L3" selected>L3 — Performance (Default)</option>
+            <option value="L2">L2 — Moderate</option>
+            <option value="L1">L1 — Foundation</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="addAthlete()">Add Athlete</button>
+      </div>
+
+      <!-- Athlete List -->
+      <div class="admin-card">
+        <div class="admin-title">All Athletes</div>
+        <div id="admin-athlete-list">
+          <div class="empty-state"><span class="empty-icon">⏳</span>Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Modal (inline) -->
+    <div id="edit-panel" style="display:none;margin-top:16px;" class="admin-card">
+      <div class="admin-title">Edit Athlete</div>
+      <input type="hidden" id="edit-id" />
+      <div class="admin-grid">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" id="edit-name" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Grade</label>
+          <select id="edit-grade" class="form-input">
+            <option value="6">6th</option><option value="7">7th</option><option value="8">8th</option>
+            <option value="9">9th</option><option value="10">10th</option><option value="11">11th</option><option value="12">12th</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sport</label>
+          <input type="text" id="edit-sport" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Groups (comma separated)</label>
+          <input type="text" id="edit-groups" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Default Level</label>
+          <select id="edit-level" class="form-input">
+            <option value="L3">L3</option><option value="L2">L2</option><option value="L1">L1</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn-sm green" onclick="saveEditAthlete()">Save Changes</button>
+        <button class="btn-sm" onclick="document.getElementById('edit-panel').style.display='none'">Cancel</button>
+      </div>
+    </div>
+  </div>
