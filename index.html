@@ -515,7 +515,7 @@
     border-radius: var(--radius-lg);
     padding: 24px;
     width: 100%;
-    max-width: 420px;
+    max-width: 620px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   }
   .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; color: var(--green-900); margin-bottom: 16px; }
@@ -533,6 +533,7 @@
   .modal-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 4px; display: block; }
   .modal-btns { display: flex; gap: 8px; margin-top: 16px; }
   .modal-btns .btn-sm { flex: 1; text-align: center; }
+  .log-set-row { display:grid; grid-template-columns: 80px 1fr 1fr; gap:10px; margin-bottom:8px; align-items:center; }
   /* ---- CHARTS ---- */
   .chart-toggle-btn {
     padding: 8px 16px;
@@ -690,7 +691,7 @@
   .edit-section-title-input::placeholder { color: rgba(255,255,255,0.5); }
   .edit-exercise-row {
     display: grid;
-    grid-template-columns: 1fr 60px 60px 70px 70px 70px 70px 36px;
+    grid-template-columns: 1fr 56px 224px 224px 68px 78px 36px;
     gap: 6px;
     padding: 8px 12px;
     border-bottom: 1px solid var(--gray-100);
@@ -717,10 +718,11 @@
     padding: 4px 12px;
     background: var(--page-bg);
     display: grid;
-    grid-template-columns: 1fr 60px 60px 70px 70px 70px 70px 36px;
+    grid-template-columns: 1fr 56px 224px 224px 68px 78px 36px;
     gap: 6px;
     border-bottom: 1px solid var(--border);
   }
+  .set-box-wrap { display:flex; gap:6px; flex-wrap:nowrap; overflow-x:auto; }
   .btn-del { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--gray-400); padding: 2px; border-radius: 4px; }
   .btn-del:hover { color: var(--danger); background: var(--danger-light); }
   .add-exercise-btn {
@@ -768,6 +770,11 @@
     border-radius: 0;
   }
   .edit-save-bar .save-msg { color: var(--green-200); font-size: 13px; }
+  .edit-save-bar .save-msg.big { font-size: 20px; font-weight: 800; color: #fff; }
+  .rm-grid { display:grid; grid-template-columns:repeat(3,minmax(120px,1fr)); gap:8px; margin-top:8px; }
+  .rm-card { background: rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.25); border-radius:8px; padding:8px; color:#fff; }
+  .rm-lift { font-size:11px; opacity:.9; font-weight:700; }
+  .rm-val { font-size:18px; font-weight:800; }
   .btn-save-workout {
     padding: 10px 28px;
     background: var(--gold);
@@ -1026,26 +1033,25 @@
 
 
 
-<!-- CONFIG SCREEN (shown if no Supabase creds) -->
+<!-- LOGIN SCREEN -->
 <div id="config-screen">
   <div class="config-card">
     <div class="config-logo">
       <img src="eagle.png" class="eagle-icon" />
       <div>
         <div class="config-title">Eagle Strength</div>
-        <div class="config-sub">Coaching Platform Setup</div>
+        <div class="config-sub">Coach Login</div>
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Supabase Project URL</label>
-      <input type="text" id="cfg-url" class="form-input" placeholder="https://xxxxxxxxxxxx.supabase.co" />
+      <label class="form-label">Username</label>
+      <input type="text" id="login-username" class="form-input" placeholder="username" onkeydown="onLoginKeydown(event)" autofocus />
     </div>
     <div class="form-group">
-      <label class="form-label">Supabase Anon / Publishable Key</label>
-      <input type="text" id="cfg-key" class="form-input" placeholder="eyJhbGci... or sb_publishable_..." />
+      <label class="form-label">Password</label>
+      <input type="password" id="login-password" class="form-input" placeholder="password" onkeydown="onLoginKeydown(event)" />
     </div>
-    <button class="btn-primary" onclick="saveConfig()">Connect to Supabase →</button>
-    <p class="config-hint">Credentials are used for this live session only and are never stored locally. Both legacy <code>anon</code> keys and new <code>sb_publishable_...</code> keys are supported.<br>See the <a href="#" onclick="showSetupGuide()">Setup Guide</a> for step-by-step instructions.</p>
+    <button class="btn-primary" onclick="loginCoach()">Sign In →</button>
   </div>
 </div>
 
@@ -1064,7 +1070,7 @@
     <button class="header-nav-btn" onclick="showPage('admin')">⚙ Manage Athletes</button>
     <button class="header-nav-btn" onclick="showPage('attendance')">✅ Attendance</button>
     <button class="header-nav-btn" onclick="showPage('calendar')">🗓 Calendar</button>
-    <button class="header-nav-btn" onclick="resetConfig()" style="opacity:0.6;font-size:12px;">Disconnect</button>
+    <button class="header-nav-btn" onclick="logoutCoach()" style="color:#ff6b6b;font-size:12px;">Logout</button>
   </div>
 </div>
 
@@ -1072,69 +1078,7 @@
 <div id="main-content" style="display:none;">
 
   <!-- DASHBOARD -->
-  <div id="page-dashboard" class="page active">
-    <div class="dash-top">
-      <div>
-        <div class="dash-heading">Coaching Dashboard</div>
-        <div class="dash-date" id="dash-date"></div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <div class="search-wrap">
-          <span class="search-icon">⌕</span>
-          <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
-        </div>
-      </div>
-    </div>
-
-    <div class="dashboard-kpis">
-      <div class="kpi-card">
-        <div class="kpi-label">Athletes Today</div>
-        <div class="kpi-value" id="kpi-athletes">0</div>
-        <div class="kpi-sub" id="kpi-athletes-sub">0 active rostered</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Sessions Logged</div>
-        <div class="kpi-value" id="kpi-logs">0</div>
-        <div class="kpi-sub">Entries in last 7 days</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Completion Rate</div>
-        <div class="kpi-value" id="kpi-completion">0%</div>
-        <div class="kpi-sub">Active athletes who logged this week</div>
-      </div>
-    </div>
-
-    <div class="quick-tiles">
-      <div class="quick-tile" onclick="setDayFilter('today')">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4c5.svg" alt="📅" /></div>
-        <div>
-          <div class="tile-label">Today's Training</div>
-          <div class="tile-sub" id="today-day">Loading...</div>
-        </div>
-      </div>
-      <div class="quick-tile" onclick="showPage('admin')">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f465.svg" alt="👥" /></div>
-        <div>
-          <div class="tile-label">Manage Athletes</div>
-          <div class="tile-sub">Add · Edit · Status</div>
-        </div>
-      </div>
-      <div class="quick-tile" onclick="openWeeklyOverview()">
-        <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4ca.svg" alt="📊" /></div>
-        <div>
-          <div class="tile-label">Weekly Overview</div>
-          <div class="tile-sub">View weekly logged lifts</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section-heading">
-      Athletes <span style="font-size:13px;font-weight:500;color:var(--text-muted);" id="athlete-count"></span>
-    </div>
-    <div class="athlete-grid" id="athlete-grid">
-      <div class="empty-state"><span class="empty-icon">⏳</span>Loading athletes...</div>
-    </div>
-  </div>
+  <!-- include:page-dashboard --><div data-include="ui/pages/dashboard.html"></div><!-- /include:page-dashboard -->
 
   <!-- ATHLETE PROFILE -->
   <div id="page-profile" class="page">
@@ -1154,14 +1098,6 @@
         <div class="profile-meta" id="profile-meta">Grade 10 · Basketball</div>
         <div class="profile-controls">
           <div>
-            <div style="font-size:11px;color:var(--green-200);margin-bottom:3px;font-weight:600;">DEFAULT LEVEL</div>
-            <select class="profile-select" id="profile-level-select" onchange="updateAthleteLevel(this.value)">
-              <option value="L3">L3 — Performance</option>
-              <option value="L2">L2 — Moderate</option>
-              <option value="L1">L1 — Foundation</option>
-            </select>
-          </div>
-          <div>
             <div style="font-size:11px;color:var(--green-200);margin-bottom:3px;font-weight:600;">STATUS</div>
             <select class="profile-select" id="profile-status-select" onchange="updateAthleteStatus(this.value)">
               <option value="true">Active</option>
@@ -1170,6 +1106,11 @@
           </div>
         </div>
         <textarea class="profile-notes" id="profile-notes" placeholder="Athlete notes (injuries, goals, reminders)..." onblur="saveAthleteNotes()" rows="2"></textarea>
+        <div class="rm-grid">
+          <div class="rm-card"><div class="rm-lift">BENCH PRESS 1RM</div><div class="rm-val" id="rm-bench">N/A</div></div>
+          <div class="rm-card"><div class="rm-lift">BACK SQUAT 1RM</div><div class="rm-val" id="rm-squat">N/A</div></div>
+          <div class="rm-card"><div class="rm-lift">POWER CLEAN 1RM</div><div class="rm-val" id="rm-clean">N/A</div></div>
+        </div>
       </div>
     </div>
 
@@ -1183,12 +1124,8 @@
     <!-- WORKOUT TAB -->
     <div class="tab-content active" id="tabcontent-workout">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:4px;">Day</div>
-          <div class="day-selector" id="day-selector"></div>
-        </div>
-        <div>
-          <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:4px;">Date</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.7px;">Date</span>
           <input type="date" class="date-input" id="workout-date" onchange="onDateChange()" />
         </div>
       </div>
@@ -1215,126 +1152,13 @@
   </div>
 
   <!-- ADMIN PAGE -->
-  <div id="page-admin" class="page">
-    <div class="nav-row">
-      <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
-    </div>
-    <div class="dash-heading" style="margin-bottom:20px;">⚙ Athlete Management</div>
-    <div class="admin-grid">
-      <!-- Add Athlete -->
-      <div class="admin-card">
-        <div class="admin-title">Add New Athlete</div>
-        <div class="form-group">
-          <label class="form-label">Full Name</label>
-          <input type="text" id="new-name" class="form-input" placeholder="First Last" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Grade</label>
-          <select id="new-grade" class="form-input">
-            <option value="6">6th Grade</option>
-            <option value="7">7th Grade</option>
-            <option value="8">8th Grade</option>
-            <option value="9">9th Grade</option>
-            <option value="10" selected>10th Grade</option>
-            <option value="11">11th Grade</option>
-            <option value="12">12th Grade</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Sport</label>
-          <input type="text" id="new-sport" class="form-input" placeholder="Football, Basketball, etc." />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Groups (comma separated)</label>
-          <input type="text" id="new-groups" class="form-input" placeholder="Varsity, Morning, Rehab" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Default Level</label>
-          <select id="new-level" class="form-input">
-            <option value="L3" selected>L3 — Performance (Default)</option>
-            <option value="L2">L2 — Moderate</option>
-            <option value="L1">L1 — Foundation</option>
-          </select>
-        </div>
-        <button class="btn-primary" onclick="addAthlete()">Add Athlete</button>
-      </div>
-
-      <!-- Athlete List -->
-      <div class="admin-card">
-        <div class="admin-title">All Athletes</div>
-        <div id="admin-athlete-list">
-          <div class="empty-state"><span class="empty-icon">⏳</span>Loading...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Edit Modal (inline) -->
-    <div id="edit-panel" style="display:none;margin-top:16px;" class="admin-card">
-      <div class="admin-title">Edit Athlete</div>
-      <input type="hidden" id="edit-id" />
-      <div class="admin-grid">
-        <div class="form-group">
-          <label class="form-label">Name</label>
-          <input type="text" id="edit-name" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Grade</label>
-          <select id="edit-grade" class="form-input">
-            <option value="6">6th</option><option value="7">7th</option><option value="8">8th</option>
-            <option value="9">9th</option><option value="10">10th</option><option value="11">11th</option><option value="12">12th</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Sport</label>
-          <input type="text" id="edit-sport" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Groups (comma separated)</label>
-          <input type="text" id="edit-groups" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Default Level</label>
-          <select id="edit-level" class="form-input">
-            <option value="L3">L3</option><option value="L2">L2</option><option value="L1">L1</option>
-          </select>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:8px;">
-        <button class="btn-sm green" onclick="saveEditAthlete()">Save Changes</button>
-        <button class="btn-sm" onclick="document.getElementById('edit-panel').style.display='none'">Cancel</button>
-      </div>
-    </div>
-  </div>
+  <!-- include:page-admin --><div data-include="ui/pages/admin.html"></div><!-- /include:page-admin -->
 
   <!-- TODAY'S WORKOUT PAGE -->
-  <div id="page-today" class="page">
-    <div class="nav-row">
-      <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
-    </div>
-    <div class="today-header">
-      <div>
-        <div class="today-day-name" id="today-page-day">Monday</div>
-        <div class="today-date-str" id="today-page-date"></div>
-      </div>
-      <button class="btn-display" onclick="openTVDisplay()">📺 Display on TV</button>
-    </div>
-    <div id="today-workout-panel">
-      <div class="empty-state"><span class="empty-icon">⏳</span>Loading today's workout...</div>
-    </div>
-  </div>
+  <!-- include:page-today --><div data-include="ui/pages/today.html"></div><!-- /include:page-today -->
 
   <!-- EDIT WORKOUTS PAGE -->
-  <div id="page-edit-workouts" class="page">
-    <div class="nav-row">
-      <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
-    </div>
-    <div class="dash-heading" style="margin-bottom:16px;">Edit Workouts</div>
-    <div class="edit-day-tabs" id="edit-day-tabs"></div>
-    <div id="edit-workout-editor"></div>
-    <div class="edit-save-bar">
-      <button class="btn-save-workout" onclick="saveEditedWorkout()">💾 Save Day</button>
-    </div>
-  </div>
+  <!-- include:page-edit-workouts --><div data-include="ui/pages/edit-workouts.html"></div><!-- /include:page-edit-workouts -->
 
   <div id="page-attendance" class="page">
     <div class="nav-row"><button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button></div>
@@ -1427,24 +1251,12 @@
     <div class="modal-title" id="log-modal-title">Log: Exercise</div>
     <div class="modal-grid">
       <div>
-        <label class="modal-label">Sets Completed</label>
-        <input type="number" id="log-sets" class="modal-input" placeholder="3" min="0" max="20" />
-      </div>
-      <div>
-        <label class="modal-label">Reps Completed</label>
-        <input type="number" id="log-reps" class="modal-input" placeholder="10" min="0" max="100" />
-      </div>
-      <div>
-        <label class="modal-label">Weight (lbs)</label>
-        <input type="number" id="log-weight" class="modal-input" placeholder="135" min="0" />
-      </div>
-      <div>
-        <label class="modal-label">Level Used</label>
-        <select id="log-level" class="modal-input">
-          <option value="L3">L3</option>
-          <option value="L2">L2</option>
-          <option value="L1">L1</option>
-        </select>
+        <label class="modal-label">Set-by-Set Log</label>
+        <div style="margin-bottom:8px;">
+          <label class="modal-label">Log Date</label>
+          <input type="date" id="log-date" class="modal-input" />
+        </div>
+        <div id="log-set-rows"></div>
       </div>
     </div>
     <div>
@@ -1497,139 +1309,94 @@
 <script>
 // ===================== CONFIG =====================
 let supabase = null;
-const CONFIG_KEY = 'eagle_strength_config';
+const SUPABASE_URL = 'https://ispmelxwebnhnoflbeoj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_RV-YgGToZ9yfk4RNVvfMQQ_Peh_NVIF';
+const COACH_SESSION_KEY = 'coach_session_username';
+let currentCoach = null;
 let appDialogResolver = null;
-
-function getConfig() {
-  try { return JSON.parse(localStorage.getItem(CONFIG_KEY)) || {}; } catch { return {}; }
+function onLoginKeydown(event) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  loginCoach();
 }
 
-function saveConfig() {
-  let url = document.getElementById('cfg-url').value.trim();
-  let key = document.getElementById('cfg-key').value.trim();
-  // Alias shortcuts for coach login convenience
-  if (url.toLowerCase() === 'admin') {
-    url = 'https://ispmelxwebnhnoflbeoj.supabase.co';
-  }
-  if (key === 'german') {
-    key = 'sb_publishable_RV-YgGToZ9yfk4RNVvfMQQ_Peh_NVIF';
-  }
-  document.getElementById('cfg-url').value = url;
-  document.getElementById('cfg-key').value = key;
-  if (!url || !key) { toast('Please enter both URL and Key'); return; }
-  if (!url.startsWith('https://')) { toast('URL must start with https://'); return; }
-connectToSupabase(url, key);
+async function applyCoachSession(username) {
+  currentCoach = username;
+  document.getElementById('config-screen').style.display = 'none';
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'block';
+  await loadAthletes();
+  renderDashboard();
 }
-async function resetConfig() {
-  if (!await appConfirm('Disconnect from Supabase?', 'You can reconnect anytime.')) return;
-  localStorage.removeItem(CONFIG_KEY);
-  location.reload();
+
+async function loginCoach() {
+  const username = (document.getElementById('login-username').value || '').trim();
+  const password = (document.getElementById('login-password').value || '').trim();
+  if (!username || !password) return toast('Enter username and password');
+  if (!supabase) await connectToSupabase(SUPABASE_URL, SUPABASE_KEY);
+  const usernameNormalized = username.toLowerCase();
+  const { data, error } = await supabase
+    .from('coach_users')
+    .select('username')
+    .ilike('username', usernameNormalized)
+    .eq('password', password)
+    .maybeSingle();
+  if (error || !data) return toast('Invalid login');
+  localStorage.setItem(COACH_SESSION_KEY, data.username);
+  await applyCoachSession(data.username);
+  await auditAction('login', 'Coach signed in');
+}
+
+async function logoutCoach() {
+  if (currentCoach) await auditAction('logout', 'Coach signed out');
+  currentCoach = null;
+  localStorage.removeItem(COACH_SESSION_KEY);
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('app-header').style.display = 'none';
+  document.getElementById('main-content').style.display = 'none';
+  document.getElementById('config-screen').style.display = 'block';
+}
+
+async function auditAction(action, details = '') {
+  if (!supabase || !currentCoach) return;
+  await supabase.from('coach_audit_logs').insert([{ coach_username: currentCoach, action, details }]);
 }
 
 // ===================== WORKOUT DATA =====================
 const WORKOUT_TEMPLATES = {
-  Monday: [
-    { section: 'Lower Body — Squat', exercises: [
-      { name: 'Bodyweight Squat', level: 'L1', sets: 3, reps: '12', tempo: '3-1-1', rest: '60s' },
-      { name: 'Goblet Squat', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Front Squat', level: 'L3', sets: 4, reps: '6', tempo: '3-1-1', rest: '90s' },
-    ]},
-    { section: 'Upper Body — Push', exercises: [
-      { name: 'Push-Up', level: 'L1', sets: 3, reps: '15', tempo: '2-1-1', rest: '60s' },
-      { name: 'DB Bench Press', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Bench Press', level: 'L3', sets: 4, reps: '6', tempo: '3-1-1', rest: '90s' },
-    ]},
-    { section: 'Core', exercises: [
-      { name: 'Plank', level: 'L1-L3', sets: 3, reps: '30-60s', tempo: '—', rest: '45s' },
-      { name: 'Dead Bug', level: 'L1-L3', sets: 3, reps: '8 each', tempo: '—', rest: '45s' },
-    ]},
-    { section: 'Conditioning', exercises: [
-      { name: 'Sprints (20 yards)', level: 'L1-L3', sets: '8-12', reps: '—', tempo: '—', rest: 'Full recovery' },
-    ]},
-  ],
-  Tuesday: [
-    { section: 'Lower Body — Hinge', exercises: [
-      { name: 'Glute Bridge', level: 'L1', sets: 3, reps: '15', tempo: '2-2-1', rest: '60s' },
-      { name: 'DB Romanian Deadlift', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Trap Bar Deadlift', level: 'L3', sets: 4, reps: '5', tempo: '2-1-1', rest: '120s' },
-    ]},
-    { section: 'Upper Body — Pull', exercises: [
-      { name: 'Inverted Row', level: 'L1', sets: 3, reps: '12', tempo: '2-1-2', rest: '60s' },
-      { name: 'Lat Pulldown', level: 'L2', sets: 3, reps: '10', tempo: '3-1-2', rest: '75s' },
-      { name: 'Pull-Up', level: 'L3', sets: 4, reps: '6', tempo: '2-1-2', rest: '90s' },
-    ]},
-    { section: 'Accessory', exercises: [
-      { name: 'Step-Ups', level: 'L1-L3', sets: 3, reps: '10 each', tempo: '2-1-1', rest: '60s' },
-      { name: 'Face Pulls', level: 'L1-L3', sets: 3, reps: '15', tempo: '2-1-2', rest: '45s' },
-      { name: 'Tibialis Raises', level: 'L1-L3', sets: 3, reps: '15', tempo: '—', rest: '30s' },
-    ]},
-    { section: 'Conditioning', exercises: [
-      { name: 'Shuttle Runs', level: 'L1-L3', sets: '6', reps: '—', tempo: '—', rest: 'Full recovery' },
-    ]},
-  ],
-  Wednesday: [
-    { section: 'Active Recovery / Mobility', exercises: [
-      { name: 'Hip Flexor Stretch', level: 'L1-L3', sets: 3, reps: '30s each', tempo: '—', rest: '—' },
-      { name: 'Thoracic Rotation', level: 'L1-L3', sets: 3, reps: '10 each', tempo: '—', rest: '—' },
-      { name: 'Foam Roll — Quads/Hams', level: 'L1-L3', sets: 1, reps: '2 min each', tempo: '—', rest: '—' },
-    ]},
-    { section: 'Core', exercises: [
-      { name: 'Plank Progressions', level: 'L1-L3', sets: 3, reps: '45s', tempo: '—', rest: '45s' },
-      { name: 'Pallof Press', level: 'L1-L3', sets: 3, reps: '10 each', tempo: '—', rest: '45s' },
-    ]},
-  ],
-  Thursday: [
-    { section: 'Lower Body — Squat', exercises: [
-      { name: 'Bodyweight Squat', level: 'L1', sets: 3, reps: '12', tempo: '3-1-1', rest: '60s' },
-      { name: 'Goblet Squat', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Front Squat', level: 'L3', sets: 4, reps: '6', tempo: '3-1-1', rest: '90s' },
-    ]},
-    { section: 'Upper Body — Push', exercises: [
-      { name: 'Push-Up', level: 'L1', sets: 3, reps: '15', tempo: '2-1-1', rest: '60s' },
-      { name: 'DB Bench Press', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Bench Press', level: 'L3', sets: 4, reps: '6', tempo: '3-1-1', rest: '90s' },
-    ]},
-    { section: 'Core', exercises: [
-      { name: 'Dead Bug', level: 'L1-L3', sets: 3, reps: '8 each', tempo: '—', rest: '45s' },
-      { name: 'Bird Dog', level: 'L1-L3', sets: 3, reps: '10 each', tempo: '—', rest: '45s' },
-    ]},
-    { section: 'Conditioning', exercises: [
-      { name: 'Tempo Runs', level: 'L1-L3', sets: '4', reps: '100m', tempo: '—', rest: '90s' },
-    ]},
-  ],
-  Friday: [
-    { section: 'Lower Body — Hinge', exercises: [
-      { name: 'Glute Bridge', level: 'L1', sets: 3, reps: '15', tempo: '2-2-1', rest: '60s' },
-      { name: 'DB Romanian Deadlift', level: 'L2', sets: 3, reps: '10', tempo: '3-1-1', rest: '75s' },
-      { name: 'Trap Bar Deadlift', level: 'L3', sets: 4, reps: '5', tempo: '2-1-1', rest: '120s' },
-    ]},
-    { section: 'Upper Body — Pull', exercises: [
-      { name: 'Inverted Row', level: 'L1', sets: 3, reps: '12', tempo: '2-1-2', rest: '60s' },
-      { name: 'Lat Pulldown', level: 'L2', sets: 3, reps: '10', tempo: '3-1-2', rest: '75s' },
-      { name: 'Pull-Up', level: 'L3', sets: 4, reps: '6', tempo: '2-1-2', rest: '90s' },
-    ]},
-    { section: 'Accessory', exercises: [
-      { name: 'Step-Ups', level: 'L1-L3', sets: 3, reps: '10 each', tempo: '2-1-1', rest: '60s' },
-      { name: 'Face Pulls', level: 'L1-L3', sets: 3, reps: '15', tempo: '2-1-2', rest: '45s' },
-    ]},
-    { section: 'Conditioning', exercises: [
-      { name: 'Sprints (20 yards)', level: 'L1-L3', sets: '10', reps: '—', tempo: '—', rest: 'Full recovery' },
-    ]},
-  ],
-  Saturday: [
-    { section: 'Optional Conditioning', exercises: [
-      { name: 'Tempo Runs', level: 'L1-L3', sets: '4', reps: '200m', tempo: '—', rest: '90s' },
-      { name: 'Mobility Work', level: 'L1-L3', sets: 1, reps: '20 min', tempo: '—', rest: '—' },
-    ]},
-  ],
-  Sunday: [
-    { section: 'Rest Day', exercises: [
-      { name: 'Full Rest or Light Walk', level: 'L1-L3', sets: '—', reps: '—', tempo: '—', rest: '—' },
-    ]},
-  ],
+  Monday: [{ section: 'Monday', exercises: [
+    { name: 'Bench Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Incline Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Seated Barbell Push Press', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Upright Rows', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Dumbell Shrugs', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Curls', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+  ]}],
+  Tuesday: [{ section: 'Tuesday', exercises: [
+    { name: 'Front Squat', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Hamstring Dead Lifts', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Power Clean (M.S- Deadlifts)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Leg Explosions', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Calf Raisers Db', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+  ]}],
+  Wednesday: [{ section: 'Wednesday', exercises: [
+    { name: 'Bench Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Incline Press', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Db Push Press', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Barbell Pull To Chin', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'PUSH JERK (MS- Landmines)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+  ]}],
+  Thursday: [{ section: 'Thursday', exercises: [
+    { name: 'Back Squats', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Lateral Dumbbell Lunges', level: 'L1-L3', sets: 4, reps: '10-10-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Straight Leg DEAD-LIFTS (MS- TBD)', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Leg Explosions', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+    { name: 'Dumbell Knee Raise Step Ups', level: 'L1-L3', sets: 4, reps: '8-8-8-8', tempo: '60% 65% 70% 70%', rest: '20s', workTime: '35s' },
+  ]}],
 };
 
-const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday'];
 const SECTION_ICONS = {
   'Lower Body': '🦵', 'Upper Body': '💪', 'Core': '🎯', 'Conditioning': '⚡',
   'Accessory': '🔩', 'Active Recovery': '🧘', 'Optional': '🏃', 'Rest': '😴'
@@ -1652,6 +1419,13 @@ let logModalLevel = null;
 let workoutLogs = {};
 let progressionChart = null;
 let loggedExercisesForDate = new Set();
+const LOGGABLE_LIFTS = ['Bench Press', 'BACK SQUAT', 'Power Clean (M.S- DEADLIFTS)'];
+function normLiftName(n){ return String(n||'').toUpperCase().replace(/[-_.]/g,' ').replace(/\s+/g,' ').trim(); }
+function canLogExercise(name){
+  const n = normLiftName(name);
+  return n === 'Bench Press' || n === 'Back Squats' || n === 'BACK SQUAT' || n === 'POWER CLEAN (M S DEADLIFTS)';
+}
+let dashboardAnchorDate = new Date();
 
 // ===================== INIT =====================
 async function initApp() {
@@ -1676,10 +1450,10 @@ async function addAthlete() {
   const grade = parseInt(document.getElementById('new-grade').value);
   const sport = document.getElementById('new-sport').value.trim();
   const groups = parseGroups(document.getElementById('new-groups').value);
-  const level = document.getElementById('new-level').value;
   if (!name) { toast('Please enter athlete name'); return; }
-  const { error } = await supabase.from('athletes').insert([{ name, grade, sport, groups, default_level: level, active_status: true, notes: '' }]);
+  const { error } = await supabase.from('athletes').insert([{ name, grade, sport, groups, active_status: true, notes: '' }]);
   if (error) { toast('Error: ' + error.message); return; }
+  await auditAction('add_athlete', `Added athlete: ${name}`);
   toast('Athlete added!');
   document.getElementById('new-name').value = '';
   document.getElementById('new-sport').value = '';
@@ -1689,13 +1463,6 @@ async function addAthlete() {
   renderAthleteGrid();
 }
 
-async function updateAthleteLevel(level) {
-  const { error } = await supabase.from('athletes').update({ default_level: level }).eq('id', currentAthleteId);
-  if (error) { toast('Error saving level'); return; }
-  const idx = athletes.findIndex(a => a.id === currentAthleteId);
-  if (idx >= 0) athletes[idx].default_level = level;
-  toast('Level updated');
-}
 
 async function updateAthleteStatus(val) {
   const active = val === 'true';
@@ -1720,10 +1487,10 @@ async function saveEditAthlete() {
   const grade = parseInt(document.getElementById('edit-grade').value);
   const sport = document.getElementById('edit-sport').value.trim();
   const groups = parseGroups(document.getElementById('edit-groups').value);
-  const level = document.getElementById('edit-level').value;
   if (!name) { toast('Name required'); return; }
-  const { error } = await supabase.from('athletes').update({ name, grade, sport, groups, default_level: level }).eq('id', id);
+  const { error } = await supabase.from('athletes').update({ name, grade, sport, groups }).eq('id', id);
   if (error) { toast('Error: ' + error.message); return; }
+  await auditAction('edit_athlete', `Edited athlete: ${name}`);
   toast('Saved!');
   await loadAthletes();
   renderAdminList();
@@ -1751,6 +1518,7 @@ async function deleteAthlete(id) {
   athletes = athletes.filter(a => a.id !== id);
   renderAdminList();
   renderAthleteGrid();
+  await auditAction('delete_athlete', `Deleted athlete id: ${id}`);
   toast('Athlete deleted');
 }
 
@@ -1762,45 +1530,38 @@ async function loadWorkoutLogs(athleteId) {
 
 async function submitLog() {
   if (!logModalExercise || !currentAthleteId) return;
-  const sets = document.getElementById('log-sets').value;
-  const reps = document.getElementById('log-reps').value;
-  const weight = document.getElementById('log-weight').value;
-  const level = document.getElementById('log-level').value;
   const notes = document.getElementById('log-notes').value;
-  const date = currentDate || new Date().toISOString().split('T')[0];
-
-  const existing = await supabase.from('workout_logs')
-    .select('id')
-    .eq('athlete_id', currentAthleteId)
-    .eq('date', date)
-    .eq('exercise', logModalExercise)
-    .limit(1);
-
-  let error = null;
-  if (existing.data && existing.data.length > 0) {
-    ({ error } = await supabase.from('workout_logs').update({
-      sets_completed: parseInt(sets) || null,
-      reps_completed: parseInt(reps) || null,
-      weight_used: parseFloat(weight) || null,
-      level_used: level,
-      performance_notes: notes
-    }).eq('id', existing.data[0].id));
-  } else {
-    ({ error } = await supabase.from('workout_logs').insert([{
+  const date = document.getElementById('log-date').value || currentDate || new Date().toISOString().split('T')[0];
+  const repsInputs = Array.from(document.querySelectorAll('.log-set-reps'));
+  const weightInputs = Array.from(document.querySelectorAll('.log-set-weight'));
+  const setRows = repsInputs.map((r, i) => ({
+    set: i + 1,
+    reps: parseInt(r.value) || null,
+    weight: parseFloat(weightInputs[i]?.value) || null,
+  })).filter(x => x.reps || x.weight);
+  const totalSetsDone = setRows.length;
+  let best = { epley: 0, reps: null, weight: null };
+  setRows.forEach(s => {
+    if (!s.reps || !s.weight) return;
+    const e = s.weight * (1 + (s.reps / 30));
+    if (e > best.epley) best = { epley: e, reps: s.reps, weight: s.weight };
+  });
+  const combinedNotes = `${notes || ''}${notes ? '\n' : ''}[Set Log] ${JSON.stringify(setRows)}`;
+  const payload = {
     athlete_id: currentAthleteId,
-    date: date,
+    date,
     exercise: logModalExercise,
-    sets_completed: parseInt(sets) || null,
-    reps_completed: parseInt(reps) || null,
-    weight_used: parseFloat(weight) || null,
-    level_used: level,
-    performance_notes: notes
-    }]));
-  }
+    sets_completed: totalSetsDone || null,
+    reps_completed: best.reps,
+    weight_used: best.weight,
+    performance_notes: combinedNotes
+  };
+  const { error } = await supabase.from('workout_logs').upsert(payload, { onConflict: 'athlete_id,date,exercise' });
 
   if (error) { toast('Error saving log: ' + error.message); return; }
   document.getElementById('log-modal').style.display = 'none';
-  toast(existing.data && existing.data.length > 0 ? 'Workout log updated! ✓' : 'Lift logged! ✓');
+  await auditAction('log_workout', `${logModalExercise} on ${date}`);
+  toast('Lift logged! ✓');
 
   await refreshLoggedExercisesForCurrentDate();
   updateWorkoutLogButtons();
@@ -1808,12 +1569,24 @@ async function submitLog() {
 
 // ===================== RENDER =====================
 function renderDashboard() {
+  const anchorDate = getDashboardAnchorDate();
   const now = new Date();
-  document.getElementById('dash-date').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('dash-date').textContent = anchorDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const todayName = now.toLocaleDateString('en-US', { weekday: 'long' });
   document.getElementById('today-day').textContent = todayName + ' Workout';
   updateDashboardKpis();
   renderAthleteGrid();
+}
+
+function getDashboardAnchorDate() {
+  const d = new Date(dashboardAnchorDate);
+  d.setHours(12, 0, 0, 0);
+  return d;
+}
+
+function shiftDashboardWeek(delta) {
+  dashboardAnchorDate.setDate(dashboardAnchorDate.getDate() + (delta * 7));
+  renderDashboard();
 }
 
 async function updateDashboardKpis() {
@@ -1860,24 +1633,24 @@ async function renderAthleteGrid() {
     return;
   }
 
-  const now = new Date();
-  const monday = new Date(now);
+  const anchorDate = getDashboardAnchorDate();
+  const monday = new Date(anchorDate);
   const day = monday.getDay();
   const mondayShift = day === 0 ? -6 : 1 - day;
   monday.setDate(monday.getDate() + mondayShift);
-  const friday = new Date(monday);
-  friday.setDate(monday.getDate() + 4);
+  const thursday = new Date(monday);
+  thursday.setDate(monday.getDate() + 3);
   const from = monday.toISOString().split('T')[0];
-  const to = friday.toISOString().split('T')[0];
+  const to = thursday.toISOString().split('T')[0];
   const { data: weekLogs } = await supabase
     .from('workout_logs')
     .select('athlete_id,date')
     .gte('date', from)
     .lte('date', to);
 
-  const weekdayKeys = ['M','T','W','TH','F'];
+  const weekdayKeys = ['M','T','W','TH'];
   const dateKeyOrder = {};
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 4; i++) {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
     dateKeyOrder[d.toISOString().split('T')[0]] = i;
@@ -1892,7 +1665,7 @@ async function renderAthleteGrid() {
   });
 
   document.getElementById('athlete-grid').innerHTML = filtered.map(a => `
-    <div class="athlete-card" onclick="openAthleteProfile('${a.id}')">
+    <div class="athlete-card" data-athlete-id="${a.id}" onclick="openAthleteProfile('${a.id}')" style="cursor:pointer;text-align:left;" role="button" tabindex="0">
       ${!a.active_status ? '<span class="inactive-badge">Inactive</span>' : ''}
       <div class="athlete-avatar">${getInitials(a.name)}</div>
       <div class="athlete-name">${a.name}</div>
@@ -1903,9 +1676,17 @@ async function renderAthleteGrid() {
           return `<span class="week-pill ${didLog ? 'logged' : 'missed'}">${k}</span>`;
         }).join('')}
       </div>
-      <span class="level-badge level-${a.default_level}">${a.default_level}</span>
     </div>
   `).join('');
+  document.querySelectorAll('.athlete-card[data-athlete-id]').forEach(card => {
+    const id = card.getAttribute('data-athlete-id');
+    card.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && id) {
+        e.preventDefault();
+        openAthleteProfile(id);
+      }
+    });
+  });
 }
 
 function renderAdminList() {
@@ -1916,7 +1697,7 @@ function renderAdminList() {
   document.getElementById('admin-athlete-list').innerHTML = athletes.map(a => `
     <div class="athlete-list-item">
       <div class="athlete-avatar" style="width:32px;height:32px;font-size:13px;margin-bottom:0;">${getInitials(a.name)}</div>
-      <div class="athlete-list-name">${a.name} <span class="level-badge level-${a.default_level}" style="margin-left:4px;">${a.default_level}</span></div>
+      <div class="athlete-list-name">${a.name}</div>
       <div style="display:flex;gap:4px;">
         <button class="btn-icon" onclick="openEditAthlete('${a.id}')" title="Edit">✏️</button>
         <button class="btn-icon" onclick="toggleAthleteStatus('${a.id}')" title="${a.active_status ? 'Deactivate' : 'Activate'}">${a.active_status ? '🟢' : '⭕'}</button>
@@ -1933,7 +1714,6 @@ function openEditAthlete(id) {
   document.getElementById('edit-name').value = a.name;
   document.getElementById('edit-grade').value = a.grade;
   document.getElementById('edit-sport').value = a.sport || '';
-  document.getElementById('edit-level').value = a.default_level;
   document.getElementById('edit-groups').value = formatGroups(a.groups);
   document.getElementById('edit-panel').style.display = 'block';
   document.getElementById('edit-panel').scrollIntoView({ behavior: 'smooth' });
@@ -1941,20 +1721,26 @@ function openEditAthlete(id) {
 
 async function openAthleteProfile(id) {
   currentAthleteId = id;
-  const a = athletes.find(x => x.id === id);
-  if (!a) return;
+  let a = athletes.find(x => String(x.id) === String(id));
+  if (!a) {
+    await loadAthletes();
+    a = athletes.find(x => String(x.id) === String(id));
+  }
+  if (!a) {
+    toast('Unable to open athlete profile. Please refresh and try again.');
+    return;
+  }
 
   document.getElementById('profile-avatar').textContent = getInitials(a.name);
   document.getElementById('profile-name').textContent = a.name;
   document.getElementById('profile-meta').textContent = `Grade ${a.grade || '—'} · ${a.sport || 'No sport set'}`;
-  document.getElementById('profile-level-select').value = a.default_level;
   document.getElementById('profile-status-select').value = String(a.active_status !== false);
   document.getElementById('profile-notes').value = a.notes || '';
 
   // Jump select
   const jumpSel = document.getElementById('jump-select');
   jumpSel.innerHTML = '<option value="">Jump to athlete...</option>' +
-    athletes.map(x => `<option value="${x.id}" ${x.id === id ? 'selected' : ''}>${x.name}</option>`).join('');
+    athletes.map(x => `<option value="${x.id}" ${String(x.id) === String(id) ? 'selected' : ''}>${x.name}</option>`).join('');
 
   // Set today's day
   const now = new Date();
@@ -1966,16 +1752,40 @@ async function openAthleteProfile(id) {
 
   renderDaySelector();
   renderWorkoutPanel();
+  renderEstimated1RM();
 
   // Switch to workout tab
   switchTab('workout');
   showPage('profile');
 }
 
+async function renderEstimated1RM() {
+  const logs = await loadWorkoutLogs(currentAthleteId);
+  const lifts = [
+    { key: 'rm-bench', names: ['Bench Press'] },
+    { key: 'rm-squat', names: ['Back Squats'] },
+    { key: 'rm-clean', names: ['Power Clean (M.S- DEADLIFTS)','POWER CLEAN (M S DEADLIFTS)'] },
+  ];
+  lifts.forEach(l => { const el=document.getElementById(l.key); if (el) el.textContent = 'N/A'; });
+  lifts.forEach(lift => {
+    const normalizedNames = lift.names.map(normLiftName);
+    const candidates = logs.filter(l => normalizedNames.includes(normLiftName(l.exercise))).filter(l => l.weight_used && l.reps_completed);
+    if (!candidates.length) return;
+    let best = 0;
+    candidates.forEach(l => {
+      const w = parseFloat(l.weight_used) || 0;
+      const r = parseFloat(l.reps_completed) || 0;
+      if (w <= 0 || r <= 0) return;
+      const epley = w * (1 + (r / 30));
+      if (epley > best) best = epley;
+    });
+    const el = document.getElementById(lift.key);
+    if (el && best > 0) el.textContent = `${Math.round(best)} lbs`;
+  });
+}
+
 function renderDaySelector() {
-  document.getElementById('day-selector').innerHTML = DAYS.map(d => `
-    <button class="day-btn ${d === currentDay ? 'active' : ''}" onclick="selectDay('${d}')">${d.substring(0,3)}</button>
-  `).join('');
+  document.getElementById('day-selector').innerHTML = '';
 }
 
 function selectDay(day) {
@@ -1998,7 +1808,8 @@ function onDateChange() {
 
 function setDayFilter(filter) {
   if (filter === 'today') {
-    if (athletes.length > 0) openAthleteProfile(athletes[0].id);
+    showTodayPage();
+    showPage('today');
   }
 }
 
@@ -2010,15 +1821,13 @@ function renderWorkoutPanel() {
     return;
   }
 
-  const athlete = athletes.find(a => a.id === currentAthleteId);
-  const defaultLevel = athlete?.default_level || 'L3';
 
   document.getElementById('workout-panel').innerHTML = template.map(section => `
     <div class="section-card">
       <div class="section-card-header">
         ${section.section}
       </div>
-      ${renderExercises(section.exercises, defaultLevel)}
+      ${renderExercises(section.exercises)}
     </div>
   `).join('');
   refreshLoggedExercisesForCurrentDate().then(updateWorkoutLogButtons);
@@ -2061,86 +1870,34 @@ function updateWorkoutLogButtons() {
   });
 }
 
-function renderExercises(exercises, defaultLevel) {
-  const levelMap = { 'L1': 0, 'L2': 1, 'L3': 2 };
-
-  // Group L1/L2/L3 variants into one row if they share the same position
-  const groups = [];
-  exercises.forEach(ex => {
-    if (ex.level === 'L1-L3') {
-      groups.push([ex]);
-    } else {
-      // Check if there's already a group being built
-      const lastGroup = groups[groups.length - 1];
-      if (lastGroup && lastGroup.length < 3 && lastGroup[0].level !== 'L1-L3') {
-        lastGroup.push(ex);
-      } else {
-        groups.push([ex]);
-      }
-    }
-  });
-
-  return groups.map(group => {
-    if (group.length === 1 && group[0].level === 'L1-L3') {
-      const ex = group[0];
-      return `
-        <div class="exercise-row">
-          <div style="flex:1">
-            <div class="exercise-name">${ex.name}</div>
-            <div class="exercise-detail">${ex.sets} sets × ${ex.reps} · Tempo: ${ex.tempo} · Rest: ${ex.rest}</div>
-          </div>
-          <span class="level-badge level-L3" style="font-size:10px;">All Levels</span>
-          <button class="log-btn" data-log-exercise="${ex.name}" onclick="openLogModal('${ex.name}', 'L3')">Log</button>
-        </div>`;
-    } else {
-      // Multi-level group — show as one row with level toggle
-      const activeLevel = defaultLevel;
-      const active = group.find(e => e.level === activeLevel) || group[group.length - 1];
-      const exId = group.map(e => e.name).join('_').replace(/[^a-zA-Z0-9]/g, '');
-
-      return `
-        <div class="exercise-row" id="exrow-${exId}">
-          <div style="flex:1">
-            <div class="exercise-name" id="exname-${exId}">${active.name}</div>
-            <div class="exercise-detail" id="exdetail-${exId}">${active.sets} sets × ${active.reps} · Tempo: ${active.tempo} · Rest: ${active.rest}</div>
-          </div>
-          <div class="level-toggle">
-            ${group.map(e => `
-              <button class="level-toggle-btn ${e.level === activeLevel ? 'active' : ''}"
-                onclick="selectExerciseLevel(this, '${exId}', ${JSON.stringify(group).replace(/"/g, '&quot;')}, '${e.level}')">
-                ${e.level}
-              </button>
-            `).join('')}
-          </div>
-          <button class="log-btn" id="logbtn-${exId}" data-log-exercise="${active.name}" onclick="openLogModal('${active.name}', '${activeLevel}')">Log</button>
-        </div>`;
-    }
-  }).join('');
+function renderExercises(exercises) {
+  return exercises.map(ex => `
+    <div class="exercise-row">
+      <div style="flex:1">
+        <div class="exercise-name">${ex.name}</div>
+        <div class="exercise-detail">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo} · Rest: ${ex.rest}</div>
+      </div>
+      ${canLogExercise(ex.name) ? `<button class="log-btn" data-log-exercise="${ex.name}" onclick="openLogModal('${ex.name}', '')">Log</button>` : ''}
+    </div>`).join('');
 }
 
-function selectExerciseLevel(btn, exId, group, level) {
-  const ex = group.find(e => e.level === level);
-  if (!ex) return;
-  // Update toggle buttons
-  btn.parentElement.querySelectorAll('.level-toggle-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  // Update name/detail
-  document.getElementById(`exname-${exId}`).textContent = ex.name;
-  document.getElementById(`exdetail-${exId}`).textContent = `${ex.sets} sets × ${ex.reps} · Tempo: ${ex.tempo} · Rest: ${ex.rest}`;
-  // Update log button
-  const logBtn = document.getElementById(`logbtn-${exId}`);
-  logBtn.setAttribute('data-log-exercise', ex.name);
-  logBtn.onclick = () => openLogModal(ex.name, level);
-}
 
 function openLogModal(exercise, level) {
   logModalExercise = exercise;
   logModalLevel = level;
   document.getElementById('log-modal-title').textContent = 'Log: ' + exercise;
-  document.getElementById('log-sets').value = '';
-  document.getElementById('log-reps').value = '';
-  document.getElementById('log-weight').value = '';
-  document.getElementById('log-level').value = level;
+  const template = (getLiveTemplates()[currentDay] || []).flatMap(s => s.exercises || []);
+  const ex = template.find(x => x.name === exercise);
+  const setCount = Math.max(parseInt(ex?.sets) || 1, 1);
+  const repTargets = splitSetValues(ex?.reps || '');
+  document.getElementById('log-date').value = currentDate || new Date().toISOString().split('T')[0];
+  document.getElementById('log-set-rows').innerHTML = Array.from({length:setCount}, (_,i)=>`
+    <div class="log-set-row">
+      <div style="font-weight:700;font-size:12px;">Set ${i+1}</div>
+      <input type="number" class="modal-input log-set-reps" data-idx="${i}" placeholder="${repTargets[i] || 'Reps'}" min="0" max="100" />
+      <input type="number" class="modal-input log-set-weight" data-idx="${i}" placeholder="Weight" min="0" />
+    </div>
+  `).join('');
   document.getElementById('log-notes').value = '';
   document.getElementById('log-modal').style.display = 'flex';
 }
@@ -2158,20 +1915,61 @@ async function renderLogTable() {
     wrap.innerHTML = `<div class="empty-state"><span class="empty-icon">📝</span>No training logs yet — start logging workouts!</div>`;
     return;
   }
+  const athlete = athletes.find(a => a.id === currentAthleteId);
+  const firstName = (athlete?.name || 'Athlete').split(' ')[0];
+  const findPlannedExercise = (log) => {
+    const d = new Date((log.date || '') + 'T12:00:00');
+    const dayName = d.toLocaleDateString('en-US', { weekday: 'long' });
+    const dayTpl = (getLiveTemplates()[dayName] || []).flatMap(s => s.exercises || []);
+    return dayTpl.find(ex => normLiftName(ex.name) === normLiftName(log.exercise));
+  };
+  const parseSetLog = (notes) => {
+    const m = String(notes || '').match(/\[Set Log\]\s*(\[.*\])$/);
+    if (!m) return [];
+    try { return JSON.parse(m[1]); } catch { return []; }
+  };
+  const estimate1RMForExercise = (exerciseName) => {
+    const candidates = logs
+      .filter(l => normLiftName(l.exercise) === normLiftName(exerciseName))
+      .filter(l => l.weight_used && l.reps_completed);
+    let best = 0;
+    candidates.forEach(l => {
+      const w = parseFloat(l.weight_used) || 0;
+      const r = parseFloat(l.reps_completed) || 0;
+      if (w > 0 && r > 0) best = Math.max(best, w * (1 + r / 30));
+    });
+    return best > 0 ? `${Math.round(best)} lbs` : 'N/A';
+  };
+  const weightArrow = (log) => {
+    const prev = logs
+      .filter(x => normLiftName(x.exercise) === normLiftName(log.exercise))
+      .filter(x => x.date < log.date)
+      .sort((a,b)=>b.date.localeCompare(a.date))[0];
+    if (!prev || !prev.weight_used || !log.weight_used) return '⬆️';
+    return parseFloat(log.weight_used) > parseFloat(prev.weight_used) ? '⬆️' : '⬇️';
+  };
   wrap.innerHTML = `
     <table class="log-table">
-      <thead><tr><th>Date</th><th>Exercise</th><th>Sets</th><th>Reps</th><th>Weight</th><th>Level</th><th>Notes</th></tr></thead>
+      <thead><tr><th>Date</th><th>Exercise</th><th>Sets</th><th>Reps</th><th>Weight</th><th>Notes</th></tr></thead>
       <tbody>
         ${logs.map(l => `
-          <tr>
-            <td>${l.date}</td>
-            <td style="font-weight:600;">${l.exercise}</td>
-            <td>${l.sets_completed ?? '—'}</td>
-            <td>${l.reps_completed ?? '—'}</td>
-            <td>${l.weight_used ? l.weight_used + ' lbs' : '—'}</td>
-            <td><span class="level-badge level-${l.level_used}">${l.level_used || '—'}</span></td>
-            <td style="color:var(--text-muted);font-size:12px;">${l.performance_notes || ''}</td>
-          </tr>
+          ${(() => {
+            const planned = findPlannedExercise(l);
+            const setLog = parseSetLog(l.performance_notes);
+            const plannedReps = splitSetValues(planned?.reps || '');
+            const setsOk = setLog.length >= 4 ? '✅' : '❌';
+            const repsOk = setLog.length > 0 && plannedReps.length > 0 && setLog.every((s, i) => (parseInt(s.reps) || 0) >= (parseInt(plannedReps[i] || 0) || 0)) ? '✅' : '❌';
+            const wArrow = weightArrow(l);
+            const note = `${firstName} has an estimated 1RM of ${estimate1RMForExercise(l.exercise)}`;
+            return `<tr>
+              <td>${l.date}</td>
+              <td style="font-weight:600;">${l.exercise}</td>
+              <td>${setsOk}</td>
+              <td>${repsOk}</td>
+              <td>${wArrow}</td>
+              <td style="color:var(--text-muted);font-size:12px;">${note}</td>
+            </tr>`;
+          })()}
         `).join('')}
       </tbody>
     </table>`;
@@ -2183,10 +1981,11 @@ async function renderProgressionChart() {
 
   if (progressionChart) { progressionChart.destroy(); progressionChart = null; }
 
-  // Group by date — track max weight per exercise
-  const exercises = [...new Set(logs.filter(l => l.weight_used).map(l => l.exercise))].slice(0, 5);
+  const tracked = ['Bench Press', 'Back Squats', 'Power Clean (M.S- Deadlifts)'];
+  const normTracked = tracked.map(normLiftName);
 
-  if (exercises.length === 0) {
+  const hasTrackedData = logs.some(l => l.weight_used && normTracked.includes(normLiftName(l.exercise)));
+  if (!hasTrackedData) {
     document.getElementById('chart-empty').style.display = 'block';
     document.getElementById('progression-chart').style.display = 'none';
     return;
@@ -2194,22 +1993,29 @@ async function renderProgressionChart() {
   document.getElementById('chart-empty').style.display = 'none';
   document.getElementById('progression-chart').style.display = 'block';
 
-  const colors = ['#22883f','#D4A017','#c0392b','#2980b9','#8e44ad'];
-  const datasets = exercises.map((ex, i) => {
-    const exLogs = logs.filter(l => l.exercise === ex && l.weight_used).sort((a, b) => a.date.localeCompare(b.date));
+  const trackedLogs = logs.filter(l => l.weight_used && normTracked.includes(normLiftName(l.exercise)));
+  const allDates = [...new Set(trackedLogs.map(l => l.date))].sort((a, b) => a.localeCompare(b));
+  const colors = ['#22883f','#D4A017','#c0392b'];
+  const datasets = tracked.map((ex, i) => {
+    const exLogs = trackedLogs
+      .filter(l => normLiftName(l.exercise) === normLiftName(ex))
+      .sort((a, b) => a.date.localeCompare(b.date));
+    const byDate = {};
+    exLogs.forEach(l => { byDate[l.date] = Math.max(byDate[l.date] || 0, Number(l.weight_used) || 0); });
     return {
       label: ex,
-      data: exLogs.map(l => ({ x: l.date, y: l.weight_used })),
+      data: allDates.map(d => (byDate[d] ? byDate[d] : null)),
       borderColor: colors[i % colors.length],
       backgroundColor: colors[i % colors.length] + '20',
       tension: 0.3,
       pointRadius: 4,
+      spanGaps: true,
     };
   });
 
   progressionChart = new Chart(ctx, {
     type: 'line',
-    data: { datasets },
+    data: { labels: allDates, datasets },
     options: {
       responsive: true,
       scales: {
@@ -2223,8 +2029,13 @@ async function renderProgressionChart() {
 
 // ===================== NAVIGATION =====================
 function showPage(page) {
+  const target = document.getElementById('page-' + page);
+  if (!target) {
+    toast(`Page failed to load: ${page}. Open via http://localhost, not file://`);
+    return;
+  }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
+  target.classList.add('active');
   if (page === 'admin') { renderAdminList(); }
   if (page === 'dashboard') { renderDashboard(); }
   if (page === 'today') { showTodayPage(); }
@@ -2294,10 +2105,19 @@ async function loadWorkoutTemplates() {
 }
 
 async function saveWorkoutTemplates(templates) {
-  for (const day of Object.keys(templates)) {
-    await supabase.from('workout_templates').upsert({ day_name: day, template_json: templates[day] }, { onConflict: 'day_name' });
+  const rows = Object.keys(templates).map(day => ({
+    day_name: day,
+    template_json: JSON.parse(JSON.stringify(templates[day]))
+  }));
+  const { error } = await supabase
+    .from('workout_templates')
+    .upsert(rows, { onConflict: 'day_name' });
+  if (error) {
+    toast('Error saving workout templates: ' + error.message);
+    return false;
   }
   liveTemplates = JSON.parse(JSON.stringify(templates));
+  return true;
 }
 function getLiveTemplates() { return liveTemplates; }
 
@@ -2328,9 +2148,8 @@ function showTodayPage() {
         <div class="exercise-row">
           <div style="flex:1">
             <div class="exercise-name">${ex.name}</div>
-            <div class="exercise-detail">${ex.sets} sets × ${ex.reps}${ex.tempo && ex.tempo !== '—' ? ' · Tempo: ' + ex.tempo : ''}${ex.rest && ex.rest !== '—' ? ' · Rest: ' + ex.rest : ''}</div>
+            <div class="exercise-detail">${ex.sets} sets × ${ex.reps}${ex.tempo && ex.tempo !== '—' ? ' · % Lift: ' + ex.tempo : ''}${ex.rest && ex.rest !== '—' ? ' · Rest: ' + ex.rest : ''}</div>
           </div>
-          ${ex.level ? `<span class="level-badge level-${ex.level === 'L1-L3' ? 'L3' : ex.level}" style="font-size:10px;">${ex.level}</span>` : ''}
         </div>
       `).join('')}
     </div>
@@ -2366,30 +2185,66 @@ function renderEditWorkoutEditor() {
   container.innerHTML = template.map((section, si) => `
     <div class="edit-section-card" id="edit-sec-${si}">
       <div class="edit-section-header">
-        <input class="edit-section-title-input" value="${section.section}"
-          onchange="updateSectionTitle(${si}, this.value)" placeholder="Section name..." />
+        <div class="edit-section-title-input" style="border-bottom:none;padding:2px 4px;">${section.section}</div>
         <button class="btn-del" style="color:rgba(255,255,255,0.5);" onclick="deleteSection(${si})" title="Delete section">✕</button>
       </div>
       <div class="edit-col-header">
-        <span>Exercise Name</span><span>Sets</span><span>Reps</span><span>Tempo</span><span>Rest</span><span>Work Time</span><span>Level</span><span></span>
+        <span>Exercise Name</span><span>Sets</span><span>Reps</span><span>% Lift</span><span>Rest</span><span>Work Time</span><span></span>
       </div>
       ${section.exercises.map((ex, ei) => `
         <div class="edit-exercise-row">
           <input class="edit-input" value="${ex.name}" onchange="updateExField(${si},${ei},'name',this.value)" placeholder="Exercise name" />
           <input class="edit-input" value="${ex.sets}" onchange="updateExField(${si},${ei},'sets',this.value)" placeholder="3" />
-          <input class="edit-input" value="${ex.reps}" onchange="updateExField(${si},${ei},'reps',this.value)" placeholder="10" />
-          <input class="edit-input" value="${ex.tempo || '—'}" onchange="updateExField(${si},${ei},'tempo',this.value)" placeholder="3-1-1" />
+          <div class="edit-input set-box-wrap">${buildSetBoxes(ex.sets, ex.reps, si, ei, 'reps')}</div>
+          <div class="edit-input set-box-wrap">${buildSetBoxes(ex.sets, ex.tempo || '', si, ei, 'tempo')}</div>
           <input class="edit-input" value="${ex.rest || '—'}" onchange="updateExField(${si},${ei},'rest',this.value)" placeholder="60s" />
           <input class="edit-input" value="${ex.workTime || ''}" onchange="updateExField(${si},${ei},'workTime',this.value)" placeholder="30s" title="Work countdown duration (e.g. 30s, 2min). Leave blank for manual advance." />
-          <select class="edit-input" onchange="updateExField(${si},${ei},'level',this.value)">
-            ${['L3','L2','L1','L1-L3'].map(l => `<option value="${l}" ${ex.level===l?'selected':''}>${l}</option>`).join('')}
-          </select>
           <button class="btn-del" onclick="deleteExercise(${si},${ei})">🗑</button>
         </div>
       `).join('')}
       <button class="add-exercise-btn" onclick="addExercise(${si})">+ Add Exercise</button>
     </div>
   `).join('') + `<button class="add-section-btn" onclick="addSection()">+ Add Section</button>`;
+  updateEditWorkoutTotalTime();
+}
+function parseDurationToSecs(v) {
+  const t = String(v || '').trim().toLowerCase();
+  if (!t || t === '—') return 0;
+  if (t.includes('min')) return Math.round(parseFloat(t) * 60) || 0;
+  if (t.endsWith('m')) return Math.round(parseFloat(t) * 60) || 0;
+  if (t.endsWith('s')) return Math.round(parseFloat(t)) || 0;
+  const n = parseFloat(t);
+  return Number.isFinite(n) ? Math.round(n) : 0;
+}
+function splitSetValues(v) {
+  return String(v || '').split(/[-, ]+/).map(x => x.trim()).filter(Boolean);
+}
+function buildSetBoxes(sets, value, si, ei, field) {
+  const n = Math.max(parseInt(sets) || 0, 0);
+  const vals = splitSetValues(value);
+  return Array.from({ length: n }, (_, idx) => {
+    const val = vals[idx] || '';
+    return `<input class="edit-input" style="width:46px;padding:6px;" value="${val}" onchange="updateSetValue(${si},${ei},'${field}',${idx},this.value)" placeholder="${field === 'tempo' ? '%' : '#'}" />`;
+  }).join('');
+}
+function updateSetValue(si, ei, field, idx, val) {
+  const ex = editWorkouts[editCurrentDay][si].exercises[ei];
+  const arr = splitSetValues(ex[field]);
+  arr[idx] = val;
+  ex[field] = arr.filter(x => String(x).trim() !== '').join('-');
+}
+function updateEditWorkoutTotalTime() {
+  const template = editWorkouts[editCurrentDay] || [];
+  let total = 0;
+  template.forEach(section => (section.exercises || []).forEach(ex => {
+    const sets = parseInt(ex.sets) || 0;
+    total += parseDurationToSecs(ex.workTime) * Math.max(sets, 1);
+    total += parseDurationToSecs(ex.rest) * Math.max((sets || 1) - 1, 0);
+  }));
+  const el = document.getElementById('edit-total-time');
+  if (!el) return;
+  const m = Math.floor(total / 60), s = total % 60;
+  el.textContent = `Total workout time: ${m}m ${String(s).padStart(2, '0')}s`;
 }
 
 function updateSectionTitle(si, val) {
@@ -2397,6 +2252,8 @@ function updateSectionTitle(si, val) {
 }
 function updateExField(si, ei, field, val) {
   editWorkouts[editCurrentDay][si].exercises[ei][field] = val;
+  if (field === 'sets') renderEditWorkoutEditor();
+  updateEditWorkoutTotalTime();
 }
 function deleteExercise(si, ei) {
   editWorkouts[editCurrentDay][si].exercises.splice(ei, 1);
@@ -2408,7 +2265,7 @@ async function deleteSection(si) {
   renderEditWorkoutEditor();
 }
 function addExercise(si) {
-  editWorkouts[editCurrentDay][si].exercises.push({ name: '', sets: 3, reps: '10', tempo: '—', rest: '60s', workTime: '60s', level: 'L3' });
+  editWorkouts[editCurrentDay][si].exercises.push({ name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' });
   renderEditWorkoutEditor();
   // scroll to bottom of section
   setTimeout(() => {
@@ -2419,12 +2276,14 @@ function addExercise(si) {
 function addSection() {
   if (!editWorkouts[editCurrentDay]) editWorkouts[editCurrentDay] = [];
   editWorkouts[editCurrentDay].push({ section: 'New Section', exercises: [
-    { name: '', sets: 3, reps: '10', tempo: '—', rest: '60s', workTime: '60s', level: 'L3' }
+    { name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' }
   ]});
   renderEditWorkoutEditor();
 }
-function saveEditedWorkout() {
-  saveWorkoutTemplates(editWorkouts);
+async function saveEditedWorkout() {
+  const ok = await saveWorkoutTemplates(editWorkouts);
+  if (!ok) return;
+  auditAction('save_workout_templates', `Saved templates for ${editCurrentDay}`);
   toast(`${editCurrentDay} workout saved!`);
 }
 
@@ -2478,22 +2337,56 @@ function openTVDisplay() {
   const now = new Date();
   const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
   document.getElementById('tv-day-label').textContent = dayName;
-  tvSteps = buildTVSteps(dayName);
-  if (tvSteps.length === 0) { toast('No workout for today!'); return; }
-  tvStepIndex = 0;
-  tvSetIndex = 0;
-  tvSkippedSets = {};
-  tvResetState();
+  const template = (getLiveTemplates()[dayName] || []);
+  const rows = [];
+  template.forEach(section => (section.exercises || []).forEach(ex => {
+    rows.push(`<div class="tv-queue-item"><div class="tv-queue-item-name">${ex.name}</div><div class="tv-queue-item-detail">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo || '—'}</div></div>`);
+  }));
+  document.getElementById('tv-main').innerHTML = `
+    <div class="tv-section-label">Workout Breakdown</div>
+    <div class="tv-exercise-name">Coach Display</div>
+    <div class="tv-set-info">
+      <div class="tv-stat"><div class="tv-stat-label">Stopwatch</div><div class="tv-stat-val" id="tv-stopwatch">00:00.00</div></div>
+      <div style="display:flex;gap:8px;">
+        <button class="tv-ctrl-btn primary" id="tv-sw-btn" onclick="tvToggleStopwatch()">Start</button>
+        <button class="tv-ctrl-btn" onclick="tvResetStopwatch()">Reset</button>
+      </div>
+    </div>`;
+  document.getElementById('tv-queue').innerHTML = rows.join('') || '<div class="tv-queue-item">No workout scheduled.</div>';
+  document.querySelector('.tv-controls').style.display = 'none';
+  document.getElementById('tv-progress-text').textContent = 'Workout list';
+  document.getElementById('tv-progress-pct').textContent = '';
+  document.getElementById('tv-progress-bar').style.width = '100%';
   document.getElementById('tv-display').classList.add('active');
   document.body.style.overflow = 'hidden';
-  tvRenderCurrent();
-  tvRenderQueue();
 }
 
 function closeTVDisplay() {
   document.getElementById('tv-display').classList.remove('active');
   document.body.style.overflow = '';
+  document.querySelector('.tv-controls').style.display = 'flex';
+  tvResetStopwatch();
   tvResetState();
+}
+let tvStopwatchCenti = 0;
+let tvStopwatchTimer = null;
+function tvToggleStopwatch() {
+  const btn = document.getElementById('tv-sw-btn');
+  if (tvStopwatchTimer) {
+    clearInterval(tvStopwatchTimer); tvStopwatchTimer = null; if (btn) btn.textContent = 'Start'; return;
+  }
+  tvStopwatchTimer = setInterval(() => {
+    tvStopwatchCenti += 1;
+    const m = Math.floor(tvStopwatchCenti / 6000), s = Math.floor((tvStopwatchCenti % 6000) / 100), cs = tvStopwatchCenti % 100;
+    const el = document.getElementById('tv-stopwatch');
+    if (el) el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+  }, 10);
+  if (btn) btn.textContent = 'Stop';
+}
+function tvResetStopwatch() {
+  clearInterval(tvStopwatchTimer); tvStopwatchTimer = null; tvStopwatchCenti = 0;
+  const el = document.getElementById('tv-stopwatch'); if (el) el.textContent = '00:00.00';
+  const btn = document.getElementById('tv-sw-btn'); if (btn) btn.textContent = 'Start';
 }
 
 // ---- RENDERING ----
@@ -2911,6 +2804,7 @@ async function saveAttendance(){
   }));
   const {error}=await supabase.from('attendance_logs').upsert(rows,{onConflict:'athlete_id,date,group_name'});
   if(error) return toast(error.message);
+  await auditAction('save_attendance', `Saved attendance for ${date}`);
   toast('Attendance saved');
 }
 function openAttendanceOverview() {
@@ -2990,17 +2884,47 @@ async function saveCalendarEventFromModal() {
   if (error) return toast(error.message);
   closeCalendarEventModal();
   renderCalendarMonth(monthKey);
+  await auditAction('save_calendar_event', `Saved event for ${date}: ${text}`);
   toast('Calendar event saved');
 }
 
 // ===================== BOOT =====================
-window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('config-screen').style.display = 'block';
+async function loadHtmlPartials() {
+  const partialNodes = Array.from(document.querySelectorAll('[data-include]'));
+  await Promise.all(partialNodes.map(async (node) => {
+    const src = node.getAttribute('data-include');
+    if (!src) return;
+    try {
+      const res = await fetch(src);
+      const html = await res.text();
+      node.outerHTML = html;
+    } catch (e) {
+      node.outerHTML = `<div class="empty-state"><span class="empty-icon">⚠️</span>Failed to load partial: ${src}</div>`;
+    }
+  }));
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadHtmlPartials();
+  await connectToSupabase(SUPABASE_URL, SUPABASE_KEY);
+  const savedCoach = (localStorage.getItem(COACH_SESSION_KEY) || '').trim();
+  if (savedCoach && supabase) {
+    const { data } = await supabase
+      .from('coach_users')
+      .select('username')
+      .ilike('username', savedCoach.toLowerCase())
+      .maybeSingle();
+    if (data?.username) {
+      await applyCoachSession(data.username);
+    } else {
+      localStorage.removeItem(COACH_SESSION_KEY);
+      document.getElementById('config-screen').style.display = 'block';
+    }
+  } else {
+    document.getElementById('config-screen').style.display = 'block';
+    setTimeout(() => document.getElementById('login-username')?.focus(), 0);
+  }
   removeStrayCssTextNodes();
-  const cfg = getConfig();
-  if (cfg.url) document.getElementById('cfg-url').value = cfg.url;
-  if (cfg.key) document.getElementById('cfg-key').value = cfg.key;
-  if (cfg.url && cfg.key) setTimeout(() => connectToSupabase(cfg.url, cfg.key), 150);
 });
 
 function loadSupabaseLib() {
@@ -3046,38 +2970,12 @@ async function connectToSupabase(url, key) {
     // Test the connection
     const { error } = await supabase.from('athletes').select('id').limit(1);
     if (error && error.code !== 'PGRST116') throw error;
-    // Success — show app
-    document.getElementById('config-screen').style.display = 'none';
-    document.getElementById('app-header').style.display = 'flex';
-    document.getElementById('main-content').style.display = 'block';
-    await loadAthletes();
-    renderDashboard();
+    if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
   } catch(e) {
-    if (btn) { btn.textContent = 'Connect to Supabase →'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
     toast('Connection failed: ' + (e.message || 'Check your URL and key'));
   }
 }
 </script>
 </body>
 </html>
-  .dashboard-kpis {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(170px, 1fr));
-    gap: 12px;
-    margin: 0 0 18px;
-  }
-  .kpi-card {
-    background: linear-gradient(180deg, var(--surface-1) 0%, var(--surface-2) 100%);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    box-shadow: var(--shadow-1);
-  }
-  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; }
-  .kpi-value { font-family: 'Barlow Condensed', sans-serif; font-size: 30px; color: var(--green-900); font-weight: 800; line-height: 1.1; margin-top: 6px; }
-  .kpi-sub { font-size: 12px; color: var(--gray-600); margin-top: 4px; }
-  @media (max-width: 900px) {
-    .dashboard-kpis { grid-template-columns: 1fr; }
-    .search-input { width: 100%; }
-    .search-wrap { width: 100%; }
-  }
