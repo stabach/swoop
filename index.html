@@ -515,7 +515,7 @@
     border-radius: var(--radius-lg);
     padding: 24px;
     width: 100%;
-    max-width: 420px;
+    max-width: 620px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
   }
   .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 800; color: var(--green-900); margin-bottom: 16px; }
@@ -533,6 +533,7 @@
   .modal-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 4px; display: block; }
   .modal-btns { display: flex; gap: 8px; margin-top: 16px; }
   .modal-btns .btn-sm { flex: 1; text-align: center; }
+  .log-set-row { display:grid; grid-template-columns: 80px 1fr 1fr; gap:10px; margin-bottom:8px; align-items:center; }
   /* ---- CHARTS ---- */
   .chart-toggle-btn {
     padding: 8px 16px;
@@ -1533,18 +1534,29 @@ async function submitLog() {
   const date = currentDate || new Date().toISOString().split('T')[0];
   const repsInputs = Array.from(document.querySelectorAll('.log-set-reps'));
   const weightInputs = Array.from(document.querySelectorAll('.log-set-weight'));
-  const rows = repsInputs.map((r, i) => ({
+  const setRows = repsInputs.map((r, i) => ({
+    set: i + 1,
+    reps: parseInt(r.value) || null,
+    weight: parseFloat(weightInputs[i]?.value) || null,
+  })).filter(x => x.reps || x.weight);
+  const totalSetsDone = setRows.length;
+  let best = { epley: 0, reps: null, weight: null };
+  setRows.forEach(s => {
+    if (!s.reps || !s.weight) return;
+    const e = s.weight * (1 + (s.reps / 30));
+    if (e > best.epley) best = { epley: e, reps: s.reps, weight: s.weight };
+  });
+  const combinedNotes = `${notes || ''}${notes ? '\n' : ''}[Set Log] ${JSON.stringify(setRows)}`;
+  const payload = {
     athlete_id: currentAthleteId,
     date,
     exercise: logModalExercise,
-    sets_completed: i + 1,
-    reps_completed: parseInt(r.value) || null,
-    weight_used: parseFloat(weightInputs[i]?.value) || null,
-    performance_notes: notes
-  })).filter(x => x.reps_completed || x.weight_used);
-
-  await supabase.from('workout_logs').delete().eq('athlete_id', currentAthleteId).eq('date', date).eq('exercise', logModalExercise);
-  const { error } = rows.length ? await supabase.from('workout_logs').insert(rows) : { error: null };
+    sets_completed: totalSetsDone || null,
+    reps_completed: best.reps,
+    weight_used: best.weight,
+    performance_notes: combinedNotes
+  };
+  const { error } = await supabase.from('workout_logs').upsert(payload, { onConflict: 'athlete_id,date,exercise' });
 
   if (error) { toast('Error saving log: ' + error.message); return; }
   document.getElementById('log-modal').style.display = 'none';
@@ -1871,10 +1883,10 @@ function openLogModal(exercise, level) {
   const setCount = Math.max(parseInt(ex?.sets) || 1, 1);
   const repTargets = splitSetValues(ex?.reps || '');
   document.getElementById('log-set-rows').innerHTML = Array.from({length:setCount}, (_,i)=>`
-    <div style="display:grid;grid-template-columns:70px 1fr 1fr;gap:8px;margin-bottom:6px;align-items:center;">
+    <div class="log-set-row">
       <div style="font-weight:700;font-size:12px;">Set ${i+1}</div>
-      <input type="number" class="modal-input log-set-reps" data-idx="${i}" placeholder="${repTargets[i] || 'reps'}" min="0" max="100" />
-      <input type="number" class="modal-input log-set-weight" data-idx="${i}" placeholder="weight" min="0" />
+      <input type="number" class="modal-input log-set-reps" data-idx="${i}" placeholder="${repTargets[i] || 'Reps'}" min="0" max="100" />
+      <input type="number" class="modal-input log-set-weight" data-idx="${i}" placeholder="Weight (lbs)" min="0" />
     </div>
   `).join('');
   document.getElementById('log-notes').value = '';
