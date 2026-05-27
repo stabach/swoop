@@ -1077,8 +1077,9 @@
       <div>
         <div class="dash-heading">Coaching Dashboard</div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn-sm" id="dash-prev-week-btn" onclick="shiftDashboardWeek(-1)" title="Previous Week">←</button>
           <div class="dash-date" id="dash-date"></div>
-          <button class="btn-sm" id="dash-last-week-btn" onclick="toggleDashboardWeekView()">Last Week</button>
+          <button class="btn-sm" id="dash-next-week-btn" onclick="shiftDashboardWeek(1)" title="Next Week">→</button>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
@@ -1625,7 +1626,7 @@ let logModalLevel = null;
 let workoutLogs = {};
 let progressionChart = null;
 let loggedExercisesForDate = new Set();
-let dashboardViewMode = 'current';
+let dashboardWeekOffset = 0;
 
 // ===================== INIT =====================
 async function initApp() {
@@ -1785,8 +1786,6 @@ function renderDashboard() {
   const anchorDate = getDashboardAnchorDate();
   const now = new Date();
   document.getElementById('dash-date').textContent = anchorDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  const btn = document.getElementById('dash-last-week-btn');
-  btn.textContent = dashboardViewMode === 'current' ? 'Last Week' : 'This Week';
   const todayName = now.toLocaleDateString('en-US', { weekday: 'long' });
   document.getElementById('today-day').textContent = todayName + ' Workout';
   updateDashboardKpis();
@@ -1802,16 +1801,12 @@ function getDashboardAnchorDate() {
   monday.setDate(now.getDate() + mondayShift);
   const thursday = new Date(monday);
   thursday.setDate(monday.getDate() + 3);
-  if (dashboardViewMode === 'last') {
-    const lastThursday = new Date(thursday);
-    lastThursday.setDate(thursday.getDate() - 7);
-    return lastThursday;
-  }
+  thursday.setDate(thursday.getDate() + (dashboardWeekOffset * 7));
   return thursday;
 }
 
-function toggleDashboardWeekView() {
-  dashboardViewMode = dashboardViewMode === 'current' ? 'last' : 'current';
+function shiftDashboardWeek(delta) {
+  dashboardWeekOffset += delta;
   renderDashboard();
 }
 
