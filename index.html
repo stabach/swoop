@@ -1665,7 +1665,7 @@ async function renderAthleteGrid() {
   });
 
   document.getElementById('athlete-grid').innerHTML = filtered.map(a => `
-    <div class="athlete-card" data-athlete-id="${a.id}" style="cursor:pointer;text-align:left;" role="button" tabindex="0">
+    <div class="athlete-card" data-athlete-id="${a.id}" onclick="openAthleteProfile('${a.id}')" style="cursor:pointer;text-align:left;" role="button" tabindex="0">
       ${!a.active_status ? '<span class="inactive-badge">Inactive</span>' : ''}
       <div class="athlete-avatar">${getInitials(a.name)}</div>
       <div class="athlete-name">${a.name}</div>
@@ -1678,10 +1678,8 @@ async function renderAthleteGrid() {
       </div>
     </div>
   `).join('');
-  const grid = document.getElementById('athlete-grid');
-  grid.querySelectorAll('.athlete-card[data-athlete-id]').forEach(card => {
+  document.querySelectorAll('.athlete-card[data-athlete-id]').forEach(card => {
     const id = card.getAttribute('data-athlete-id');
-    card.addEventListener('click', () => id && openAthleteProfile(id));
     card.addEventListener('keydown', (e) => {
       if ((e.key === 'Enter' || e.key === ' ') && id) {
         e.preventDefault();
@@ -2024,8 +2022,13 @@ async function renderProgressionChart() {
 
 // ===================== NAVIGATION =====================
 function showPage(page) {
+  const target = document.getElementById('page-' + page);
+  if (!target) {
+    toast(`Page failed to load: ${page}. Open via http://localhost, not file://`);
+    return;
+  }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
+  target.classList.add('active');
   if (page === 'admin') { renderAdminList(); }
   if (page === 'dashboard') { renderDashboard(); }
   if (page === 'today') { showTodayPage(); }
