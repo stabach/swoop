@@ -1721,8 +1721,15 @@ function openEditAthlete(id) {
 
 async function openAthleteProfile(id) {
   currentAthleteId = id;
-  const a = athletes.find(x => String(x.id) === String(id));
-  if (!a) return;
+  let a = athletes.find(x => String(x.id) === String(id));
+  if (!a) {
+    await loadAthletes();
+    a = athletes.find(x => String(x.id) === String(id));
+  }
+  if (!a) {
+    toast('Unable to open athlete profile. Please refresh and try again.');
+    return;
+  }
 
   document.getElementById('profile-avatar').textContent = getInitials(a.name);
   document.getElementById('profile-name').textContent = a.name;
