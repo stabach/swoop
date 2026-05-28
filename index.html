@@ -1228,12 +1228,12 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Username</label>
-      <input type="text" id="login-username" class="form-input" placeholder="username" onkeydown="onLoginKeydown(event)" autofocus />
+      <label class="form-label">Email</label>
+      <input type="email" id="login-username" class="form-input" placeholder="coach@school.com" autocomplete="email" onkeydown="onLoginKeydown(event)" autofocus />
     </div>
     <div class="form-group">
       <label class="form-label">Password</label>
-      <input type="password" id="login-password" class="form-input" placeholder="password" onkeydown="onLoginKeydown(event)" />
+      <input type="password" id="login-password" class="form-input" placeholder="password" autocomplete="current-password" onkeydown="onLoginKeydown(event)" />
     </div>
     <button class="btn-primary" onclick="loginCoach()">Sign In →</button>
   </div>
@@ -1507,8 +1507,9 @@
 let supabase = null;
 const SUPABASE_URL = 'https://ispmelxwebnhnoflbeoj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RV-YgGToZ9yfk4RNVvfMQQ_Peh_NVIF';
-const COACH_SESSION_KEY = 'coach_session_username';
+const LEGACY_COACH_SESSION_KEY = 'coach_session_username';
 let currentCoach = null;
+let currentAuthUser = null;
 let appDialogResolver = null;
 function onLoginKeydown(event) {
   if (event.key !== 'Enter') return;
@@ -1516,8 +1517,23 @@ function onLoginKeydown(event) {
   loginCoach();
 }
 
-async function applyCoachSession(username) {
-  currentCoach = username;
+async function getCoachProfileForAuthUser(user) {
+  if (!user?.id) return null;
+  const { data, error } = await supabase
+    .from('coach_users')
+    .select('username,email,auth_user_id')
+    .eq('auth_user_id', user.id)
+    .maybeSingle();
+  if (error) {
+    console.error('Unable to load coach profile:', error);
+    return null;
+  }
+  return data || null;
+}
+
+async function applyCoachSession(profile, authUser = null) {
+  currentCoach = profile;
+  currentAuthUser = authUser || { id: profile?.auth_user_id, email: profile?.email };
   document.getElementById('config-screen').style.display = 'none';
   document.getElementById('app-header').style.display = 'flex';
   document.getElementById('main-content').style.display = 'block';
@@ -1527,37 +1543,47 @@ async function applyCoachSession(username) {
 }
 
 async function loginCoach() {
-  const username = (document.getElementById('login-username').value || '').trim();
+  const email = (document.getElementById('login-username').value || '').trim();
   const password = (document.getElementById('login-password').value || '').trim();
-  if (!username || !password) return toast('Enter username and password');
+  if (!email || !password) return toast('Enter email and password');
   if (!supabase) await connectToSupabase(SUPABASE_URL, SUPABASE_KEY);
-  const usernameNormalized = username.toLowerCase();
-  const { data, error } = await supabase
-    .from('coach_users')
-    .select('username')
-    .ilike('username', usernameNormalized)
-    .eq('password', password)
-    .maybeSingle();
-  if (error || !data) return toast('Invalid login');
-  localStorage.setItem(COACH_SESSION_KEY, data.username);
-  await applyCoachSession(data.username);
+  if (!supabase) return;
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error || !data?.user) return toast('Invalid login');
+
+  const profile = await getCoachProfileForAuthUser(data.user);
+  if (!profile) {
+    await supabase.auth.signOut();
+    return toast('Coach profile not linked to this login');
+  }
+
+  await applyCoachSession(profile, data.user);
   await auditAction('login', 'Coach signed in');
 }
 
 async function logoutCoach() {
   if (currentCoach) await auditAction('logout', 'Coach signed out');
+  if (supabase?.auth) await supabase.auth.signOut();
   currentCoach = null;
-  localStorage.removeItem(COACH_SESSION_KEY);
+  currentAuthUser = null;
+  localStorage.removeItem(LEGACY_COACH_SESSION_KEY);
   document.getElementById('login-username').value = '';
   document.getElementById('login-password').value = '';
   document.getElementById('app-header').style.display = 'none';
   document.getElementById('main-content').style.display = 'none';
   document.getElementById('config-screen').style.display = 'block';
+  setTimeout(() => document.getElementById('login-username')?.focus(), 0);
 }
 
 async function auditAction(action, details = '') {
-  if (!supabase || !currentCoach) return;
-  await supabase.from('coach_audit_logs').insert([{ coach_username: currentCoach, action, details }]);
+  if (!supabase || !currentCoach || !currentAuthUser?.id) return;
+  await supabase.from('coach_audit_logs').insert([{
+    auth_user_id: currentAuthUser.id,
+    coach_username: currentCoach.username || currentAuthUser.email || 'Coach',
+    action,
+    details
+  }]);
 }
 
 // ===================== WORKOUT DATA =====================
@@ -3306,18 +3332,24 @@ async function loadHtmlPartials() {
 window.addEventListener('DOMContentLoaded', async () => {
   await loadHtmlPartials();
   await connectToSupabase(SUPABASE_URL, SUPABASE_KEY);
-  const savedCoach = (localStorage.getItem(COACH_SESSION_KEY) || '').trim();
-  if (savedCoach && supabase) {
-    const { data } = await supabase
-      .from('coach_users')
-      .select('username')
-      .ilike('username', savedCoach.toLowerCase())
-      .maybeSingle();
-    if (data?.username) {
-      await applyCoachSession(data.username);
+  localStorage.removeItem(LEGACY_COACH_SESSION_KEY);
+
+  if (!supabase) {
+    document.getElementById('config-screen').style.display = 'block';
+    setTimeout(() => document.getElementById('login-username')?.focus(), 0);
+    removeStrayCssTextNodes();
+    return;
+  }
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.user) {
+    const profile = await getCoachProfileForAuthUser(session.user);
+    if (profile) {
+      await applyCoachSession(profile, session.user);
     } else {
-      localStorage.removeItem(COACH_SESSION_KEY);
+      await supabase.auth.signOut();
       document.getElementById('config-screen').style.display = 'block';
+      setTimeout(() => document.getElementById('login-username')?.focus(), 0);
     }
   } else {
     document.getElementById('config-screen').style.display = 'block';
@@ -3366,9 +3398,7 @@ async function connectToSupabase(url, key) {
       ? { auth: { persistSession: true, autoRefreshToken: true } }
       : {};
     supabase = window.supabase.createClient(url, key, clientOptions);
-    // Test the connection
-    const { error } = await supabase.from('athletes').select('id').limit(1);
-    if (error && error.code !== 'PGRST116') throw error;
+    // Do not probe protected tables before login. RLS should block anonymous reads.
     if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
   } catch(e) {
     if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
