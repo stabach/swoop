@@ -912,8 +912,28 @@
   .edit-save-bar .save-msg.big { font-size: 20px; font-weight: 800; color: #fff; }
   .rm-grid { display:grid; grid-template-columns:repeat(3,minmax(120px,1fr)); gap:8px; margin-top:8px; }
   .rm-card { background: rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.25); border-radius:8px; padding:8px; color:#fff; }
+  .rm-card.with-refresh { position: relative; padding-right: 38px; }
   .rm-lift { font-size:11px; opacity:.9; font-weight:700; }
   .rm-val { font-size:18px; font-weight:800; }
+  .rm-refresh-btn {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    width: 25px;
+    height: 25px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    transition: background .15s, transform .15s, border-color .15s;
+  }
+  .rm-refresh-btn:hover { background: rgba(255,255,255,0.28); border-color: rgba(255,255,255,0.7); transform: rotate(35deg); }
   .btn-save-workout {
     padding: 10px 28px;
     background: var(--gold);
@@ -1291,7 +1311,10 @@
         </div>
         <textarea class="profile-notes" id="profile-notes" placeholder="Athlete notes (injuries, goals, reminders)..." onblur="saveAthleteNotes()" rows="2"></textarea>
         <div class="rm-grid">
-          <div class="rm-card"><div class="rm-lift">BENCH PRESS 1RM</div><div class="rm-val" id="rm-bench">N/A</div></div>
+          <div class="rm-card with-refresh">
+            <button type="button" class="rm-refresh-btn" onclick="refreshEstimated1RM()" title="Refresh 1RM estimates" aria-label="Refresh 1RM estimates">↻</button>
+            <div class="rm-lift">BENCH PRESS 1RM</div><div class="rm-val" id="rm-bench">N/A</div>
+          </div>
           <div class="rm-card"><div class="rm-lift">BACK SQUAT 1RM</div><div class="rm-val" id="rm-squat">N/A</div></div>
           <div class="rm-card"><div class="rm-lift">POWER CLEAN 1RM</div><div class="rm-val" id="rm-clean">N/A</div></div>
         </div>
@@ -1842,6 +1865,7 @@ async function submitLog() {
 
   if (error) { toast('Error saving log: ' + error.message); return; }
   document.getElementById('log-modal').style.display = 'none';
+  await renderEstimated1RM();
   await auditAction('log_workout', `${logModalExercise} on ${date}`);
   toast('Lift logged! ✓');
 
@@ -2118,6 +2142,12 @@ async function openAthleteProfile(id) {
   // Switch to workout tab
   switchTab('workout');
   showPage('profile');
+}
+
+async function refreshEstimated1RM() {
+  if (!currentAthleteId) return;
+  await renderEstimated1RM();
+  toast('1RM estimates refreshed');
 }
 
 async function renderEstimated1RM() {
