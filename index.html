@@ -867,9 +867,9 @@
     align-items: center;
     justify-content: flex-start;
     width: 100%;
-    max-width: 1260px;
+    max-width: 1600px;
     height: 100vh;
-    padding: 86px 40px 44px;
+    padding: 86px 24px 32px;
     text-align: center;
     overflow-y: auto;
     scrollbar-color: var(--green-400) rgba(255,255,255,0.08);
@@ -1020,7 +1020,8 @@
   .tv-queue-item.done:hover { opacity: 0.6; background: rgba(255,255,255,0.06); cursor: pointer; }
   .tv-queue-item-name { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; color: white; }
   .tv-queue-item-detail { font-size: 12px; color: var(--green-300); margin-top: 2px; }
-  .tv-workout-center { width: min(1120px, 92vw); margin: 0 auto 24px; display: flex; flex-direction: column; gap: 12px; }
+  .tv-workout-layout { width: min(1500px, 96vw); display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+  .tv-workout-center { width: 100%; margin: 0; display: flex; flex-direction: column; gap: 12px; }
   .tv-workout-card { background: linear-gradient(180deg, rgba(23,63,40,0.85), rgba(10,29,18,0.9)); border: 1px solid rgba(78,203,113,0.35); border-radius: 999px; padding: 16px 28px 16px 34px; text-align: left; box-shadow: 0 14px 40px rgba(0,0,0,0.35); display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 28px; cursor: pointer; transition: transform .16s ease, border-color .16s ease, background .16s ease; }
   .tv-workout-card:hover { transform: scale(1.015); border-color: var(--green-300); background: linear-gradient(180deg, rgba(29,85,51,0.9), rgba(10,37,21,0.94)); }
   .tv-workout-title { font-size: clamp(30px, 4.3vw, 56px); color: #fff; font-weight: 800; letter-spacing: 0.8px; line-height: 1.05; }
@@ -1033,14 +1034,19 @@
   .tv-focus-back { border: 1px solid rgba(141,232,169,.45); background: rgba(255,255,255,.08); color: var(--green-100); border-radius: 999px; padding: 10px 24px; font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; cursor: pointer; }
   .tv-focus-back:hover { background: rgba(78,203,113,.18); }
   .tv-workout-sub { margin-top: 8px; font-size: clamp(16px, 2.2vw, 24px); color: var(--green-200); font-weight: 600; }
-  .tv-stopwatch-shell { position: relative; margin: 14px auto 0; width: min(430px, 86vw); border-radius: 999px; padding: 20px 18px 22px; background: radial-gradient(circle at 30% 20%, #1f4d31 0%, #0d2a1b 70%); border: 5px solid #7adf9a; box-shadow: inset 0 0 0 3px rgba(255,255,255,0.08), 0 20px 46px rgba(0,0,0,.45); }
+  .tv-stopwatch-panel { position: sticky; top: 86px; display: flex; flex-direction: column; align-items: center; gap: 18px; padding-top: 36px; }
+  .tv-stopwatch-shell { position: relative; margin: 0; width: min(320px, 100%); border-radius: 999px; padding: 20px 16px 22px; background: radial-gradient(circle at 30% 20%, #1f4d31 0%, #0d2a1b 70%); border: 5px solid #7adf9a; box-shadow: inset 0 0 0 3px rgba(255,255,255,0.08), 0 20px 46px rgba(0,0,0,.45); }
   .tv-stopwatch-shell::before { content: ''; position: absolute; top: -16px; left: 50%; transform: translateX(-50%); width: 72px; height: 18px; border-radius: 10px; background: #7adf9a; box-shadow: 0 2px 0 #4fb86f; }
   .tv-stopwatch-label { text-transform: uppercase; letter-spacing: 2px; font-size: 12px; color: var(--green-100); font-weight: 700; }
   .tv-stopwatch-time { font-size: clamp(48px, 7vw, 72px); font-weight: 800; line-height: 1; margin-top: 8px; color: #fff; font-variant-numeric: tabular-nums; }
-  .tv-stopwatch-actions { display: flex; justify-content: center; gap: 14px; margin-top: 18px; }
-  .tv-sw-btn { min-width: 170px; height: 58px; border-radius: 999px; border: 2px solid rgba(255,255,255,0.28); background: rgba(255,255,255,0.12); color: #fff; font-size: 30px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; cursor: pointer; }
+  .tv-stopwatch-actions { display: flex; justify-content: center; gap: 12px; margin-top: 0; }
+  .tv-sw-btn { min-width: 140px; height: 58px; border-radius: 999px; border: 2px solid rgba(255,255,255,0.28); background: rgba(255,255,255,0.12); color: #fff; font-size: 30px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; cursor: pointer; }
   .tv-sw-btn.primary { background: #1a7b3f; border-color: #4ecb71; }
   .tv-sw-btn:hover { filter: brightness(1.06); }
+  @media (max-width: 1100px) {
+    .tv-workout-layout { grid-template-columns: 1fr; }
+    .tv-stopwatch-panel { position: static; padding-top: 8px; padding-bottom: 20px; }
+  }
   .calendar-grid { display:grid; grid-template-columns: repeat(7, minmax(120px,1fr)); gap:8px; }
   .calendar-weekdays { display:grid; grid-template-columns: repeat(7, minmax(120px,1fr)); gap:8px; }
   .calendar-cell { background:#fff; border:1px solid var(--border); border-radius:8px; min-height:120px; padding:8px; cursor:pointer; }
@@ -2453,14 +2459,18 @@ function renderTvFullWorkout(dayName) {
     </div>`).join('');
   document.getElementById('tv-main').innerHTML = `
     <div class="tv-section-label">${dayName} Workout Breakdown</div>
-    <div class="tv-workout-center">${workoutRows || '<div class="tv-workout-card"><div class="tv-workout-title">No Workout Scheduled</div></div>'}</div>
-    <div class="tv-stopwatch-shell">
-      <div class="tv-stopwatch-label">Stopwatch</div>
-      <div class="tv-stopwatch-time" id="tv-stopwatch">00:00.00</div>
-    </div>
-    <div class="tv-stopwatch-actions">
-      <button class="tv-sw-btn primary" id="tv-sw-btn" onclick="tvToggleStopwatch()">Start</button>
-      <button class="tv-sw-btn" onclick="tvResetStopwatch()">Reset</button>
+    <div class="tv-workout-layout">
+      <div class="tv-workout-center">${workoutRows || '<div class="tv-workout-card"><div class="tv-workout-title">No Workout Scheduled</div></div>'}</div>
+      <aside class="tv-stopwatch-panel" aria-label="Stopwatch controls">
+        <div class="tv-stopwatch-shell">
+          <div class="tv-stopwatch-label">Stopwatch</div>
+          <div class="tv-stopwatch-time" id="tv-stopwatch">00:00.00</div>
+        </div>
+        <div class="tv-stopwatch-actions">
+          <button class="tv-sw-btn primary" id="tv-sw-btn" onclick="tvToggleStopwatch()">Start</button>
+          <button class="tv-sw-btn" onclick="tvResetStopwatch()">Reset</button>
+        </div>
+      </aside>
     </div>`;
 }
 
