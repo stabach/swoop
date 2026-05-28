@@ -182,7 +182,9 @@
   .dashboard-hero::after {
     content: '';
     position: absolute;
-    inset: auto 24px -46px auto;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
     width: 170px;
     height: 170px;
     border-radius: 999px;
@@ -386,10 +388,33 @@
   .athlete-meta { font-size: 13px; color: var(--text-muted); line-height: 1.35; }
   .athlete-week {
     display: flex;
-    gap: 5px;
+    gap: 6px;
     align-items: center;
     flex-wrap: nowrap;
     justify-content: flex-end;
+  }
+  .week-pill {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    border: 1px solid var(--border);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.75), 0 4px 10px rgba(11,46,26,0.07);
+  }
+  .week-pill.logged {
+    background: linear-gradient(180deg, var(--green-100) 0%, #dff8e7 100%);
+    border-color: var(--green-300);
+    color: var(--green-800);
+  }
+  .week-pill.missed {
+    background: linear-gradient(180deg, #fff1ef 0%, #fde3df 100%);
+    border-color: #f0aaa2;
+    color: #b5362a;
   }
   .athlete-row-label { display: none; }
   @media (max-width: 980px) {
