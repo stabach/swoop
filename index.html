@@ -1430,6 +1430,26 @@ function canLogExercise(name){
 }
 let dashboardAnchorDate = new Date();
 
+
+function isWorkoutLoggingDay(dateStr) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr + 'T12:00:00');
+  const day = d.getDay();
+  return day >= 1 && day <= 4; // Monday-Thursday only
+}
+
+function enforceWorkoutLogDate(inputEl) {
+  const val = inputEl?.value || '';
+  if (!val) return true;
+  if (isWorkoutLoggingDay(val)) {
+    inputEl.setCustomValidity('');
+    return true;
+  }
+  inputEl.setCustomValidity('Only Monday through Thursday can be logged.');
+  inputEl.reportValidity();
+  return false;
+}
+
 // ===================== INIT =====================
 async function initApp() {
   // Called only when we already have a live supabase client
@@ -1534,7 +1554,9 @@ async function loadWorkoutLogs(athleteId) {
 async function submitLog() {
   if (!logModalExercise || !currentAthleteId) return;
   const notes = document.getElementById('log-notes').value;
-  const date = document.getElementById('log-date').value || currentDate || new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('log-date');
+  const date = dateInput.value || currentDate || new Date().toISOString().split('T')[0];
+  if (!enforceWorkoutLogDate(dateInput)) return;
   const repsInputs = Array.from(document.querySelectorAll('.log-set-reps'));
   const weightInputs = Array.from(document.querySelectorAll('.log-set-weight'));
   const setRows = repsInputs.map((r, i) => ({
@@ -1900,7 +1922,10 @@ function openLogModal(exercise, level) {
   const ex = template.find(x => x.name === exercise);
   const setCount = Math.max(parseInt(ex?.sets) || 1, 1);
   const repTargets = splitSetValues(ex?.reps || '');
-  document.getElementById('log-date').value = currentDate || new Date().toISOString().split('T')[0];
+  const logDateInput = document.getElementById('log-date');
+  logDateInput.value = currentDate || new Date().toISOString().split('T')[0];
+  logDateInput.onchange = () => enforceWorkoutLogDate(logDateInput);
+  enforceWorkoutLogDate(logDateInput);
   document.getElementById('log-set-rows').innerHTML = Array.from({length:setCount}, (_,i)=>`
     <div class="log-set-row">
       <div style="font-weight:700;font-size:12px;">Set ${i+1}</div>
