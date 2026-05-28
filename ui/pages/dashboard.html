@@ -14,12 +14,12 @@
           <div class="dash-heading">Coaching Dashboard</div>
 
           <!-- SEGMENT: Week navigation controls.
-               ←/→ call shiftDashboardWeek() to move backward/forward by 1 week from the currently shown date.
-               The center #dash-date shows the current dashboard date. -->
+               ←/→ call shiftDashboardDay() to move backward/forward by 1 day from the currently shown date.
+               The roster bubbles still summarize the Monday–Thursday training week for the shown date. -->
           <div class="dash-week-nav">
-            <button class="btn-sm" id="dash-prev-week-btn" onclick="shiftDashboardWeek(-1)" title="Previous Week">←</button>
+            <button class="btn-sm dash-arrow-btn" id="dash-prev-week-btn" onclick="shiftDashboardDay(-1)" title="Previous Day">←</button>
             <div class="dash-date" id="dash-date"></div>
-            <button class="btn-sm" id="dash-next-week-btn" onclick="shiftDashboardWeek(1)" title="Next Week">→</button>
+            <button class="btn-sm dash-arrow-btn" id="dash-next-week-btn" onclick="shiftDashboardDay(1)" title="Next Day">→</button>
           </div>
         </div>
 

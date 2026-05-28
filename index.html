@@ -520,6 +520,7 @@
   .btn-sm.green { background: var(--green-800); color: white; border-color: var(--green-800); }
   .btn-sm.green:hover { background: var(--green-700); }
   .btn-sm.danger { background: var(--danger-light); color: var(--danger); border-color: var(--danger); }
+  .dash-arrow-btn { min-height: 32px; width: 34px; padding: 4px 0; border-radius: 8px; font-size: 13px; }
   .jump-select {
     padding: 7px 12px;
     border-radius: 6px;
@@ -737,6 +738,8 @@
   .log-table tr:last-child td { border-bottom: none; }
   .log-table tr:hover td { background: var(--page-bg); }
   .log-table tr:nth-child(even) td { background: #fbfdfb; }
+  .log-table tr.clickable-log-row { cursor:pointer; }
+  .log-table tr.clickable-log-row:hover td { background: var(--green-100); }
   .overflow-table { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
   /* ---- MISC ---- */
   .toast {
@@ -912,28 +915,8 @@
   .edit-save-bar .save-msg.big { font-size: 20px; font-weight: 800; color: #fff; }
   .rm-grid { display:grid; grid-template-columns:repeat(3,minmax(120px,1fr)); gap:8px; margin-top:8px; }
   .rm-card { background: rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.25); border-radius:8px; padding:8px; color:#fff; }
-  .rm-card.with-refresh { position: relative; padding-right: 38px; }
   .rm-lift { font-size:11px; opacity:.9; font-weight:700; }
   .rm-val { font-size:18px; font-weight:800; }
-  .rm-refresh-btn {
-    position: absolute;
-    top: 7px;
-    right: 7px;
-    width: 25px;
-    height: 25px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.45);
-    background: rgba(255,255,255,0.16);
-    color: #fff;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 1;
-    transition: background .15s, transform .15s, border-color .15s;
-  }
-  .rm-refresh-btn:hover { background: rgba(255,255,255,0.28); border-color: rgba(255,255,255,0.7); transform: rotate(35deg); }
   .btn-save-workout {
     padding: 10px 28px;
     background: var(--gold);
@@ -1315,10 +1298,7 @@
         </div>
         <textarea class="profile-notes" id="profile-notes" placeholder="Athlete notes (injuries, goals, reminders)..." onblur="saveAthleteNotes()" rows="2"></textarea>
         <div class="rm-grid">
-          <div class="rm-card with-refresh">
-            <button type="button" class="rm-refresh-btn" onclick="refreshEstimated1RM()" title="Refresh 1RM estimates" aria-label="Refresh 1RM estimates">↻</button>
-            <div class="rm-lift">BENCH PRESS 1RM</div><div class="rm-val" id="rm-bench">N/A</div>
-          </div>
+          <div class="rm-card"><div class="rm-lift">BENCH PRESS 1RM</div><div class="rm-val" id="rm-bench">N/A</div></div>
           <div class="rm-card"><div class="rm-lift">BACK SQUAT 1RM</div><div class="rm-val" id="rm-squat">N/A</div></div>
           <div class="rm-card"><div class="rm-lift">POWER CLEAN 1RM</div><div class="rm-val" id="rm-clean">N/A</div></div>
         </div>
@@ -1899,8 +1879,8 @@ function getDashboardAnchorDate() {
   return d;
 }
 
-function shiftDashboardWeek(delta) {
-  dashboardAnchorDate.setDate(dashboardAnchorDate.getDate() + (delta * 7));
+function shiftDashboardDay(delta) {
+  dashboardAnchorDate.setDate(dashboardAnchorDate.getDate() + delta);
   renderDashboard();
 }
 
@@ -2153,12 +2133,6 @@ async function openAthleteProfile(id) {
   showPage('profile');
 }
 
-async function refreshEstimated1RM() {
-  if (!currentAthleteId) return;
-  await renderEstimated1RM();
-  toast('1RM estimates refreshed');
-}
-
 async function renderEstimated1RM() {
   const logs = await loadWorkoutLogs(currentAthleteId);
   const lifts = [
@@ -2398,11 +2372,12 @@ async function renderLogTable() {
     if (!prev || !prev.weight_used || !log.weight_used) return '⬆️';
     return parseFloat(log.weight_used) > parseFloat(prev.weight_used) ? '⬆️' : '⬇️';
   };
+  window.currentRenderedLogs = logs;
   wrap.innerHTML = `
     <table class="log-table">
       <thead><tr><th>Date</th><th>Exercise</th><th>Sets</th><th>Reps</th><th>Weight</th><th>Notes</th></tr></thead>
       <tbody>
-        ${logs.map(l => `
+        ${logs.map((l, logIndex) => `
           ${(() => {
             const planned = findPlannedExercise(l);
             const setLog = parseSetLog(l.performance_notes);
@@ -2411,18 +2386,36 @@ async function renderLogTable() {
             const repsOk = setLog.length > 0 && plannedReps.length > 0 && setLog.every((s, i) => (parseInt(s.reps) || 0) >= (parseInt(plannedReps[i] || 0) || 0)) ? '✅' : '❌';
             const wArrow = weightArrow(l);
             const note = `${firstName} has an estimated 1RM of ${estimate1RMForExercise(l.exercise)}`;
-            return `<tr>
-              <td>${l.date}</td>
-              <td style="font-weight:600;">${l.exercise}</td>
+            return `<tr class="clickable-log-row" onclick="showWorkoutLogDetails(${logIndex})" title="Click to view entered set log">
+              <td>${escHtml(l.date)}</td>
+              <td style="font-weight:600;">${escHtml(l.exercise)}</td>
               <td>${setsOk}</td>
               <td>${repsOk}</td>
               <td>${wArrow}</td>
-              <td style="color:var(--text-muted);font-size:12px;">${note}</td>
+              <td style="color:var(--text-muted);font-size:12px;">${escHtml(note)}</td>
             </tr>`;
           })()}
         `).join('')}
       </tbody>
     </table>`;
+}
+
+function showWorkoutLogDetails(logIndex) {
+  const log = (window.currentRenderedLogs || [])[logIndex];
+  if (!log) return;
+  const setLog = parseSetLogFromNotes(log.performance_notes);
+  const notes = stripSetLogFromNotes(log.performance_notes || '');
+  const setRows = setLog.length
+    ? setLog.map(s => `<tr><td>${escHtml(s.set ?? '')}</td><td>${escHtml(s.reps ?? '')}</td><td>${escHtml(s.weight ?? '')}</td></tr>`).join('')
+    : '<tr><td colspan="3">No set-by-set entries saved.</td></tr>';
+  const html = `
+    <div style="text-align:left;">
+      <div style="font-weight:800;margin-bottom:6px;">${escHtml(log.exercise)} — ${escHtml(log.date)}</div>
+      <table class="log-table" style="margin:8px 0 12px;"><thead><tr><th>Set</th><th>Reps</th><th>Weight</th></tr></thead><tbody>${setRows}</tbody></table>
+      <div style="font-size:12px;color:var(--text-muted);font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;">Notes</div>
+      <div>${escHtml(notes || 'No notes entered.')}</div>
+    </div>`;
+  appAlert('Workout Log Details', html, true);
 }
 
 async function renderProgressionChart() {
