@@ -566,6 +566,25 @@
     padding: 20px;
   }
   .admin-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800; color: var(--green-900); margin-bottom: 16px; }
+  .admin-page-head { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; }
+  .admin-add-btn { width:auto; padding:12px 18px; white-space:nowrap; }
+  .admin-roster-card { padding:18px; }
+  .admin-toolbar { display:flex; align-items:flex-end; gap:12px; margin-bottom:14px; }
+  .admin-filter-field { flex:1; }
+  .admin-filter-field.small { flex:0 0 220px; }
+  .admin-table-wrap { border:1px solid var(--border); border-radius:12px; overflow:auto; max-height:68vh; background:white; }
+  .admin-athlete-table { width:100%; border-collapse:collapse; min-width:780px; font-size:14px; }
+  .admin-athlete-table th { position:sticky; top:0; z-index:1; background:var(--green-900); color:white; text-align:left; padding:11px 12px; font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:.8px; text-transform:uppercase; }
+  .admin-athlete-table td { padding:10px 12px; border-bottom:1px solid var(--gray-100); vertical-align:middle; }
+  .admin-athlete-table tbody tr:hover { background:var(--surface-3); }
+  .admin-table-name { font-weight:800; color:var(--green-900); }
+  .admin-team-pill { display:inline-flex; align-items:center; margin:2px 4px 2px 0; padding:3px 7px; border-radius:999px; background:var(--green-100); color:var(--green-900); font-size:12px; font-weight:700; }
+  .admin-actions { display:flex; gap:6px; align-items:center; }
+  .admin-modal { position:fixed; inset:0; z-index:9000; background:rgba(5,14,8,.62); display:flex; align-items:center; justify-content:center; padding:24px; }
+  .admin-modal-card { width:min(720px, 96vw); background:white; border-radius:18px; border:1px solid var(--border); padding:24px; box-shadow:0 24px 70px rgba(0,0,0,.3); position:relative; }
+  .admin-modal-close { position:absolute; top:10px; right:12px; border:0; background:transparent; font-size:30px; line-height:1; color:var(--text-muted); cursor:pointer; }
+  .admin-modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:10px; }
+  @media (max-width: 700px) { .admin-page-head, .admin-toolbar { flex-direction:column; align-items:stretch; } .admin-filter-field.small { flex:1; } }
   .athlete-list-item {
     display: flex;
     align-items: center;
@@ -1544,6 +1563,7 @@ async function addAthlete() {
   await loadAthletes();
   renderAdminList();
   renderAthleteGrid();
+  closeAdminAthleteModal();
 }
 
 
@@ -1578,11 +1598,11 @@ async function saveEditAthlete() {
   await loadAthletes();
   renderAdminList();
   renderAthleteGrid();
-  document.getElementById('edit-panel').style.display = 'none';
+  closeAdminAthleteModal();
 }
 
 async function toggleAthleteStatus(id) {
-  const athlete = athletes.find(a => a.id === id);
+  const athlete = athletes.find(a => String(a.id) === String(id));
   if (!athlete) return;
   const newStatus = !athlete.active_status;
   const { error } = await supabase.from('athletes').update({ active_status: newStatus }).eq('id', id);
@@ -1781,34 +1801,99 @@ async function renderAthleteGrid() {
   };
 }
 
+function escHtml(v) {
+  return String(v ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[ch]));
+}
+
+function athleteLastName(a) {
+  const parts = String(a?.name || '').trim().split(/\s+/).filter(Boolean);
+  return (parts[parts.length - 1] || '').toLowerCase();
+}
+
+function renderAdminTeamOptions() {
+  const sel = document.getElementById('admin-team-filter');
+  if (!sel) return;
+  const current = sel.value || '';
+  const teams = [...new Set(athletes.flatMap(a => a.groups || []))].sort((a,b)=>a.localeCompare(b));
+  sel.innerHTML = `<option value="">All Teams</option>` + teams.map(t => `<option value="${escHtml(t)}">${escHtml(t)}</option>`).join('');
+  if (teams.includes(current)) sel.value = current;
+}
+
 function renderAdminList() {
-  if (athletes.length === 0) {
-    document.getElementById('admin-athlete-list').innerHTML = `<div class="empty-state"><span class="empty-icon">👥</span>No athletes yet</div>`;
+  const wrap = document.getElementById('admin-athlete-list');
+  if (!wrap) return;
+  renderAdminTeamOptions();
+  const search = (document.getElementById('admin-search')?.value || '').trim().toLowerCase();
+  const team = document.getElementById('admin-team-filter')?.value || '';
+  const filtered = athletes
+    .filter(a => !team || (a.groups || []).includes(team))
+    .filter(a => {
+      if (!search) return true;
+      return [a.name, a.sport, formatGroups(a.groups), String(a.grade || '')].join(' ').toLowerCase().includes(search);
+    })
+    .sort((a,b) => athleteLastName(a).localeCompare(athleteLastName(b)) || String(a.name || '').localeCompare(String(b.name || '')));
+
+  if (!athletes.length) {
+    wrap.innerHTML = `<div class="empty-state"><span class="empty-icon">👥</span>No athletes yet</div>`;
     return;
   }
-  document.getElementById('admin-athlete-list').innerHTML = athletes.map(a => `
-    <div class="athlete-list-item">
-      <div class="athlete-avatar" style="width:32px;height:32px;font-size:13px;margin-bottom:0;">${getInitials(a.name)}</div>
-      <div class="athlete-list-name">${a.name}</div>
-      <div style="display:flex;gap:4px;">
-        <button class="btn-icon" onclick="openEditAthlete('${a.id}')" title="Edit">✏️</button>
-        <button class="btn-icon" onclick="toggleAthleteStatus('${a.id}')" title="${a.active_status ? 'Deactivate' : 'Activate'}">${a.active_status ? '🟢' : '⭕'}</button>
-        <button class="btn-icon danger" onclick="deleteAthlete('${a.id}')" title="Delete">🗑️</button>
-      </div>
-    </div>
-  `).join('');
+  if (!filtered.length) {
+    wrap.innerHTML = `<div class="empty-state"><span class="empty-icon">🔎</span>No athletes match the current filters</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `<table class="admin-athlete-table">
+    <thead><tr><th>Name</th><th>Grade</th><th>Team / Group</th><th>Sport</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${filtered.map(a => {
+      const teams = (a.groups || []).length ? (a.groups || []).map(g => `<span class="admin-team-pill">${escHtml(g)}</span>`).join('') : '—';
+      return `<tr>
+        <td><div class="admin-table-name">${escHtml(a.name)}</div></td>
+        <td>Grade ${escHtml(a.grade || '—')}</td>
+        <td>${teams}</td>
+        <td>${escHtml(a.sport || '—')}</td>
+        <td>${a.active_status ? 'Active' : 'Inactive'}</td>
+        <td><div class="admin-actions">
+          <button class="btn-sm" onclick="openEditAthlete('${a.id}')">✏️ Edit</button>
+          <button class="btn-icon" onclick="toggleAthleteStatus('${a.id}')" title="${a.active_status ? 'Deactivate' : 'Activate'}">${a.active_status ? '🟢' : '⭕'}</button>
+          <button class="btn-icon danger" onclick="deleteAthlete('${a.id}')" title="Delete">🗑️</button>
+        </div></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function openAdminAthleteModal(mode) {
+  const modal = document.getElementById('admin-athlete-modal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  document.getElementById('add-panel').style.display = mode === 'add' ? 'block' : 'none';
+  document.getElementById('edit-panel').style.display = mode === 'edit' ? 'block' : 'none';
+}
+
+function closeAdminAthleteModal(event) {
+  if (event && event.target !== document.getElementById('admin-athlete-modal')) return;
+  const modal = document.getElementById('admin-athlete-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function openAddAthlete() {
+  ['new-name','new-sport','new-groups'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  const grade = document.getElementById('new-grade');
+  if (grade) grade.value = '10';
+  openAdminAthleteModal('add');
+  setTimeout(() => document.getElementById('new-name')?.focus(), 0);
 }
 
 function openEditAthlete(id) {
-  const a = athletes.find(x => x.id === id);
+  const a = athletes.find(x => String(x.id) === String(id));
   if (!a) return;
   document.getElementById('edit-id').value = a.id;
   document.getElementById('edit-name').value = a.name;
   document.getElementById('edit-grade').value = a.grade;
   document.getElementById('edit-sport').value = a.sport || '';
   document.getElementById('edit-groups').value = formatGroups(a.groups);
-  document.getElementById('edit-panel').style.display = 'block';
-  document.getElementById('edit-panel').scrollIntoView({ behavior: 'smooth' });
+  openAdminAthleteModal('edit');
+  setTimeout(() => document.getElementById('edit-name')?.focus(), 0);
 }
 
 async function openAthleteProfile(id) {
