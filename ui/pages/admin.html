@@ -1,0 +1,76 @@
+<div id="page-admin" class="page">
+  <!-- SEGMENT: Back navigation row.
+       Edit when changing back-button text/icon/placement. -->
+  <div class="nav-row">
+    <button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button>
+  </div>
+
+  <!-- SEGMENT: Page title and right-side add button for athlete management. -->
+  <div class="admin-page-head">
+    <div class="dash-heading">⚙ Athlete Management</div>
+    <button class="btn-primary admin-add-btn" onclick="openAddAthlete()">+ Add Athlete</button>
+  </div>
+
+  <!-- SEGMENT: All Athletes table controls.
+       Search filters by name/sport/group; Team filters by athlete groups. -->
+  <div class="admin-card admin-roster-card">
+    <div class="admin-title">All Athletes</div>
+    <div class="admin-toolbar">
+      <div class="admin-filter-field">
+        <label class="form-label">Search</label>
+        <input type="text" id="admin-search" class="form-input" placeholder="Search athletes..." oninput="renderAdminList()" />
+      </div>
+      <div class="admin-filter-field small">
+        <label class="form-label">Team</label>
+        <select id="admin-team-filter" class="form-input" onchange="renderAdminList()">
+          <option value="">All Teams</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- SEGMENT: Excel-style roster table.
+         renderAdminList() sorts by last name and paints rows into #admin-athlete-list. -->
+    <div class="admin-table-wrap" id="admin-athlete-list"><div class="empty-state"><span class="empty-icon">⏳</span>Loading...</div></div>
+  </div>
+
+  <!-- SEGMENT: In-page athlete popup.
+       openAddAthlete() shows the add form; openEditAthlete() shows the edit form. -->
+  <div id="admin-athlete-modal" class="admin-modal" style="display:none;" onclick="closeAdminAthleteModal(event)">
+    <div class="admin-modal-card" onclick="event.stopPropagation()">
+      <button class="admin-modal-close" onclick="closeAdminAthleteModal()">×</button>
+
+      <!-- SEGMENT: Add athlete popup form.
+           addAthlete() reads #new-* fields and saves directly to Supabase. -->
+      <div id="add-panel" style="display:none;">
+        <div class="admin-title">Add Athlete</div>
+        <div class="admin-grid">
+          <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="new-name" class="form-input" placeholder="First Last" /></div>
+          <div class="form-group"><label class="form-label">Grade</label><select id="new-grade" class="form-input"><option value="6">6th Grade</option><option value="7">7th Grade</option><option value="8">8th Grade</option><option value="9">9th Grade</option><option value="10" selected>10th Grade</option><option value="11">11th Grade</option><option value="12">12th Grade</option></select></div>
+          <div class="form-group"><label class="form-label">Sport</label><input type="text" id="new-sport" class="form-input" placeholder="Football, Basketball, etc." /></div>
+          <div class="form-group"><label class="form-label">Groups / Team (comma separated)</label><input type="text" id="new-groups" class="form-input" placeholder="Varsity, Morning, Rehab" /></div>
+        </div>
+        <div class="admin-modal-actions">
+          <button class="btn-sm" onclick="closeAdminAthleteModal()">Cancel</button>
+          <button class="btn-sm green" onclick="addAthlete()">Save</button>
+        </div>
+      </div>
+
+      <!-- SEGMENT: Edit athlete popup form.
+           saveEditAthlete() persists changes directly to the athletes Supabase table. -->
+      <div id="edit-panel" style="display:none;">
+        <div class="admin-title">Edit Athlete</div>
+        <input type="hidden" id="edit-id" />
+        <div class="admin-grid">
+          <div class="form-group"><label class="form-label">Name</label><input type="text" id="edit-name" class="form-input" /></div>
+          <div class="form-group"><label class="form-label">Grade</label><select id="edit-grade" class="form-input"><option value="6">6th</option><option value="7">7th</option><option value="8">8th</option><option value="9">9th</option><option value="10">10th</option><option value="11">11th</option><option value="12">12th</option></select></div>
+          <div class="form-group"><label class="form-label">Sport</label><input type="text" id="edit-sport" class="form-input" /></div>
+          <div class="form-group"><label class="form-label">Groups / Team (comma separated)</label><input type="text" id="edit-groups" class="form-input" /></div>
+        </div>
+        <div class="admin-modal-actions">
+          <button class="btn-sm" onclick="closeAdminAthleteModal()">Cancel</button>
+          <button class="btn-sm green" onclick="saveEditAthlete()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
