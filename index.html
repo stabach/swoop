@@ -1014,6 +1014,18 @@
   .tv-queue-item.done:hover { opacity: 0.6; background: rgba(255,255,255,0.06); cursor: pointer; }
   .tv-queue-item-name { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; color: white; }
   .tv-queue-item-detail { font-size: 12px; color: var(--green-300); margin-top: 2px; }
+  .tv-workout-center { width: min(1100px, 92vw); margin: 0 auto 28px; display: flex; flex-direction: column; gap: 14px; }
+  .tv-workout-card { background: linear-gradient(180deg, rgba(23,63,40,0.85), rgba(10,29,18,0.9)); border: 1px solid rgba(78,203,113,0.35); border-radius: 16px; padding: 16px 20px; text-align: left; box-shadow: 0 14px 40px rgba(0,0,0,0.35); }
+  .tv-workout-title { font-size: clamp(26px, 4vw, 44px); color: #fff; font-weight: 800; letter-spacing: 0.8px; line-height: 1.1; }
+  .tv-workout-sub { margin-top: 8px; font-size: clamp(16px, 2.2vw, 24px); color: var(--green-200); font-weight: 600; }
+  .tv-stopwatch-shell { position: relative; margin: 14px auto 0; width: min(430px, 86vw); border-radius: 999px; padding: 20px 18px 22px; background: radial-gradient(circle at 30% 20%, #1f4d31 0%, #0d2a1b 70%); border: 5px solid #7adf9a; box-shadow: inset 0 0 0 3px rgba(255,255,255,0.08), 0 20px 46px rgba(0,0,0,.45); }
+  .tv-stopwatch-shell::before { content: ''; position: absolute; top: -16px; left: 50%; transform: translateX(-50%); width: 72px; height: 18px; border-radius: 10px; background: #7adf9a; box-shadow: 0 2px 0 #4fb86f; }
+  .tv-stopwatch-label { text-transform: uppercase; letter-spacing: 2px; font-size: 12px; color: var(--green-100); font-weight: 700; }
+  .tv-stopwatch-time { font-size: clamp(48px, 7vw, 72px); font-weight: 800; line-height: 1; margin-top: 8px; color: #fff; font-variant-numeric: tabular-nums; }
+  .tv-stopwatch-actions { display: flex; justify-content: center; gap: 14px; margin-top: 18px; }
+  .tv-sw-btn { min-width: 170px; height: 58px; border-radius: 999px; border: 2px solid rgba(255,255,255,0.28); background: rgba(255,255,255,0.12); color: #fff; font-size: 30px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; cursor: pointer; }
+  .tv-sw-btn.primary { background: #1a7b3f; border-color: #4ecb71; }
+  .tv-sw-btn:hover { filter: brightness(1.06); }
   .calendar-grid { display:grid; grid-template-columns: repeat(7, minmax(120px,1fr)); gap:8px; }
   .calendar-weekdays { display:grid; grid-template-columns: repeat(7, minmax(120px,1fr)); gap:8px; }
   .calendar-cell { background:#fff; border:1px solid var(--border); border-radius:8px; min-height:120px; padding:8px; cursor:pointer; }
@@ -2406,25 +2418,29 @@ function openTVDisplay() {
   const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
   document.getElementById('tv-day-label').textContent = dayName;
   const template = (getLiveTemplates()[dayName] || []);
-  const rows = [];
+  const workoutRows = [];
   template.forEach(section => (section.exercises || []).forEach(ex => {
-    rows.push(`<div class="tv-queue-item"><div class="tv-queue-item-name">${ex.name}</div><div class="tv-queue-item-detail">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo || '—'}</div></div>`);
+    workoutRows.push(`<div class="tv-workout-card"><div class="tv-workout-title">${ex.name}</div><div class="tv-workout-sub">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo || '—'} · Rest: ${ex.rest || '—'} · Work: ${ex.workTime || '—'}</div></div>`);
   }));
   document.getElementById('tv-main').innerHTML = `
     <div class="tv-section-label">Workout Breakdown</div>
-    <div class="tv-exercise-name">Coach Display</div>
-    <div class="tv-set-info">
-      <div class="tv-stat"><div class="tv-stat-label">Stopwatch</div><div class="tv-stat-val" id="tv-stopwatch">00:00.00</div></div>
-      <div style="display:flex;gap:8px;">
-        <button class="tv-ctrl-btn primary" id="tv-sw-btn" onclick="tvToggleStopwatch()">Start</button>
-        <button class="tv-ctrl-btn" onclick="tvResetStopwatch()">Reset</button>
-      </div>
+    <div class="tv-workout-center">${workoutRows.join('') || '<div class="tv-workout-card"><div class="tv-workout-title">No Workout Scheduled</div></div>'}</div>
+    <div class="tv-stopwatch-shell">
+      <div class="tv-stopwatch-label">Stopwatch</div>
+      <div class="tv-stopwatch-time" id="tv-stopwatch">00:00.00</div>
+    </div>
+    <div class="tv-stopwatch-actions">
+      <button class="tv-sw-btn primary" id="tv-sw-btn" onclick="tvToggleStopwatch()">Start</button>
+      <button class="tv-sw-btn" onclick="tvResetStopwatch()">Reset</button>
     </div>`;
-  document.getElementById('tv-queue').innerHTML = rows.join('') || '<div class="tv-queue-item">No workout scheduled.</div>';
+  document.getElementById('tv-queue').innerHTML = '';
+  document.getElementById('tv-queue').style.display = 'none';
   document.querySelector('.tv-controls').style.display = 'none';
-  document.getElementById('tv-progress-text').textContent = 'Workout list';
+  document.getElementById('tv-progress-text').textContent = '';
   document.getElementById('tv-progress-pct').textContent = '';
-  document.getElementById('tv-progress-bar').style.width = '100%';
+  document.getElementById('tv-progress-bar').style.width = '0%';
+  document.querySelector('.tv-progress-label').style.display = 'none';
+  document.querySelector('.tv-progress-bar-wrap').style.display = 'none';
   document.getElementById('tv-display').classList.add('active');
   document.body.style.overflow = 'hidden';
 }
@@ -2433,6 +2449,9 @@ function closeTVDisplay() {
   document.getElementById('tv-display').classList.remove('active');
   document.body.style.overflow = '';
   document.querySelector('.tv-controls').style.display = 'flex';
+  document.getElementById('tv-queue').style.display = 'flex';
+  document.querySelector('.tv-progress-label').style.display = 'flex';
+  document.querySelector('.tv-progress-bar-wrap').style.display = 'block';
   tvResetStopwatch();
   tvResetState();
 }
