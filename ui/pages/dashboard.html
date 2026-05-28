@@ -1,0 +1,113 @@
+<div id="page-dashboard" class="page active">
+  <!-- SEGMENT: Premium dashboard shell.
+       This wrapper keeps the homepage feeling like one polished dashboard instead of a long webpage.
+       Edit .dashboard-shell in index.html when changing the spacing between the hero, overview cards, and roster panel. -->
+  <div class="dashboard-shell">
+    <!-- SEGMENT: Dashboard hero row (title + week navigation + search).
+         This is the top premium area. Edit here when changing the main heading, week arrows,
+         date display, or search field placement/behavior wiring. -->
+    <section class="dashboard-hero">
+      <div class="dash-top">
+        <!-- SEGMENT: Left side header block (title + selected week anchor date).
+             Date text is populated by renderDashboard() into #dash-date. -->
+        <div>
+          <div class="dash-heading">Coaching Dashboard</div>
+
+          <!-- SEGMENT: Week navigation controls.
+               ←/→ call shiftDashboardWeek() to move backward/forward by 1 week from the currently shown date.
+               The center #dash-date shows the current dashboard date. -->
+          <div class="dash-week-nav">
+            <button class="btn-sm" id="dash-prev-week-btn" onclick="shiftDashboardWeek(-1)" title="Previous Week">←</button>
+            <div class="dash-date" id="dash-date"></div>
+            <button class="btn-sm" id="dash-next-week-btn" onclick="shiftDashboardWeek(1)" title="Next Week">→</button>
+          </div>
+        </div>
+
+        <!-- SEGMENT: Right side utility tools.
+             Search input filters athlete roster rows via filterAthletes(). -->
+        <div class="dash-tool-row">
+          <div class="search-wrap">
+            <span class="search-icon">⌕</span>
+            <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEGMENT: KPI + quick action overview grid.
+         This stacks compact KPI cards first, then shortcut tiles underneath so the athlete roster starts higher without oversized stat-card whitespace. -->
+    <div class="dashboard-overview-grid">
+      <!-- SEGMENT: KPI cards row.
+           Each value is filled by updateDashboardKpis().
+           Edit here to change KPI card ordering, labels, or displayed text. -->
+      <div class="dashboard-kpis">
+        <div class="kpi-card">
+          <div class="kpi-label">Athletes Today</div>
+          <div class="kpi-value" id="kpi-athletes">0</div>
+          <div class="kpi-sub" id="kpi-athletes-sub">0 active rostered</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Sessions Logged</div>
+          <div class="kpi-value" id="kpi-logs">0</div>
+          <div class="kpi-sub">Entries in last 7 days</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Completion Rate</div>
+          <div class="kpi-value" id="kpi-completion">0%</div>
+          <div class="kpi-sub">Active athletes who logged this week</div>
+        </div>
+      </div>
+
+      <!-- SEGMENT: Quick action tiles.
+           Edit here to add/remove shortcut cards and change click destinations. -->
+      <div class="quick-tiles">
+        <div class="quick-tile" onclick="setDayFilter('today')">
+          <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4c5.svg" alt="📅" /></div>
+          <div>
+            <div class="tile-label">Today's Training</div>
+            <div class="tile-sub" id="today-day">Loading...</div>
+          </div>
+        </div>
+        <div class="quick-tile" onclick="showPage('admin')">
+          <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f465.svg" alt="👥" /></div>
+          <div>
+            <div class="tile-label">Manage Athletes</div>
+            <div class="tile-sub">Add · Edit · Status</div>
+          </div>
+        </div>
+        <div class="quick-tile" onclick="openWeeklyOverview()">
+          <div class="tile-icon"><img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f4ca.svg" alt="📊" /></div>
+          <div>
+            <div class="tile-label">Weekly Overview</div>
+            <div class="tile-sub">View weekly logged lifts</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEGMENT: Boxed athlete roster panel.
+         This is intentionally scrollable so the whole homepage does not become one long page.
+         Edit .athlete-grid max-height in index.html to show more/fewer visible athlete rows before scrolling. -->
+    <section class="athlete-roster-panel">
+      <!-- SEGMENT: Athlete section heading and results count.
+           #athlete-count is updated by renderAthleteGrid(). -->
+      <div class="section-heading">
+        Athletes <span style="font-size:13px;font-weight:600;color:var(--text-muted);" id="athlete-count"></span>
+      </div>
+
+      <!-- SEGMENT: Excel-like roster column labels.
+           Keep these labels aligned with the grid-template-columns used by .athlete-card in index.html. -->
+      <div class="athlete-table-head" aria-hidden="true">
+        <span>Athlete</span>
+        <span>Details</span>
+        <span>Log Status</span>
+      </div>
+
+      <!-- SEGMENT: Athlete roster rows mount point.
+           renderAthleteGrid() writes compact Excel-like athlete rows and M/T/W/TH pills here. -->
+      <div class="athlete-grid" id="athlete-grid">
+        <div class="empty-state"><span class="empty-icon">⏳</span>Loading athletes...</div>
+      </div>
+    </section>
+  </div>
+</div>
