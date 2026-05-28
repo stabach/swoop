@@ -1015,8 +1015,10 @@
   .tv-queue-item-name { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; color: white; }
   .tv-queue-item-detail { font-size: 12px; color: var(--green-300); margin-top: 2px; }
   .tv-workout-center { width: min(1100px, 92vw); margin: 0 auto 28px; display: flex; flex-direction: column; gap: 14px; }
-  .tv-workout-card { background: linear-gradient(180deg, rgba(23,63,40,0.85), rgba(10,29,18,0.9)); border: 1px solid rgba(78,203,113,0.35); border-radius: 16px; padding: 16px 20px; text-align: left; box-shadow: 0 14px 40px rgba(0,0,0,0.35); }
-  .tv-workout-title { font-size: clamp(26px, 4vw, 44px); color: #fff; font-weight: 800; letter-spacing: 0.8px; line-height: 1.1; }
+  .tv-workout-card { background: linear-gradient(180deg, rgba(23,63,40,0.85), rgba(10,29,18,0.9)); border: 1px solid rgba(78,203,113,0.35); border-radius: 999px; padding: 18px 28px 18px 34px; text-align: left; box-shadow: 0 14px 40px rgba(0,0,0,0.35); display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 28px; }
+  .tv-workout-title { font-size: clamp(32px, 5vw, 60px); color: #fff; font-weight: 800; letter-spacing: 0.8px; line-height: 1.05; }
+  .tv-workout-set-list { min-width: 180px; border-left: 2px solid rgba(141,232,169,0.35); padding-left: 24px; display: flex; flex-direction: column; gap: 4px; }
+  .tv-workout-set-row { color: var(--green-100); font-size: clamp(20px, 2.8vw, 34px); font-weight: 800; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .tv-workout-sub { margin-top: 8px; font-size: clamp(16px, 2.2vw, 24px); color: var(--green-200); font-weight: 600; }
   .tv-stopwatch-shell { position: relative; margin: 14px auto 0; width: min(430px, 86vw); border-radius: 999px; padding: 20px 18px 22px; background: radial-gradient(circle at 30% 20%, #1f4d31 0%, #0d2a1b 70%); border: 5px solid #7adf9a; box-shadow: inset 0 0 0 3px rgba(255,255,255,0.08), 0 20px 46px rgba(0,0,0,.45); }
   .tv-stopwatch-shell::before { content: ''; position: absolute; top: -16px; left: 50%; transform: translateX(-50%); width: 72px; height: 18px; border-radius: 10px; background: #7adf9a; box-shadow: 0 2px 0 #4fb86f; }
@@ -2413,6 +2415,19 @@ function tvResetState() {
   tvPhase = 'work';
 }
 
+
+function buildTvSetBreakdown(ex) {
+  const setCount = Math.max(parseInt(ex?.sets) || 0, 0);
+  const reps = splitSetValues(ex?.reps || '');
+  const percents = splitSetValues(ex?.tempo || '');
+  if (!setCount) return '<div class="tv-workout-set-row">—</div>';
+  return Array.from({ length: setCount }, (_, idx) => {
+    const rep = reps[idx] || reps[reps.length - 1] || '—';
+    const pct = percents[idx] || percents[percents.length - 1] || '—';
+    return `<div class="tv-workout-set-row">${rep} × ${pct}</div>`;
+  }).join('');
+}
+
 function openTVDisplay() {
   const now = new Date();
   const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
@@ -2420,7 +2435,7 @@ function openTVDisplay() {
   const template = (getLiveTemplates()[dayName] || []);
   const workoutRows = [];
   template.forEach(section => (section.exercises || []).forEach(ex => {
-    workoutRows.push(`<div class="tv-workout-card"><div class="tv-workout-title">${ex.name}</div><div class="tv-workout-sub">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo || '—'} · Rest: ${ex.rest || '—'} · Work: ${ex.workTime || '—'}</div></div>`);
+    workoutRows.push(`<div class="tv-workout-card"><div><div class="tv-workout-title">${ex.name}</div><div class="tv-workout-sub">Rest: ${ex.rest || '—'} · Work: ${ex.workTime || '—'}</div></div><div class="tv-workout-set-list">${buildTvSetBreakdown(ex)}</div></div>`);
   }));
   document.getElementById('tv-main').innerHTML = `
     <div class="tv-section-label">Workout Breakdown</div>
