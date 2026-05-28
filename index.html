@@ -247,42 +247,37 @@
     justify-content: space-between;
   }
   .athlete-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
   .athlete-card {
     background: linear-gradient(180deg, var(--surface-1) 0%, var(--surface-2) 100%);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 16px;
+    padding: 12px 14px;
     cursor: pointer;
-    transition: box-shadow 0.15s, transform 0.1s, border-color 0.15s;
+    transition: box-shadow 0.15s, transform 0.1s, border-color 0.15s, background 0.15s;
     position: relative;
-  }
-  .athlete-card:hover { box-shadow: 0 4px 16px rgba(11,46,26,0.12); transform: translateY(-2px); border-color: var(--green-300); }
-  .athlete-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: var(--green-100);
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(180px, 1.3fr) minmax(170px, 1fr) auto;
     align-items: center;
-    justify-content: center;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--green-800);
-    margin-bottom: 10px;
+    gap: 14px;
   }
-  .athlete-name { font-weight: 600; font-size: 15px; color: var(--text-main); margin-bottom: 3px; }
-  .athlete-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
+  .athlete-card:hover { box-shadow: 0 4px 16px rgba(11,46,26,0.12); transform: translateY(-1px); border-color: var(--green-300); background: var(--surface-3); }
+  .athlete-name { font-weight: 800; font-size: 16px; color: var(--text-main); margin-bottom: 2px; }
+  .athlete-meta { font-size: 13px; color: var(--text-muted); line-height: 1.35; }
   .athlete-week {
     display: flex;
     gap: 5px;
-    margin: 6px 0 10px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+  }
+  .athlete-row-label { font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: var(--text-muted); font-weight: 800; margin-bottom: 2px; }
+  @media (max-width: 720px) {
+    .athlete-card { grid-template-columns: 1fr; align-items: flex-start; }
+    .athlete-week { justify-content: flex-start; }
   }
   .week-pill {
     width: 24px;
@@ -1751,7 +1746,9 @@ async function updateDashboardKpis() {
 
 async function renderAthleteGrid() {
   const query = (document.getElementById('search-input')?.value || '').toLowerCase();
-  const filtered = athletes.filter(a => a.name.toLowerCase().includes(query) || (a.sport || '').toLowerCase().includes(query));
+  const filtered = athletes
+    .filter(a => a.name.toLowerCase().includes(query) || (a.sport || '').toLowerCase().includes(query))
+    .sort((a,b) => athleteLastName(a).localeCompare(athleteLastName(b)) || String(a.name || '').localeCompare(String(b.name || '')));
   document.getElementById('athlete-count').textContent = `(${filtered.length})`;
 
   if (filtered.length === 0) {
@@ -1791,12 +1788,17 @@ async function renderAthleteGrid() {
   });
 
   document.getElementById('athlete-grid').innerHTML = filtered.map(a => `
-    <div class="athlete-card" data-athlete-id="${a.id}" style="cursor:pointer;text-align:left;" role="button" tabindex="0">
+    <div class="athlete-card" data-athlete-id="${a.id}" role="button" tabindex="0">
       ${!a.active_status ? '<span class="inactive-badge">Inactive</span>' : ''}
-      <div class="athlete-avatar">${getInitials(a.name)}</div>
-      <div class="athlete-name">${a.name}</div>
-      <div class="athlete-meta">Grade ${a.grade || '—'} · ${a.sport || 'No sport'}</div>
-      <div class="athlete-week">
+      <div>
+        <div class="athlete-row-label">Athlete</div>
+        <div class="athlete-name">${escHtml(a.name)}</div>
+      </div>
+      <div>
+        <div class="athlete-row-label">Details</div>
+        <div class="athlete-meta">Grade ${escHtml(a.grade || '—')} · ${escHtml(a.sport || 'No sport')}</div>
+      </div>
+      <div class="athlete-week" aria-label="Monday through Thursday log status">
         ${weekdayKeys.map((k, idx) => {
           const didLog = logsByAthlete[a.id]?.has(idx);
           return `<span class="week-pill ${didLog ? 'logged' : 'missed'}">${k}</span>`;
