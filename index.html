@@ -1028,6 +1028,8 @@
   .attendance-name { font-weight:700; color:var(--text-main); }
   .attendance-status { font-size:12px; color:var(--text-muted); margin-top:4px; }
 </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
 
@@ -1429,6 +1431,7 @@ function canLogExercise(name){
   return LOGGABLE_LIFTS.includes(key);
 }
 let dashboardAnchorDate = new Date();
+let logDatePicker = null;
 
 
 function isWorkoutLoggingDay(dateStr) {
@@ -1436,6 +1439,30 @@ function isWorkoutLoggingDay(dateStr) {
   const d = new Date(dateStr + 'T12:00:00');
   const day = d.getDay();
   return day >= 1 && day <= 4; // Monday-Thursday only
+}
+
+
+function initLogDatePicker() {
+  const input = document.getElementById('log-date');
+  if (!input) return;
+
+  if (window.flatpickr) {
+    if (logDatePicker && typeof logDatePicker.destroy === 'function') {
+      logDatePicker.destroy();
+    }
+    logDatePicker = flatpickr(input, {
+      dateFormat: 'Y-m-d',
+      disableMobile: true,
+      allowInput: false,
+      disable: [
+        function(date) {
+          const day = date.getDay();
+          return day === 0 || day === 5 || day === 6; // Sun/Fri/Sat disabled (Mon-Thu only)
+        }
+      ],
+      onChange: function() { enforceWorkoutLogDate(input); }
+    });
+  }
 }
 
 function enforceWorkoutLogDate(inputEl) {
@@ -1923,7 +1950,13 @@ function openLogModal(exercise, level) {
   const setCount = Math.max(parseInt(ex?.sets) || 1, 1);
   const repTargets = splitSetValues(ex?.reps || '');
   const logDateInput = document.getElementById('log-date');
-  logDateInput.value = currentDate || new Date().toISOString().split('T')[0];
+  initLogDatePicker();
+  const defaultLogDate = currentDate || new Date().toISOString().split('T')[0];
+  if (logDatePicker && typeof logDatePicker.setDate === 'function') {
+    logDatePicker.setDate(defaultLogDate, true);
+  } else {
+    logDateInput.value = defaultLogDate;
+  }
   logDateInput.onchange = () => enforceWorkoutLogDate(logDateInput);
   enforceWorkoutLogDate(logDateInput);
   document.getElementById('log-set-rows').innerHTML = Array.from({length:setCount}, (_,i)=>`
