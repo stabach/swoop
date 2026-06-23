@@ -1297,8 +1297,8 @@
     background: linear-gradient(180deg, rgba(0,0,0,0.78), transparent);
   }
   .tv-logo { display:flex; align-items:center; gap:20px; min-width:340px; font-size: clamp(20px, 1.62vw, 31px); font-weight: 800; letter-spacing: 9px; color: #fff; text-transform: uppercase; }
-  .tv-brand-mark { width: 62px; height: 62px; border-radius: 50%; border: 4px solid #5dff62; display:flex; align-items:center; justify-content:center; color:#5dff62; box-shadow: 0 0 26px rgba(89,255,104,.34); overflow:hidden; }
-  .tv-brand-mark img { width: 116%; height: 116%; object-fit: contain; display:block; filter: drop-shadow(0 0 8px rgba(93,255,98,.35)); }
+  .tv-brand-mark { width: 62px; height: 62px; border-radius: 50%; border: 4px solid #5dff62; display:flex; align-items:center; justify-content:center; color:#5dff62; box-shadow: 0 0 26px rgba(89,255,104,.34); overflow:hidden; background: rgba(4, 18, 10, .88); }
+  .tv-eagle-head { width: 122%; height: 122%; display:block; filter: drop-shadow(0 0 8px rgba(93,255,98,.35)); transform: translate(4px, 1px); }
   .tv-day-label { flex:1; display:flex; align-items:center; justify-content:center; gap:28px; font-size: clamp(18px, 1.5vw, 28px); font-weight: 700; color: #f2fff2; letter-spacing: 3px; white-space: nowrap; }
   .tv-day-label::before,
   .tv-day-label::after { content:''; width:min(220px, 18vw); height:1px; background:linear-gradient(90deg, transparent, #54ff5c 55%, transparent); box-shadow:0 0 14px rgba(84,255,92,.8); }
@@ -1571,12 +1571,6 @@
     letter-spacing: clamp(3px, .35vw, 7px);
     text-transform: uppercase;
     white-space: nowrap;
-  }
-  .tv-station-slashes {
-    width: clamp(36px, 3vw, 56px);
-    height: 22px;
-    background: repeating-linear-gradient(110deg, transparent 0 9px, #54ff5c 9px 14px, transparent 14px 22px);
-    filter: drop-shadow(0 0 8px rgba(84,255,92,.5));
   }
   .tv-station-body {
     min-height: 0;
@@ -2150,7 +2144,16 @@
   <div class="tv-top-bar">
     <div class="tv-logo">
       <span class="tv-brand-mark" aria-hidden="true">
-        <img src="eagle-head-transparent.png" alt="" />
+        <svg class="tv-eagle-head" viewBox="0 0 160 160" fill="none">
+          <path d="M28 85C43 47 83 22 153 10C128 24 108 39 92 55C112 49 135 52 154 65C121 62 94 70 74 90C98 84 124 91 144 105C111 101 79 109 54 132C57 114 49 99 28 85Z" fill="#fff"/>
+          <path d="M31 90C42 74 57 69 76 78C60 80 49 87 43 100C58 97 74 103 87 116C65 114 48 122 38 137C25 131 18 114 31 90Z" fill="#f7c84b"/>
+          <path d="M27 85C44 44 86 20 154 9C128 24 108 39 92 55C113 49 135 52 154 65C123 63 96 71 74 90C97 85 123 90 144 105C112 102 81 110 54 132C58 114 50 100 28 85Z" stroke="#006b3a" stroke-width="7" stroke-linejoin="round"/>
+          <path d="M31 90C43 73 58 70 76 78C61 80 50 88 43 100C59 98 75 104 87 116C66 115 49 122 38 137C25 131 18 114 31 90Z" stroke="#006b3a" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M63 72C77 64 94 64 112 70M70 84C88 77 103 77 121 83M82 98C99 94 113 96 128 104" stroke="#006b3a" stroke-width="5" stroke-linecap="round"/>
+          <path d="M66 78C73 75 81 75 89 79" stroke="#001f12" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="82" cy="67" r="4" fill="#001f12"/>
+          <path d="M89 63L102 55L94 70Z" fill="#006b3a"/>
+        </svg>
       </span>
       <span>Eagle Strength</span>
     </div>
@@ -5018,7 +5021,6 @@ function renderTvFullWorkout(label) {
         <div class="tv-station-header">
           <div class="tv-station-number"><span>${stationIndex + 1}</span></div>
           <div class="tv-station-title">${escHtml(stationTitle(stationIndex))}</div>
-          <div class="tv-station-slashes" aria-hidden="true"></div>
         </div>
         <div class="tv-station-body">
           ${exerciseCards}
