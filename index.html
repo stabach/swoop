@@ -1431,6 +1431,161 @@
   .calendar-event-time { color:var(--text-muted); font-weight:800; font-size:12px; }
   .calendar-empty-events { color:var(--text-muted); font-size:13px; margin-bottom:12px; }
   .weekday-head { font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); text-align:center; margin-bottom:8px; }
+  .tutorials-shell { max-width: 1120px; margin: 0 auto; }
+  .tutorials-hero {
+    min-height: 270px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+  }
+  .tutorials-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(44px, 7vw, 76px);
+    line-height: 0.95;
+    font-weight: 800;
+    color: var(--green-900);
+    letter-spacing: 0.5px;
+  }
+  .tutorials-subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 520px;
+  }
+  .tutorial-search {
+    width: min(720px, 100%);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .tutorial-search-input {
+    height: 58px;
+    border-radius: var(--radius);
+    border: 2px solid var(--border);
+    background: white;
+    padding: 0 18px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 18px;
+    color: var(--text-main);
+  }
+  .tutorial-search-input:focus {
+    outline: none;
+    border-color: var(--green-500);
+    box-shadow: 0 0 0 3px rgba(78,203,113,0.16);
+  }
+  .tutorial-player {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .tutorial-player-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #050e08;
+  }
+  .tutorial-player-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .tutorial-player-meta {
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .tutorial-player-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 800;
+    color: var(--green-900);
+  }
+  .tutorial-player-channel {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .tutorial-results {
+    margin-top: 8px;
+  }
+  .tutorial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+  }
+  .tutorial-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .12s, box-shadow .12s, transform .12s;
+  }
+  .tutorial-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--green-400);
+  }
+  .tutorial-card.selected {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(199,154,43,0.24);
+  }
+  .tutorial-thumb-wrap {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--green-900);
+  }
+  .tutorial-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .tutorial-badge {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    background: rgba(5,14,8,0.82);
+    color: white;
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  .tutorial-card-body {
+    padding: 10px 12px 12px;
+  }
+  .tutorial-card-title {
+    font-weight: 800;
+    color: var(--green-900);
+    line-height: 1.2;
+    font-size: 14px;
+  }
+  .tutorial-card-channel {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  @media (max-width: 680px) {
+    .tutorials-hero { min-height: 220px; }
+    .tutorial-search { grid-template-columns: 1fr; }
+    .tutorial-search .btn-save-workout { width: 100%; }
+    .tutorial-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 420px) {
+    .tutorial-grid { grid-template-columns: 1fr; }
+  }
   .attendance-toolbar { display:flex; align-items:flex-end; gap:12px; margin-bottom:14px; }
   .attendance-filter-field { flex:1; }
   .attendance-actions { display:flex; gap:8px; flex-wrap:wrap; }
@@ -1492,6 +1647,7 @@
     <button class="header-nav-btn" onclick="showPage('admin')">Manage Athletes</button>
     <button class="header-nav-btn" onclick="showPage('attendance')">Attendance</button>
     <button class="header-nav-btn" onclick="showPage('calendar')">Calendar</button>
+    <button class="header-nav-btn" onclick="showPage('tutorials')">Tutorials</button>
     <button class="header-nav-btn" onclick="logoutCoach()" style="color:#ff6b6b;font-size:12px;">Logout</button>
   </div>
 </div>
@@ -1582,6 +1738,9 @@
 
   <!-- EDIT WORKOUTS PAGE -->
   <!-- include:page-edit-workouts --><div data-include="ui/pages/edit-workouts.html"></div><!-- /include:page-edit-workouts -->
+
+  <!-- TUTORIALS PAGE -->
+  <!-- include:page-tutorials --><div data-include="ui/pages/tutorials.html"></div><!-- /include:page-tutorials -->
 
   <div id="page-attendance" class="page">
     <div class="nav-row"><button class="btn-sm" onclick="showPage('dashboard')">← Dashboard</button></div>
@@ -1750,6 +1909,7 @@
 let supabase = null;
 const SUPABASE_URL = 'https://ispmelxwebnhnoflbeoj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RV-YgGToZ9yfk4RNVvfMQQ_Peh_NVIF';
+const TUTORIALS_API_URL = window.TUTORIALS_API_URL || '/api/tutorials';
 const LEGACY_COACH_SESSION_KEY = 'coach_session_username';
 const COACH_AUTH_EMAIL_DOMAIN = 'eaglestrength.local';
 let currentCoach = null;
@@ -2713,6 +2873,103 @@ async function renderProgressionChart() {
   });
 }
 
+// ===================== TUTORIALS =====================
+function showTutorialsPage() {
+  const input = document.getElementById('tutorial-search-input');
+  const results = document.getElementById('tutorial-results');
+  if (input && !input.value) input.focus();
+  if (results && !tutorialVideos.length) {
+    results.innerHTML = `<div class="empty-state">Search for an exercise to find quick tutorial videos.</div>`;
+  }
+}
+
+function tutorialEmbedUrl(videoId) {
+  return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0&modestbranding=1`;
+}
+
+function tutorialCard(video) {
+  const selected = video.id === selectedTutorialVideoId;
+  const badge = video.isShort ? 'Shorts' : 'Quick Video';
+  return `
+    <button class="tutorial-card ${selected ? 'selected' : ''}" type="button" onclick="selectTutorialVideo(${jsArg(video.id)})">
+      <div class="tutorial-thumb-wrap">
+        ${video.thumbnail ? `<img class="tutorial-thumb" src="${escHtml(video.thumbnail)}" alt="${escHtml(video.title)} thumbnail" loading="lazy" />` : ''}
+        <span class="tutorial-badge">${escHtml(badge)}</span>
+      </div>
+      <div class="tutorial-card-body">
+        <div class="tutorial-card-title">${escHtml(video.title)}</div>
+        <div class="tutorial-card-channel">${escHtml(video.channelTitle || 'YouTube')}</div>
+      </div>
+    </button>`;
+}
+
+function renderTutorialResults() {
+  const results = document.getElementById('tutorial-results');
+  if (!results) return;
+  if (!tutorialVideos.length) {
+    results.innerHTML = `<div class="empty-state">No tutorial videos found. Try searching a different exercise name.</div>`;
+    return;
+  }
+  results.innerHTML = `<div class="tutorial-grid">${tutorialVideos.map(tutorialCard).join('')}</div>`;
+}
+
+function selectTutorialVideo(videoId) {
+  const video = tutorialVideos.find(v => v.id === videoId);
+  if (!video) return;
+  selectedTutorialVideoId = videoId;
+  const player = document.getElementById('tutorial-player');
+  if (player) {
+    player.style.display = 'block';
+    player.innerHTML = `
+      <div class="tutorial-player-frame">
+        <iframe src="${tutorialEmbedUrl(video.id)}" title="${escHtml(video.title)}" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+      <div class="tutorial-player-meta">
+        <div>
+          <div class="tutorial-player-title">${escHtml(video.title)}</div>
+          <div class="tutorial-player-channel">${escHtml(video.channelTitle || 'YouTube')}</div>
+        </div>
+        <a class="btn-sm" href="${escHtml(video.url || `https://www.youtube.com/watch?v=${video.id}`)}" target="_blank" rel="noopener">Open on YouTube</a>
+      </div>`;
+    player.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  renderTutorialResults();
+}
+
+async function searchTutorials(event) {
+  if (event) event.preventDefault();
+  const input = document.getElementById('tutorial-search-input');
+  const results = document.getElementById('tutorial-results');
+  const player = document.getElementById('tutorial-player');
+  const term = (input?.value || '').trim();
+  if (!term) {
+    tutorialVideos = [];
+    selectedTutorialVideoId = null;
+    if (player) player.style.display = 'none';
+    if (results) results.innerHTML = `<div class="empty-state">Search for an exercise to find quick tutorial videos.</div>`;
+    return;
+  }
+
+  if (results) results.innerHTML = `<div class="empty-state">Finding tutorial videos...</div>`;
+  if (player) player.style.display = 'none';
+  selectedTutorialVideoId = null;
+
+  try {
+    const separator = TUTORIALS_API_URL.includes('?') ? '&' : '?';
+    const res = await fetch(`${TUTORIALS_API_URL}${separator}q=${encodeURIComponent(term)}`);
+    if (!res.ok) throw new Error(`Tutorial API returned ${res.status}`);
+    const data = await res.json();
+    tutorialVideos = Array.isArray(data.videos) ? data.videos.slice(0, 5) : [];
+    renderTutorialResults();
+    if (tutorialVideos.length) selectTutorialVideo(tutorialVideos[0].id);
+  } catch (error) {
+    console.error('Tutorial search failed:', error);
+    tutorialVideos = [];
+    selectedTutorialVideoId = null;
+    if (results) results.innerHTML = `<div class="empty-state">Could not load tutorial videos right now. Please try again.</div>`;
+  }
+}
+
 // ===================== NAVIGATION =====================
 function showPage(page) {
   const target = document.getElementById('page-' + page);
@@ -2726,6 +2983,7 @@ function showPage(page) {
   if (page === 'dashboard') { renderDashboard(); }
   if (page === 'today') { showTodayPage({ resetToToday: true }); }
   if (page === 'edit-workouts') { showEditWorkoutsPage(); }
+  if (page === 'tutorials') { showTutorialsPage(); }
   if (page === 'attendance') { renderAttendanceGroupOptions(); }
   if (page === 'calendar') { if (!document.getElementById('calendar-month').value) document.getElementById('calendar-month').value = new Date().toISOString().slice(0,7); loadCalendarEvents(); }
 }
@@ -2795,6 +3053,8 @@ let editCreateFormOpen = false;
 let todayWorkoutDate = null;
 let todaySelectedWorkoutId = null;
 let copyWorkoutSourceId = null;
+let tutorialVideos = [];
+let selectedTutorialVideoId = null;
 
 function deepClone(v) {
   return JSON.parse(JSON.stringify(v));
