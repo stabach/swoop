@@ -1248,9 +1248,10 @@
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(circle at 20% 10%, rgba(60, 255, 107, 0.14), transparent 28%),
-      radial-gradient(circle at 78% 18%, rgba(72, 255, 122, 0.10), transparent 24%),
-      linear-gradient(180deg, #020604 0%, #050b08 48%, #07100e 100%);
+      radial-gradient(circle at 22% 8%, rgba(76, 240, 92, 0.12), transparent 30%),
+      radial-gradient(circle at 76% 18%, rgba(76, 240, 92, 0.08), transparent 25%),
+      radial-gradient(circle at 50% 72%, rgba(76, 240, 92, 0.05), transparent 34%),
+      linear-gradient(180deg, #020505 0%, #050908 48%, #070c0b 100%);
     z-index: 10000;
     flex-direction: column;
     align-items: center;
@@ -1265,10 +1266,10 @@
     inset: 0;
     pointer-events: none;
     background-image:
-      linear-gradient(rgba(86, 255, 126, 0.055) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(86, 255, 126, 0.04) 1px, transparent 1px);
-    background-size: 72px 72px;
-    opacity: 0.16;
+      linear-gradient(rgba(86, 255, 126, 0.036) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(86, 255, 126, 0.026) 1px, transparent 1px);
+    background-size: 86px 86px;
+    opacity: 0.13;
     mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.85) 100%);
   }
   #tv-display::after {
@@ -1290,20 +1291,22 @@
     position: absolute;
     top: 0; left: 0; right: 0;
     z-index: 2;
-    padding: 22px 44px 6px;
-    display: flex;
+    padding: 30px 48px 8px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(auto, 760px) minmax(0, 1fr);
     align-items: center;
-    justify-content: space-between;
+    column-gap: 28px;
     background: linear-gradient(180deg, rgba(0,0,0,0.78), transparent);
   }
-  .tv-logo { display:flex; align-items:center; gap:20px; min-width:340px; font-size: clamp(20px, 1.62vw, 31px); font-weight: 800; letter-spacing: 9px; color: #fff; text-transform: uppercase; }
-  .tv-brand-mark { width: 62px; height: 62px; border-radius: 50%; border: 4px solid #5dff62; display:flex; align-items:center; justify-content:center; color:#5dff62; box-shadow: 0 0 26px rgba(89,255,104,.34); overflow:hidden; background: rgba(4, 18, 10, .88); }
+  .tv-logo { justify-self:start; display:flex; align-items:center; gap:20px; min-width:0; font-size: clamp(20px, 1.45vw, 28px); font-weight: 800; letter-spacing: 8px; color: #fff; text-transform: uppercase; white-space: nowrap; }
+  .tv-brand-mark { width: 58px; height: 58px; border-radius: 50%; border: 3px solid #58f05a; display:flex; align-items:center; justify-content:center; color:#58f05a; box-shadow: 0 0 24px rgba(88,240,90,.28); overflow:hidden; background: rgba(4, 18, 10, .86); }
   .tv-eagle-head { width: 122%; height: 122%; display:block; filter: drop-shadow(0 0 8px rgba(93,255,98,.35)); transform: translate(4px, 1px); }
-  .tv-day-label { flex:1; display:flex; align-items:center; justify-content:center; gap:28px; font-size: clamp(18px, 1.5vw, 28px); font-weight: 700; color: #f2fff2; letter-spacing: 3px; white-space: nowrap; }
+  .tv-day-label { justify-self:center; width:100%; display:flex; align-items:center; justify-content:center; gap:24px; font-size: clamp(17px, 1.26vw, 24px); font-weight: 700; color: #f2fff2; letter-spacing: 3px; white-space: nowrap; }
   .tv-day-label::before,
-  .tv-day-label::after { content:''; width:min(220px, 18vw); height:1px; background:linear-gradient(90deg, transparent, #54ff5c 55%, transparent); box-shadow:0 0 14px rgba(84,255,92,.8); }
+  .tv-day-label::after { content:''; width:min(220px, 15vw); height:1px; background:linear-gradient(90deg, transparent, #58f05a 55%, transparent); box-shadow:0 0 11px rgba(88,240,90,.62); }
   .tv-close-btn {
-    min-width: 166px;
+    justify-self:end;
+    min-width: 144px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -1311,7 +1314,7 @@
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.28);
     color: white;
-    padding: 16px 26px;
+    padding: 13px 23px;
     border-radius: 12px;
     cursor: pointer;
     font-family: 'Barlow Condensed', sans-serif;
@@ -1320,7 +1323,7 @@
     letter-spacing: 2px;
     text-transform: uppercase;
   }
-  .tv-close-btn svg { width: 24px; height: 24px; color:#5dff62; }
+  .tv-close-btn svg { width: 23px; height: 23px; color:#58f05a; }
   .tv-close-btn:hover { background: rgba(84,255,92,0.14); border-color: rgba(84,255,92,0.55); }
   .tv-main {
     position: relative;
@@ -1331,41 +1334,41 @@
     justify-content: center;
     width: 100%;
     height: 100vh;
-    padding: 96px 42px 28px;
+    padding: 112px 48px 34px;
     text-align: center;
     overflow: hidden;
   }
   .tv-breakdown-shell {
-    width: min(1848px, calc(100vw - 84px));
+    width: min(1810px, calc(100vw - 96px));
     height: 100%;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
-    gap: clamp(12px, 1.7vh, 20px);
+    gap: clamp(20px, 2.4vh, 28px);
   }
   .tv-display-title {
     display:flex;
     align-items:center;
     justify-content:center;
     gap: clamp(18px, 2vw, 34px);
-    font-size: clamp(40px, 3.75vw, 72px);
+    font-size: clamp(44px, 3.65vw, 70px);
     line-height: .92;
     font-weight: 800;
     letter-spacing: clamp(4px, .45vw, 10px);
     text-transform: uppercase;
     color: #f7faf7;
-    text-shadow: 0 0 28px rgba(255,255,255,0.16);
+    text-shadow: 0 0 24px rgba(255,255,255,0.13);
     white-space: nowrap;
   }
   .tv-display-title::before,
   .tv-display-title::after {
     content:'';
-    width: clamp(92px, 10vw, 150px);
-    height: 20px;
-    background: repeating-linear-gradient(115deg, transparent 0 10px, #55ff5b 10px 18px, transparent 18px 28px);
-    opacity: .82;
-    filter: drop-shadow(0 0 10px rgba(85,255,91,.5));
+    width: clamp(88px, 9vw, 138px);
+    height: 18px;
+    background: repeating-linear-gradient(115deg, transparent 0 10px, #58f05a 10px 17px, transparent 17px 28px);
+    opacity: .66;
+    filter: drop-shadow(0 0 8px rgba(88,240,90,.38));
   }
-  .tv-title-date { color:#5dff62; text-shadow:0 0 20px rgba(93,255,98,.44); }
+  .tv-title-date { color:#58f05a; text-shadow:0 0 18px rgba(88,240,90,.36); }
   .tv-section-label {
     font-size: clamp(16px, 2.5vw, 26px);
     font-weight: 700;
@@ -1511,33 +1514,35 @@
   .tv-queue-item-detail { font-size: 12px; color: var(--green-300); margin-top: 2px; }
   .tv-workout-layout {
     min-height: 0;
+    height: min(100%, 760px);
+    align-self: center;
     display: grid;
-    grid-template-columns: repeat(3, minmax(260px, 1fr)) minmax(250px, 0.72fr);
-    gap: clamp(16px, 1.2vw, 24px);
+    grid-template-columns: repeat(3, minmax(260px, 1fr)) minmax(260px, 0.85fr);
+    gap: clamp(16px, 1.05vw, 20px);
     align-items: stretch;
   }
   .tv-station-board { display: contents; }
   .tv-station-card {
     min-height: 0;
     background:
-      radial-gradient(circle at 78% 8%, rgba(80,255,99,0.10), transparent 30%),
-      linear-gradient(180deg, rgba(10,18,14,0.92), rgba(6,16,10,0.96));
-    border: 1px solid rgba(84,255,92,0.46);
+      radial-gradient(circle at 78% 8%, rgba(88,240,90,0.09), transparent 30%),
+      linear-gradient(180deg, rgba(10,18,14,0.86), rgba(6,16,10,0.94));
+    border: 1px solid rgba(88,240,90,0.34);
     border-radius: 22px;
-    box-shadow: inset 0 0 28px rgba(84,255,92,0.08), 0 20px 60px rgba(0,0,0,0.45);
+    box-shadow: inset 0 0 26px rgba(88,240,90,0.055), 0 20px 60px rgba(0,0,0,0.44);
     overflow: hidden;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
   }
   .tv-station-header {
-    min-height: clamp(66px, 7.2vh, 86px);
+    min-height: clamp(64px, 6.5vh, 78px);
     color: #fff;
     font-family: 'Barlow Condensed', sans-serif;
     padding: clamp(12px, 1.35vh, 18px) clamp(16px, 1.35vw, 24px);
     display:flex;
     align-items:center;
     gap: clamp(14px, 1.3vw, 22px);
-    border-bottom: 1px solid rgba(84,255,92,0.26);
+    border-bottom: 1px solid rgba(88,240,90,0.22);
     background: linear-gradient(180deg, rgba(8,15,11,0.78), rgba(4,12,8,0.52));
   }
   .tv-station-number {
@@ -1545,21 +1550,21 @@
     height: clamp(46px, 3.35vw, 62px);
     flex: 0 0 auto;
     clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0 50%);
-    background: linear-gradient(180deg, #58ff5c, #1c9d36);
+    background: linear-gradient(180deg, #58f05a, #1f8f36);
     display:flex;
     align-items:center;
     justify-content:center;
     color:#07100a;
     font-size: clamp(24px, 1.9vw, 34px);
     font-weight:800;
-    box-shadow:0 0 24px rgba(84,255,92,.36);
+    box-shadow:0 0 20px rgba(88,240,90,.26);
   }
   .tv-station-number span {
     width: calc(100% - 8px);
     height: calc(100% - 8px);
     clip-path: inherit;
     background: #07110c;
-    color:#69ff6b;
+    color:#62f166;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -1572,21 +1577,39 @@
     text-transform: uppercase;
     white-space: nowrap;
   }
+  .tv-station-slashes {
+    flex: 0 0 auto;
+    width: clamp(34px, 2.5vw, 48px);
+    height: clamp(18px, 1.7vw, 24px);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .tv-station-slashes span {
+    width: 5px;
+    height: 100%;
+    border-radius: 999px;
+    background: #58f05a;
+    transform: skewX(-18deg);
+    box-shadow: 0 0 10px rgba(88,240,90,0.42);
+  }
+  .tv-station-slashes span:nth-child(3) { opacity: .62; }
   .tv-station-body {
     min-height: 0;
     display: grid;
     grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: clamp(12px, 1.35vh, 17px);
-    padding: clamp(13px, 1.25vw, 21px);
+    gap: clamp(12px, 1.3vh, 16px);
+    padding: clamp(13px, 1.15vw, 20px);
   }
   .tv-station-exercise {
     min-height: 0;
-    border: 1px solid rgba(195,255,203,0.18);
+    border: 1px solid rgba(195,255,203,0.16);
     border-radius: 16px;
     background:
-      radial-gradient(circle at 20% 0%, rgba(84,255,92,0.13), transparent 46%),
+      radial-gradient(circle at 20% 0%, rgba(88,240,90,0.105), transparent 46%),
       linear-gradient(180deg, rgba(11,31,18,0.76), rgba(6,13,9,0.86));
-    box-shadow: inset 0 0 18px rgba(84,255,92,0.05);
+    box-shadow: inset 0 0 18px rgba(88,240,90,0.042);
     padding: clamp(15px, 1.2vw, 22px);
     text-align: left;
     display: grid;
@@ -1597,7 +1620,7 @@
     cursor: pointer;
     transition: transform .16s ease, border-color .16s ease, background .16s ease;
   }
-  .tv-station-exercise:hover { transform: translateY(-2px); border-color: rgba(84,255,92,0.62); background: rgba(30,80,42,0.3); }
+  .tv-station-exercise:hover { transform: translateY(-2px); border-color: rgba(88,240,90,0.52); background: rgba(30,80,42,0.26); }
   .tv-station-exercise.empty { opacity: .45; cursor: default; }
   .tv-station-exercise.empty:hover { transform: none; border-color: rgba(195,255,203,0.18); background: linear-gradient(180deg, rgba(11,31,18,0.50), rgba(6,13,9,0.68)); }
   .tv-exercise-icon-hex {
@@ -1605,9 +1628,9 @@
     align-self: start;
     width: clamp(50px, 3.9vw, 70px);
     height: clamp(50px, 3.9vw, 70px);
-    color: #5dff62;
+    color: #58f05a;
     clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0 50%);
-    background: rgba(84,255,92,0.55);
+    background: rgba(88,240,90,0.48);
     display:flex;
     align-items:center;
     justify-content:center;
@@ -1636,9 +1659,9 @@
   }
   .tv-workout-card { background: linear-gradient(180deg, rgba(23,63,40,0.85), rgba(10,29,18,0.9)); border: 1px solid rgba(78,203,113,0.35); border-radius: 18px; padding: 18px 22px; text-align: left; box-shadow: 0 14px 40px rgba(0,0,0,0.35); }
   .tv-workout-title { font-size: clamp(30px, 4.3vw, 56px); color: #fff; font-weight: 800; letter-spacing: 0.8px; line-height: 1.05; }
-  .tv-workout-set-list { display: flex; flex-direction: column; gap: clamp(4px, .45vh, 7px); align-self:end; }
-  .tv-workout-set-row { display:flex; align-items:center; gap:14px; color: #f0fff2; font-size: clamp(17px, 1.42vw, 26px); font-weight: 700; letter-spacing: clamp(1px, .14vw, 3px); line-height: 1.08; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .tv-set-bullet { width: 7px; height: 7px; border-radius: 50%; background:#5dff62; box-shadow:0 0 10px rgba(93,255,98,.8); flex:0 0 auto; }
+  .tv-workout-set-list { display: flex; flex-direction: column; gap: clamp(4px, .45vh, 7px); align-self:start; margin-top: clamp(2px, .45vh, 8px); }
+  .tv-workout-set-row { display:flex; align-items:center; gap:14px; color: #f0fff2; font-size: clamp(17px, 1.34vw, 25px); font-weight: 700; letter-spacing: clamp(1px, .12vw, 3px); line-height: 1.08; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tv-set-bullet { width: 7px; height: 7px; border-radius: 50%; background:#58f05a; box-shadow:0 0 9px rgba(88,240,90,.64); flex:0 0 auto; }
   .tv-focus-wrap { width: min(1120px, 92vw); min-height: calc(100vh - 170px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px; }
   .tv-focus-title { font-size: clamp(72px, 12vw, 160px); line-height: .9; font-weight: 800; text-align: center; color: #fff; text-shadow: 0 12px 46px rgba(0,0,0,.55); }
   .tv-focus-set-list { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -1650,21 +1673,21 @@
     min-height: 0;
     display: grid;
     grid-template-rows: auto auto auto;
-    align-content: center;
+    align-content: start;
     gap: clamp(16px, 2.2vh, 28px);
-    padding: clamp(22px, 2.4vw, 40px) clamp(16px, 1.55vw, 28px);
-    border: 1px solid rgba(255,255,255,0.20);
+    padding: clamp(58px, 7.5vh, 82px) clamp(16px, 1.55vw, 28px) clamp(22px, 2.4vw, 40px);
+    border: 1px solid rgba(255,255,255,0.18);
     border-radius: 22px;
     background:
-      radial-gradient(circle at 50% 18%, rgba(84,255,92,0.12), transparent 34%),
+      radial-gradient(circle at 50% 18%, rgba(88,240,90,0.10), transparent 34%),
       linear-gradient(180deg, rgba(19,25,22,0.76), rgba(5,12,9,0.92));
-    box-shadow: inset 0 0 28px rgba(84,255,92,0.05), 0 20px 60px rgba(0,0,0,0.45);
+    box-shadow: inset 0 0 26px rgba(88,240,90,0.04), 0 20px 60px rgba(0,0,0,0.45);
   }
   .tv-stopwatch-heading { display:flex; flex-direction:column; align-items:center; gap:12px; }
-  .tv-stopwatch-icon { width: clamp(34px, 3vw, 52px); height: clamp(34px, 3vw, 52px); color:#5dff62; filter: drop-shadow(0 0 12px rgba(93,255,98,.48)); }
+  .tv-stopwatch-icon { width: clamp(34px, 3vw, 52px); height: clamp(34px, 3vw, 52px); color:#58f05a; filter: drop-shadow(0 0 10px rgba(88,240,90,.40)); }
   .tv-stopwatch-label-wrap { width:100%; display:flex; align-items:center; justify-content:center; gap:18px; }
   .tv-stopwatch-label-wrap::before,
-  .tv-stopwatch-label-wrap::after { content:''; height:1px; flex:1; background:linear-gradient(90deg, transparent, rgba(93,255,98,.65), transparent); }
+  .tv-stopwatch-label-wrap::after { content:''; height:1px; flex:1; background:linear-gradient(90deg, transparent, rgba(88,240,90,.52), transparent); }
   .tv-stopwatch-label { text-transform: uppercase; letter-spacing: clamp(4px, .36vw, 7px); font-size: clamp(14px, 1.05vw, 20px); color: #f4fff3; font-weight: 800; }
   .tv-stopwatch-shell {
     position: relative;
@@ -1673,10 +1696,10 @@
     border-radius: 18px;
     padding: clamp(18px, 2.2vh, 30px) 12px;
     background: linear-gradient(180deg, rgba(9,28,13,0.94), rgba(2,9,5,0.96));
-    border: 1px solid rgba(84,255,92,0.42);
-    box-shadow: inset 0 0 26px rgba(84,255,92,0.15), 0 0 34px rgba(84,255,92,0.12);
+    border: 1px solid rgba(88,240,90,0.32);
+    box-shadow: inset 0 0 24px rgba(88,240,90,0.12), 0 0 28px rgba(88,240,90,0.09);
   }
-  .tv-stopwatch-time { font-family: 'Courier New', monospace; font-size: clamp(38px, 3vw, 58px); font-weight: 800; line-height: .95; color: #5dff62; text-shadow: 0 0 18px rgba(93,255,98,.52); font-variant-numeric: tabular-nums; letter-spacing: -3px; }
+  .tv-stopwatch-time { font-family: 'Courier New', monospace; font-size: clamp(38px, 3vw, 58px); font-weight: 800; line-height: .95; color: #58f05a; text-shadow: 0 0 16px rgba(88,240,90,.42); font-variant-numeric: tabular-nums; letter-spacing: -3px; }
   .tv-stopwatch-actions { display: grid; grid-template-rows: repeat(2, auto); gap: clamp(12px, 1.8vh, 20px); margin-top: 0; }
   .tv-sw-btn {
     width: 100%;
@@ -1700,6 +1723,30 @@
   .tv-sw-btn.primary { background: linear-gradient(180deg, #67ff5e, #22bc3b); border-color: #73ff76; color:#061006; box-shadow: inset 0 4px 18px rgba(255,255,255,.22), 0 0 28px rgba(89,255,91,.34); }
   .tv-sw-btn:not(.primary) { border-color: rgba(255,255,255,.36); color:#f2f5f2; }
   .tv-sw-btn:hover { filter: brightness(1.06); }
+  @media (max-height: 850px) and (min-width: 1101px) {
+    .tv-top-bar { padding: 18px 40px 4px; }
+    .tv-logo { gap: 16px; font-size: clamp(18px, 1.25vw, 24px); letter-spacing: 7px; }
+    .tv-brand-mark { width: 50px; height: 50px; }
+    .tv-day-label { font-size: clamp(16px, 1.1vw, 21px); }
+    .tv-close-btn { min-width: 132px; padding: 10px 20px; font-size: clamp(17px, 1.15vw, 22px); }
+    .tv-main { padding: 82px 38px 24px; }
+    .tv-breakdown-shell { width: min(1780px, calc(100vw - 76px)); gap: 12px; }
+    .tv-display-title { font-size: clamp(36px, 3.35vw, 58px); }
+    .tv-display-title::before,
+    .tv-display-title::after { height: 14px; width: clamp(74px, 8vw, 120px); }
+    .tv-station-header { min-height: 58px; padding: 10px 16px; }
+    .tv-station-number { width: 46px; height: 46px; font-size: 24px; }
+    .tv-station-title { font-size: 27px; }
+    .tv-station-body { gap: 10px; padding: 12px; }
+    .tv-station-exercise { padding: 12px; grid-template-columns: 52px minmax(0, 1fr); row-gap: 8px; }
+    .tv-exercise-icon-hex { width: 52px; height: 52px; }
+    .tv-station-exercise-name { font-size: 34px; }
+    .tv-workout-set-row { font-size: clamp(16px, 1.2vw, 21px); gap: 10px; }
+    .tv-stopwatch-panel { padding: 44px 16px 20px; gap: 16px; }
+    .tv-stopwatch-shell { padding: 18px 10px; }
+    .tv-stopwatch-time { font-size: clamp(34px, 2.55vw, 46px); }
+    .tv-sw-btn { min-height: 54px; font-size: clamp(22px, 1.65vw, 28px); }
+  }
   @media (max-width: 1100px) {
     .tv-main { padding: 102px 28px 28px; overflow:auto; }
     .tv-breakdown-shell { height:auto; width:min(960px, calc(100vw - 48px)); }
@@ -4913,11 +4960,12 @@ function buildTVSteps(workoutRecord) {
 }
 
 function parseRestSecs(restStr) {
-  if (!restStr || restStr === '—') return 60;
-  const m = String(restStr).match(/(\d+)/);
+  const text = String(restStr ?? '').trim();
+  if (!text || text === '—') return 60;
+  const m = text.match(/(\d+)/);
   if (!m) return 60;
   const n = parseInt(m[1]);
-  if (restStr.toLowerCase().includes('min')) return n * 60;
+  if (text.toLowerCase().includes('min')) return n * 60;
   return n;
 }
 
@@ -4963,9 +5011,9 @@ function exerciseIconSvg(name) {
 
 function fitTvExerciseTitles() {
   document.querySelectorAll('.tv-station-exercise-name').forEach(el => {
-    el.style.fontSize = '40px';
+    el.style.fontSize = '';
     el.style.letterSpacing = '';
-    let size = 40;
+    let size = parseFloat(window.getComputedStyle(el).fontSize) || 40;
     while (el.scrollWidth > el.clientWidth && size > 18) {
       size -= 1;
       el.style.fontSize = `${size}px`;
@@ -5021,6 +5069,7 @@ function renderTvFullWorkout(label) {
         <div class="tv-station-header">
           <div class="tv-station-number"><span>${stationIndex + 1}</span></div>
           <div class="tv-station-title">${escHtml(stationTitle(stationIndex))}</div>
+          <div class="tv-station-slashes" aria-hidden="true"><span></span><span></span><span></span></div>
         </div>
         <div class="tv-station-body">
           ${exerciseCards}
@@ -5092,11 +5141,13 @@ function openTVDisplay(workoutId = null) {
   document.querySelector('.tv-progress-label').style.display = 'none';
   document.querySelector('.tv-progress-bar-wrap').style.display = 'none';
   document.getElementById('tv-display').classList.add('active');
+  document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';
 }
 
 function closeTVDisplay() {
   document.getElementById('tv-display').classList.remove('active');
+  document.documentElement.style.overflow = '';
   document.body.style.overflow = '';
   document.querySelector('.tv-controls').style.display = 'flex';
   document.getElementById('tv-queue').style.display = 'flex';
