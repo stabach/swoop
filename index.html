@@ -1299,8 +1299,8 @@
     background: linear-gradient(180deg, rgba(0,0,0,0.78), transparent);
   }
   .tv-logo { justify-self:start; display:flex; align-items:center; gap:20px; min-width:0; font-size: clamp(20px, 1.45vw, 28px); font-weight: 800; letter-spacing: 8px; color: #fff; text-transform: uppercase; white-space: nowrap; }
-  .tv-brand-mark { width: 58px; height: 58px; border-radius: 50%; border: 3px solid #58f05a; display:flex; align-items:center; justify-content:center; color:#58f05a; box-shadow: 0 0 24px rgba(88,240,90,.28); overflow:hidden; background: rgba(4, 18, 10, .86); }
-  .tv-eagle-head { width: 122%; height: 122%; display:block; filter: drop-shadow(0 0 8px rgba(93,255,98,.35)); transform: translate(4px, 1px); }
+  .tv-brand-mark { width: 58px; height: 58px; border-radius: 50%; border: 3px solid #58f05a; display:flex; align-items:center; justify-content:center; color:#58f05a; box-shadow: 0 0 24px rgba(88,240,90,.28); overflow:hidden; background: rgba(2, 8, 5, .92); }
+  .tv-eagle-head { width: 82%; height: 82%; display:block; color:#58f05a; filter: drop-shadow(0 0 7px rgba(93,255,98,.34)); transform: translate(1px, 0); }
   .tv-day-label { justify-self:center; width:100%; display:flex; align-items:center; justify-content:center; gap:24px; font-size: clamp(17px, 1.26vw, 24px); font-weight: 700; color: #f2fff2; letter-spacing: 3px; white-space: nowrap; }
   .tv-day-label::before,
   .tv-day-label::after { content:''; width:min(220px, 15vw); height:1px; background:linear-gradient(90deg, transparent, #58f05a 55%, transparent); box-shadow:0 0 11px rgba(88,240,90,.62); }
@@ -1659,9 +1659,9 @@
   }
   .tv-workout-card { background: linear-gradient(180deg, rgba(23,63,40,0.85), rgba(10,29,18,0.9)); border: 1px solid rgba(78,203,113,0.35); border-radius: 18px; padding: 18px 22px; text-align: left; box-shadow: 0 14px 40px rgba(0,0,0,0.35); }
   .tv-workout-title { font-size: clamp(30px, 4.3vw, 56px); color: #fff; font-weight: 800; letter-spacing: 0.8px; line-height: 1.05; }
-  .tv-workout-set-list { display: flex; flex-direction: column; gap: clamp(4px, .45vh, 7px); align-self:start; margin-top: clamp(2px, .45vh, 8px); }
-  .tv-workout-set-row { display:flex; align-items:center; gap:14px; color: #f0fff2; font-size: clamp(17px, 1.34vw, 25px); font-weight: 700; letter-spacing: clamp(1px, .12vw, 3px); line-height: 1.08; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .tv-set-bullet { width: 7px; height: 7px; border-radius: 50%; background:#58f05a; box-shadow:0 0 9px rgba(88,240,90,.64); flex:0 0 auto; }
+  .tv-workout-set-list { display: flex; flex-direction: column; gap: clamp(6px, .62vh, 10px); align-self:start; margin-top: clamp(5px, .7vh, 12px); }
+  .tv-workout-set-row { display:flex; align-items:center; gap:16px; color: #f0fff2; font-size: clamp(21px, 1.65vw, 32px); font-weight: 800; letter-spacing: clamp(1px, .12vw, 3px); line-height: 1.06; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tv-set-bullet { width: 9px; height: 9px; border-radius: 50%; background:#58f05a; box-shadow:0 0 11px rgba(88,240,90,.72); flex:0 0 auto; }
   .tv-focus-wrap { width: min(1120px, 92vw); min-height: calc(100vh - 170px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px; }
   .tv-focus-title { font-size: clamp(72px, 12vw, 160px); line-height: .9; font-weight: 800; text-align: center; color: #fff; text-shadow: 0 12px 46px rgba(0,0,0,.55); }
   .tv-focus-set-list { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -1741,7 +1741,7 @@
     .tv-station-exercise { padding: 12px; grid-template-columns: 52px minmax(0, 1fr); row-gap: 8px; }
     .tv-exercise-icon-hex { width: 52px; height: 52px; }
     .tv-station-exercise-name { font-size: 34px; }
-    .tv-workout-set-row { font-size: clamp(16px, 1.2vw, 21px); gap: 10px; }
+    .tv-workout-set-row { font-size: clamp(19px, 1.42vw, 25px); gap: 12px; }
     .tv-stopwatch-panel { padding: 44px 16px 20px; gap: 16px; }
     .tv-stopwatch-shell { padding: 18px 10px; }
     .tv-stopwatch-time { font-size: clamp(34px, 2.55vw, 46px); }
@@ -2192,14 +2192,13 @@
     <div class="tv-logo">
       <span class="tv-brand-mark" aria-hidden="true">
         <svg class="tv-eagle-head" viewBox="0 0 160 160" fill="none">
-          <path d="M28 85C43 47 83 22 153 10C128 24 108 39 92 55C112 49 135 52 154 65C121 62 94 70 74 90C98 84 124 91 144 105C111 101 79 109 54 132C57 114 49 99 28 85Z" fill="#fff"/>
-          <path d="M31 90C42 74 57 69 76 78C60 80 49 87 43 100C58 97 74 103 87 116C65 114 48 122 38 137C25 131 18 114 31 90Z" fill="#f7c84b"/>
-          <path d="M27 85C44 44 86 20 154 9C128 24 108 39 92 55C113 49 135 52 154 65C123 63 96 71 74 90C97 85 123 90 144 105C112 102 81 110 54 132C58 114 50 100 28 85Z" stroke="#006b3a" stroke-width="7" stroke-linejoin="round"/>
-          <path d="M31 90C43 73 58 70 76 78C61 80 50 88 43 100C59 98 75 104 87 116C66 115 49 122 38 137C25 131 18 114 31 90Z" stroke="#006b3a" stroke-width="6" stroke-linejoin="round"/>
-          <path d="M63 72C77 64 94 64 112 70M70 84C88 77 103 77 121 83M82 98C99 94 113 96 128 104" stroke="#006b3a" stroke-width="5" stroke-linecap="round"/>
-          <path d="M66 78C73 75 81 75 89 79" stroke="#001f12" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="82" cy="67" r="4" fill="#001f12"/>
-          <path d="M89 63L102 55L94 70Z" fill="#006b3a"/>
+          <path d="M20 126c13-43 44-74 92-91 15-5 29-7 43-6-18 8-34 19-47 33 18-5 34-3 49 7-25 0-47 8-66 25 19-4 36-1 51 9-33 1-59 13-79 35-8 9-14 17-18 24-4-15-12-27-25-36Z" fill="currentColor"/>
+          <path d="M27 123c10-26 27-42 52-48-12 6-20 15-25 26 12-4 25-2 39 6-24 2-40 12-49 29-7-4-13-8-17-13Z" fill="currentColor"/>
+          <path d="M82 66c12-8 27-9 43-4-15 1-27 6-36 16-7-5-11-8-7-12Z" fill="#061009"/>
+          <path d="M88 61c8-2 15-1 22 3" stroke="#061009" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="96" cy="57" r="5" fill="#061009"/>
+          <path d="M108 75c16 1 29 6 40 16-17-1-30-4-40-9-5-3-5-6 0-7Z" fill="#061009"/>
+          <path d="M52 108c11-12 23-18 38-17" stroke="#061009" stroke-width="7" stroke-linecap="round"/>
         </svg>
       </span>
       <span>Eagle Strength</span>
