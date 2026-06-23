@@ -1445,13 +1445,12 @@
   .tv-station-card { min-height: 520px; background: linear-gradient(180deg, rgba(23,63,40,0.92), rgba(8,26,16,0.94)); border: 1px solid rgba(126,223,154,0.38); border-radius: 18px; box-shadow: 0 18px 44px rgba(0,0,0,0.36); overflow: hidden; display: flex; flex-direction: column; }
   .tv-station-header { background: rgba(2,18,10,0.74); border-bottom: 1px solid rgba(126,223,154,0.25); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: clamp(30px, 3.6vw, 48px); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 18px 22px; }
   .tv-station-body { display: flex; flex-direction: column; gap: 16px; padding: 18px; flex: 1; }
-  .tv-station-exercise { flex: 1; min-height: 0; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; background: rgba(255,255,255,0.055); padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 16px; cursor: pointer; transition: transform .16s ease, border-color .16s ease, background .16s ease; }
+  .tv-station-exercise { flex: 1; min-height: 0; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; background: rgba(255,255,255,0.055); padding: 18px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; cursor: pointer; transition: transform .16s ease, border-color .16s ease, background .16s ease; }
   .tv-station-exercise:hover { transform: translateY(-2px); border-color: var(--green-300); background: rgba(78,203,113,0.13); }
   .tv-station-exercise-name { font-size: clamp(30px, 3.5vw, 52px); color: #fff; font-weight: 800; letter-spacing: 0.4px; line-height: 1.02; }
-  .tv-station-exercise-detail { color: var(--green-200); font-size: clamp(17px, 1.5vw, 24px); font-weight: 700; line-height: 1.2; }
   .tv-workout-card { background: linear-gradient(180deg, rgba(23,63,40,0.85), rgba(10,29,18,0.9)); border: 1px solid rgba(78,203,113,0.35); border-radius: 18px; padding: 18px 22px; text-align: left; box-shadow: 0 14px 40px rgba(0,0,0,0.35); }
   .tv-workout-title { font-size: clamp(30px, 4.3vw, 56px); color: #fff; font-weight: 800; letter-spacing: 0.8px; line-height: 1.05; }
-  .tv-workout-set-list { display: flex; flex-direction: column; gap: 4px; }
+  .tv-workout-set-list { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
   .tv-workout-set-row { color: var(--green-100); font-size: clamp(20px, 2.2vw, 30px); font-weight: 800; line-height: 1.08; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .tv-focus-wrap { width: min(1120px, 92vw); min-height: calc(100vh - 170px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px; }
   .tv-focus-title { font-size: clamp(72px, 12vw, 160px); line-height: .9; font-weight: 800; text-align: center; color: #fff; text-shadow: 0 12px 46px rgba(0,0,0,.55); }
@@ -4677,15 +4676,6 @@ function buildTvSetBreakdown(ex) {
   }).join('');
 }
 
-function tvExerciseDetailText(ex) {
-  const bits = [];
-  if (ex.sets || ex.reps) bits.push(`${ex.sets || '—'} sets x ${ex.reps || '—'}`);
-  if (shouldShowPercentages(ex.tempo)) bits.push(`% Lift: ${splitSetValues(ex.tempo).map(formatPercentToken).join(' / ')}`);
-  if (ex.rest && ex.rest !== '—') bits.push(`Rest: ${ex.rest}`);
-  if (ex.workTime && ex.workTime !== '—') bits.push(`Work: ${ex.workTime}`);
-  return bits.join(' · ');
-}
-
 function renderTvFullWorkout(label) {
   let focusIndex = 0;
   const stationCards = getWorkoutStations(tvCurrentWorkoutRecord).map((station, stationIndex) => {
@@ -4694,10 +4684,7 @@ function renderTvFullWorkout(label) {
       const idx = focusIndex++;
       return `
         <div class="tv-station-exercise" role="button" tabindex="0" onclick="showTvLiftFocus(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showTvLiftFocus(${idx});}">
-          <div>
-            <div class="tv-station-exercise-name">${escHtml(ex.name)}</div>
-            <div class="tv-station-exercise-detail">${escHtml(tvExerciseDetailText(ex))}</div>
-          </div>
+          <div class="tv-station-exercise-name">${escHtml(ex.name)}</div>
           <div class="tv-workout-set-list">${buildTvSetBreakdown(ex)}</div>
         </div>`;
     }).join('');
