@@ -913,6 +913,162 @@
   }
   .edit-save-bar .save-msg { color: var(--green-200); font-size: 13px; }
   .edit-save-bar .save-msg.big { font-size: 20px; font-weight: 800; color: #fff; }
+  .edit-calendar-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .edit-calendar-head,
+  .edit-date-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .edit-month-title,
+  .edit-date-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--green-900);
+    letter-spacing: 0.7px;
+  }
+  .edit-month-actions,
+  .edit-workout-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .edit-calendar-weekdays,
+  .edit-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .edit-calendar-weekday {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    padding: 4px 6px;
+  }
+  .edit-calendar-day {
+    min-height: 82px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-1);
+    padding: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .12s, transform .12s, background .12s;
+  }
+  .edit-calendar-day:hover {
+    border-color: var(--green-500);
+    background: var(--green-100);
+    transform: translateY(-1px);
+  }
+  .edit-calendar-day.muted {
+    opacity: 0.42;
+  }
+  .edit-calendar-day.today {
+    border-color: var(--gold);
+    box-shadow: inset 0 0 0 1px var(--gold);
+  }
+  .edit-calendar-day.has-workouts {
+    background: #f4fbf6;
+  }
+  .edit-calendar-number {
+    font-weight: 800;
+    color: var(--green-900);
+    font-size: 15px;
+  }
+  .edit-calendar-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: var(--green-800);
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    margin-top: 16px;
+  }
+  .edit-date-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .workout-card-list {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .workout-record-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .workout-record-card.selected,
+  .today-workout-card.selected {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(199, 154, 43, 0.2);
+  }
+  .workout-title-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+  .workout-record-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--green-900);
+    font-weight: 800;
+    letter-spacing: 0.4px;
+  }
+  .team-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--green-100);
+    color: var(--green-900);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .workout-record-meta {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  .edit-create-card {
+    background: white;
+    border: 1px dashed var(--green-400);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .team-create-grid {
+    display: grid;
+    grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) auto;
+    gap: 10px;
+    align-items: end;
+  }
   .rm-grid { display:grid; grid-template-columns:repeat(3,minmax(120px,1fr)); gap:8px; margin-top:8px; }
   .rm-card { background: rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.25); border-radius:8px; padding:8px; color:#fff; }
   .rm-lift { font-size:11px; opacity:.9; font-weight:700; }
@@ -931,6 +1087,13 @@
     transition: background 0.12s;
   }
   .btn-save-workout:hover { background: #b8860d; }
+  .btn-display:disabled,
+  .btn-display:disabled:hover {
+    opacity: 0.48;
+    cursor: not-allowed;
+    transform: none;
+    background: var(--gray-400);
+  }
 
   /* ---- TODAY'S WORKOUT PAGE ---- */
   .today-header {
@@ -946,6 +1109,53 @@
   }
   .today-day-name { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 800; color: white; letter-spacing: 1px; }
   .today-date-str { font-size: 13px; color: var(--green-200); margin-top: 2px; }
+  .today-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .today-date-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .today-date-picker .date-input {
+    background: white;
+    min-width: 150px;
+  }
+  .today-workout-grid {
+    display: grid;
+    gap: 14px;
+  }
+  .today-workout-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color .12s, box-shadow .12s, transform .12s;
+  }
+  .today-workout-card:hover {
+    border-color: var(--green-400);
+    transform: translateY(-1px);
+  }
+  .today-workout-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .today-workout-card .section-card {
+    margin-bottom: 10px;
+  }
   .btn-display {
     padding: 12px 28px;
     background: var(--gold);
@@ -963,6 +1173,27 @@
     gap: 8px;
   }
   .btn-display:hover { background: #b8860d; transform: scale(1.02); }
+  @media (max-width: 760px) {
+    .edit-calendar-day { min-height: 58px; padding: 6px; }
+    .edit-calendar-count { margin-top: 8px; }
+    .today-header-actions,
+    .today-date-picker {
+      width: 100%;
+      justify-content: stretch;
+    }
+    .today-date-picker .date-input,
+    .today-date-picker .btn-sm,
+    .today-header-actions .btn-display {
+      flex: 1;
+    }
+    .workout-record-card,
+    .team-create-grid {
+      grid-template-columns: 1fr;
+    }
+    .edit-workout-actions {
+      justify-content: flex-start;
+    }
+  }
 
   /* ---- TV DISPLAY MODE ---- */
   #tv-display {
@@ -2188,20 +2419,29 @@ function setDayFilter(filter) {
 }
 
 function renderWorkoutPanel() {
-  const templates = getLiveTemplates();
-  const template = templates[currentDay];
-  if (!template || template.length === 0) {
-    document.getElementById('workout-panel').innerHTML = `<div class="empty-state"><span class="empty-icon">😴</span>No structured workout for ${currentDay}</div>`;
+  const athlete = athletes.find(a => a.id === currentAthleteId);
+  const dateStr = currentDate || toLocalDateStr();
+  const workouts = getWorkoutsForDate(dateStr).filter(record => workoutMatchesAthlete(record, athlete));
+  if (!workouts.length) {
+    const teamText = getAthleteTeams(athlete).join(', ') || 'this athlete';
+    document.getElementById('workout-panel').innerHTML = `<div class="empty-state">No workout for ${escHtml(teamText)} on ${escHtml(formatWorkoutDate(dateStr, { month: 'long', day: 'numeric' }))}</div>`;
     return;
   }
 
 
-  document.getElementById('workout-panel').innerHTML = template.map(section => `
-    <div class="section-card">
-      <div class="section-card-header">
-        ${section.section}
+  document.getElementById('workout-panel').innerHTML = workouts.map(record => `
+    <div class="workout-record-card" style="display:block;margin-bottom:14px;">
+      <div class="workout-title-row">
+        <span class="team-pill">${escHtml(record.teamName)}</span>
+        <span class="workout-record-title">${escHtml(record.title)}</span>
       </div>
-      ${renderExercises(section.exercises)}
+      <div class="workout-record-meta" style="margin-bottom:12px;">${escHtml(formatWorkoutDate(record.date, { month: 'long', day: 'numeric', year: 'numeric' }))} · ${getWorkoutExerciseCount(record)} exercises</div>
+      ${(record.sections || []).map(section => `
+        <div class="section-card">
+          <div class="section-card-header">${escHtml(section.section)}</div>
+          ${renderExercises(section.exercises || [])}
+        </div>
+      `).join('')}
     </div>
   `).join('');
   refreshLoggedExercisesForCurrentDate().then(updateWorkoutLogButtons);
@@ -2218,10 +2458,10 @@ function getMondayOfCurrentWeek(baseDate = new Date()) {
 
 function getDateForWeekday(dayName) {
   const idx = DAYS.indexOf(dayName);
-  if (idx < 0) return new Date().toISOString().split('T')[0];
-  const monday = getMondayOfCurrentWeek(new Date(currentDate || new Date().toISOString().split('T')[0]));
+  if (idx < 0) return toLocalDateStr();
+  const monday = getMondayOfCurrentWeek(currentDate ? dateFromDateStr(currentDate) : new Date());
   monday.setDate(monday.getDate() + idx);
-  return monday.toISOString().split('T')[0];
+  return toLocalDateStr(monday);
 }
 
 async function refreshLoggedExercisesForCurrentDate() {
@@ -2248,10 +2488,10 @@ function renderExercises(exercises) {
   return exercises.map(ex => `
     <div class="exercise-row">
       <div style="flex:1">
-        <div class="exercise-name">${ex.name}</div>
-        <div class="exercise-detail">${ex.sets} sets × ${ex.reps} · % Lift: ${ex.tempo} · Rest: ${ex.rest}</div>
+        <div class="exercise-name">${escHtml(ex.name || 'Untitled Exercise')}</div>
+        <div class="exercise-detail">${escHtml(exerciseDetailText(ex))}</div>
       </div>
-      ${canLogExercise(ex.name) ? `<button class="log-btn" data-log-exercise="${ex.name}" onclick="openLogModal('${ex.name}', '')">Log</button>` : ''}
+      ${canLogExercise(ex.name) ? `<button class="log-btn" data-log-exercise="${escHtml(ex.name)}" onclick="openLogModal(${jsArg(ex.name)}, '')">Log</button>` : ''}
     </div>`).join('');
 }
 
@@ -2298,13 +2538,16 @@ async function openLogModal(exercise, level) {
   logModalExercise = exercise;
   logModalLevel = level;
   document.getElementById('log-modal-title').textContent = 'Log: ' + exercise;
-  const template = (getLiveTemplates()[currentDay] || []).flatMap(s => s.exercises || []);
+  const athlete = athletes.find(a => a.id === currentAthleteId);
+  const template = getWorkoutsForDate(currentDate || toLocalDateStr())
+    .filter(record => workoutMatchesAthlete(record, athlete))
+    .flatMap(record => (record.sections || []).flatMap(s => s.exercises || []));
   const ex = template.find(x => x.name === exercise);
   const setCount = Math.max(parseInt(ex?.sets) || 1, 1);
   const repTargets = splitSetValues(ex?.reps || '');
   const logDateInput = document.getElementById('log-date');
   initLogDatePicker();
-  const defaultLogDate = currentDate || new Date().toISOString().split('T')[0];
+  const defaultLogDate = currentDate || toLocalDateStr();
   if (logDatePicker && typeof logDatePicker.setDate === 'function') {
     logDatePicker.setDate(defaultLogDate, true);
   } else {
@@ -2342,10 +2585,10 @@ async function renderLogTable() {
   const athlete = athletes.find(a => a.id === currentAthleteId);
   const firstName = (athlete?.name || 'Athlete').split(' ')[0];
   const findPlannedExercise = (log) => {
-    const d = new Date((log.date || '') + 'T12:00:00');
-    const dayName = d.toLocaleDateString('en-US', { weekday: 'long' });
-    const dayTpl = (getLiveTemplates()[dayName] || []).flatMap(s => s.exercises || []);
-    return dayTpl.find(ex => normLiftName(ex.name) === normLiftName(log.exercise));
+    const planned = getWorkoutsForDate(log.date || '')
+      .filter(record => workoutMatchesAthlete(record, athlete))
+      .flatMap(record => (record.sections || []).flatMap(s => s.exercises || []));
+    return planned.find(ex => normLiftName(ex.name) === normLiftName(log.exercise));
   };
   const parseSetLog = (notes) => {
     const m = String(notes || '').match(/\[Set Log\]\s*(\[.*\])$/);
@@ -2481,7 +2724,7 @@ function showPage(page) {
   target.classList.add('active');
   if (page === 'admin') { renderAdminList(); }
   if (page === 'dashboard') { renderDashboard(); }
-  if (page === 'today') { showTodayPage(); }
+  if (page === 'today') { showTodayPage({ resetToToday: true }); }
   if (page === 'edit-workouts') { showEditWorkoutsPage(); }
   if (page === 'attendance') { renderAttendanceGroupOptions(); }
   if (page === 'calendar') { if (!document.getElementById('calendar-month').value) document.getElementById('calendar-month').value = new Date().toISOString().slice(0,7); loadCalendarEvents(); }
@@ -2539,18 +2782,141 @@ function showSetupGuide() {
 }
 
 // ===================== WORKOUT STORAGE =====================
+const WORKOUT_RECORD_PREFIX = 'date_workout:';
+const WORKOUT_TEAM_LIST_KEY = 'date_workout_teams';
 let liveTemplates = JSON.parse(JSON.stringify(WORKOUT_TEMPLATES));
+let dateTeamWorkouts = [];
+let savedWorkoutTeams = [];
+let editCalendarMonth = startOfLocalMonth(new Date());
+let editSelectedDate = null;
+let editSelectedWorkoutId = null;
+let editWorkoutDraft = null;
+let editCreateFormOpen = false;
+let todayWorkoutDate = null;
+let todaySelectedWorkoutId = null;
+let copyWorkoutSourceId = null;
+
+function deepClone(v) {
+  return JSON.parse(JSON.stringify(v));
+}
+
+function toLocalDateStr(date = new Date()) {
+  const d = date instanceof Date ? date : new Date(date);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function dateFromDateStr(dateStr) {
+  return new Date(`${dateStr}T12:00:00`);
+}
+
+function startOfLocalMonth(date) {
+  return new Date(date.getFullYear(), date.getMonth(), 1, 12, 0, 0, 0);
+}
+
+function formatWorkoutDate(dateStr, opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) {
+  if (!dateStr) return 'No date';
+  return dateFromDateStr(dateStr).toLocaleDateString('en-US', opts);
+}
+
+function jsArg(v) {
+  return escHtml(JSON.stringify(String(v ?? '')));
+}
+
+function makeWorkoutId() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+  return `workout-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function workoutStorageKey(id) {
+  return `${WORKOUT_RECORD_PREFIX}${id}`;
+}
+
+function normalizeTeamName(value) {
+  return String(value || '').trim().replace(/\s+/g, ' ');
+}
+
+function defaultWorkoutTitle(teamName) {
+  return `${teamName || 'Team'} Workout`;
+}
+
+function normalizeWorkoutSections(sections) {
+  const source = Array.isArray(sections) ? sections : [];
+  return source.map(section => ({
+    section: String(section.section || section.title || 'Workout').trim() || 'Workout',
+    exercises: Array.isArray(section.exercises) ? section.exercises.map(ex => ({
+      name: String(ex.name || '').trim(),
+      level: ex.level || '',
+      sets: ex.sets ?? 3,
+      reps: ex.reps ?? '',
+      tempo: ex.tempo ?? '',
+      rest: ex.rest ?? '—',
+      workTime: ex.workTime ?? ''
+    })) : []
+  }));
+}
+
+function normalizeWorkoutRecord(raw, fallbackKey = '') {
+  if (!raw || typeof raw !== 'object') return null;
+  const fallbackId = String(fallbackKey || '').startsWith(WORKOUT_RECORD_PREFIX)
+    ? String(fallbackKey).slice(WORKOUT_RECORD_PREFIX.length)
+    : '';
+  const teamName = normalizeTeamName(raw.teamName || raw.team_name || raw.sportTeam || raw.sport_team || raw.team || raw.sport || 'All Teams');
+  const nowIso = new Date().toISOString();
+  return {
+    id: String(raw.id || fallbackId || makeWorkoutId()),
+    date: raw.date || raw.workout_date || toLocalDateStr(),
+    teamName,
+    title: String(raw.title || raw.name || defaultWorkoutTitle(teamName)).trim() || defaultWorkoutTitle(teamName),
+    sections: normalizeWorkoutSections(raw.sections || raw.template || raw.workout || raw.content || []),
+    createdBy: raw.createdBy || raw.created_by || currentCoach?.username || currentAuthUser?.email || '',
+    createdAt: raw.createdAt || raw.created_at || nowIso,
+    updatedAt: raw.updatedAt || raw.updated_at || nowIso
+  };
+}
+
+function compareWorkoutRecords(a, b) {
+  return String(a.date || '').localeCompare(String(b.date || ''))
+    || String(a.teamName || '').localeCompare(String(b.teamName || ''))
+    || String(a.title || '').localeCompare(String(b.title || ''));
+}
 
 async function loadWorkoutTemplates() {
+  liveTemplates = JSON.parse(JSON.stringify(WORKOUT_TEMPLATES));
+  dateTeamWorkouts = [];
+  savedWorkoutTeams = [];
+
   const { data, error } = await supabase.from('workout_templates').select('day_name, template_json');
-  if (error || !data || data.length===0) return;
-  data.forEach(r => { liveTemplates[r.day_name] = r.template_json; });
+  if (error) {
+    console.error('Unable to load workout records:', error);
+    toast('Error loading workouts: ' + error.message);
+    return;
+  }
+
+  (data || []).forEach(row => {
+    const key = row.day_name || '';
+    if (key === WORKOUT_TEAM_LIST_KEY) {
+      savedWorkoutTeams = Array.isArray(row.template_json?.teams) ? row.template_json.teams.map(normalizeTeamName).filter(Boolean) : [];
+      return;
+    }
+    if (key.startsWith(WORKOUT_RECORD_PREFIX)) {
+      const record = normalizeWorkoutRecord(row.template_json, key);
+      if (record) dateTeamWorkouts.push(record);
+      return;
+    }
+    if (DAYS.includes(key) && Array.isArray(row.template_json)) {
+      liveTemplates[key] = row.template_json;
+    }
+  });
+  dateTeamWorkouts.sort(compareWorkoutRecords);
 }
 
 async function saveWorkoutTemplates(templates) {
   const rows = Object.keys(templates).map(day => ({
     day_name: day,
-    template_json: JSON.parse(JSON.stringify(templates[day]))
+    template_json: deepClone(templates[day])
   }));
   const { error } = await supabase
     .from('workout_templates')
@@ -2559,97 +2925,451 @@ async function saveWorkoutTemplates(templates) {
     toast('Error saving workout templates: ' + error.message);
     return false;
   }
-  liveTemplates = JSON.parse(JSON.stringify(templates));
+  liveTemplates = deepClone(templates);
   return true;
 }
-function getLiveTemplates() { return liveTemplates; }
+
+function getLiveTemplates() {
+  return liveTemplates;
+}
+
+function upsertLocalWorkoutRecord(record) {
+  const idx = dateTeamWorkouts.findIndex(w => w.id === record.id);
+  if (idx >= 0) dateTeamWorkouts[idx] = record;
+  else dateTeamWorkouts.push(record);
+  dateTeamWorkouts.sort(compareWorkoutRecords);
+}
+
+async function saveWorkoutRecord(record) {
+  const normalized = normalizeWorkoutRecord(record);
+  if (!normalized) return null;
+  normalized.updatedAt = new Date().toISOString();
+  if (!normalized.createdAt) normalized.createdAt = normalized.updatedAt;
+  const { error } = await supabase
+    .from('workout_templates')
+    .upsert([{ day_name: workoutStorageKey(normalized.id), template_json: deepClone(normalized) }], { onConflict: 'day_name' });
+  if (error) {
+    toast('Error saving workout: ' + error.message);
+    return null;
+  }
+  upsertLocalWorkoutRecord(normalized);
+  return normalized;
+}
+
+async function deleteWorkoutRecordById(id) {
+  const { error } = await supabase.from('workout_templates').delete().eq('day_name', workoutStorageKey(id));
+  if (error) {
+    toast('Error deleting workout: ' + error.message);
+    return false;
+  }
+  dateTeamWorkouts = dateTeamWorkouts.filter(w => w.id !== id);
+  return true;
+}
+
+async function saveWorkoutTeamList() {
+  const teams = [...new Set(savedWorkoutTeams.map(normalizeTeamName).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  savedWorkoutTeams = teams;
+  const { error } = await supabase
+    .from('workout_templates')
+    .upsert([{ day_name: WORKOUT_TEAM_LIST_KEY, template_json: { teams } }], { onConflict: 'day_name' });
+  if (error) console.warn('Unable to save workout teams:', error);
+}
+
+async function rememberWorkoutTeam(teamName) {
+  const normalized = normalizeTeamName(teamName);
+  if (!normalized) return;
+  if (!savedWorkoutTeams.some(t => t.toLowerCase() === normalized.toLowerCase())) {
+    savedWorkoutTeams.push(normalized);
+    await saveWorkoutTeamList();
+  }
+}
+
+function getWorkoutTeams() {
+  const teams = new Set();
+  savedWorkoutTeams.forEach(t => { if (normalizeTeamName(t)) teams.add(normalizeTeamName(t)); });
+  dateTeamWorkouts.forEach(w => { if (normalizeTeamName(w.teamName)) teams.add(normalizeTeamName(w.teamName)); });
+  athletes.forEach(a => {
+    if (normalizeTeamName(a.sport)) teams.add(normalizeTeamName(a.sport));
+    (a.groups || []).forEach(g => { if (normalizeTeamName(g)) teams.add(normalizeTeamName(g)); });
+  });
+  return [...teams].sort((a,b)=>a.localeCompare(b));
+}
+
+function renderTeamOptions(selected = '', placeholder = 'Select sport/team') {
+  const normalizedSelected = normalizeTeamName(selected);
+  const teams = getWorkoutTeams();
+  if (normalizedSelected && !teams.some(t => t.toLowerCase() === normalizedSelected.toLowerCase())) teams.unshift(normalizedSelected);
+  return `<option value="">${escHtml(placeholder)}</option>` + teams.map(t => `<option value="${escHtml(t)}" ${t === normalizedSelected ? 'selected' : ''}>${escHtml(t)}</option>`).join('');
+}
+
+function getWorkoutById(id) {
+  return dateTeamWorkouts.find(w => w.id === id) || null;
+}
+
+function getWorkoutsForDate(dateStr) {
+  return dateTeamWorkouts
+    .filter(w => w.date === dateStr)
+    .sort((a,b)=>String(a.teamName || '').localeCompare(String(b.teamName || '')) || String(a.title || '').localeCompare(String(b.title || '')));
+}
+
+function getWorkoutExerciseCount(record) {
+  return (record.sections || []).reduce((sum, section) => sum + ((section.exercises || []).length), 0);
+}
+
+function getAthleteTeams(athlete) {
+  if (!athlete) return [];
+  return [athlete.sport, ...(athlete.groups || [])].map(normalizeTeamName).filter(Boolean);
+}
+
+function workoutMatchesAthlete(record, athlete) {
+  const workoutTeam = normalizeTeamName(record?.teamName).toLowerCase();
+  if (!workoutTeam || workoutTeam === 'all teams' || workoutTeam === 'all') return true;
+  const athleteTeams = getAthleteTeams(athlete).map(t => t.toLowerCase());
+  return athleteTeams.includes(workoutTeam);
+}
+
+function exerciseDetailText(ex) {
+  const bits = [];
+  if (ex.sets || ex.reps) bits.push(`${ex.sets || '—'} sets x ${ex.reps || '—'}`);
+  if (ex.tempo && ex.tempo !== '—') bits.push(`% Lift: ${ex.tempo}`);
+  if (ex.rest && ex.rest !== '—') bits.push(`Rest: ${ex.rest}`);
+  if (ex.workTime && ex.workTime !== '—') bits.push(`Work: ${ex.workTime}`);
+  return bits.join(' · ');
+}
+
+function renderWorkoutSectionsReadOnly(sections) {
+  if (!sections || !sections.length) {
+    return `<div class="empty-state">No exercises yet</div>`;
+  }
+  return sections.map(section => `
+    <div class="section-card">
+      <div class="section-card-header">${escHtml(section.section)}</div>
+      ${(section.exercises || []).map(ex => `
+        <div class="exercise-row">
+          <div style="flex:1">
+            <div class="exercise-name">${escHtml(ex.name || 'Untitled Exercise')}</div>
+            <div class="exercise-detail">${escHtml(exerciseDetailText(ex))}</div>
+          </div>
+        </div>
+      `).join('') || `<div class="empty-state">No exercises in this section</div>`}
+    </div>
+  `).join('');
+}
 
 // ===================== TODAY'S WORKOUT PAGE =====================
-function showTodayPage() {
-  const now = new Date();
-  const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
-  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  document.getElementById('today-page-day').textContent = dayName;
-  document.getElementById('today-page-date').textContent = dateStr;
-  document.getElementById('tv-day-label').textContent = dayName;
+function updateTodayDisplayButton() {
+  const btn = document.getElementById('display-tv-btn');
+  if (!btn) return;
+  const selected = todaySelectedWorkoutId ? getWorkoutById(todaySelectedWorkoutId) : null;
+  btn.disabled = !selected;
+  btn.textContent = selected ? `Display ${selected.title || selected.teamName} on TV` : 'Display on TV';
+}
 
-  const templates = getLiveTemplates();
-  const template = templates[dayName];
+function selectTodayWorkout(id) {
+  todaySelectedWorkoutId = id;
+  showTodayPage();
+}
+
+function applyTodayWorkoutDate() {
+  const dateInput = document.getElementById('today-workout-date');
+  const nextDate = dateInput?.value || toLocalDateStr();
+  if (nextDate !== todayWorkoutDate) todaySelectedWorkoutId = null;
+  todayWorkoutDate = nextDate;
+  showTodayPage();
+}
+
+function showTodayPage(options = {}) {
+  if (options.resetToToday || !todayWorkoutDate) {
+    todayWorkoutDate = toLocalDateStr();
+    todaySelectedWorkoutId = null;
+  }
+  const selectedDate = todayWorkoutDate;
+  const selectedDayName = dateFromDateStr(selectedDate).toLocaleDateString('en-US', { weekday: 'long' });
+  const dateStr = formatWorkoutDate(selectedDate);
+  const todayLabel = selectedDate === toLocalDateStr() ? "Today's Workouts" : `${selectedDayName} Workouts`;
+  document.getElementById('today-page-day').textContent = todayLabel;
+  document.getElementById('today-page-date').textContent = dateStr;
+  const dateInput = document.getElementById('today-workout-date');
+  if (dateInput) dateInput.value = selectedDate;
+
+  const workouts = getWorkoutsForDate(selectedDate);
+  if (todaySelectedWorkoutId && !workouts.some(w => w.id === todaySelectedWorkoutId)) todaySelectedWorkoutId = null;
   const panel = document.getElementById('today-workout-panel');
 
-  if (!template || template.length === 0) {
-    panel.innerHTML = `<div class="empty-state"><span class="empty-icon">😴</span>No workout scheduled for ${dayName}</div>`;
+  if (!workouts.length) {
+    const emptyDate = selectedDate === toLocalDateStr() ? 'today' : formatWorkoutDate(selectedDate, { month: 'long', day: 'numeric', year: 'numeric' });
+    panel.innerHTML = `<div class="empty-state">No workouts have been created for ${escHtml(emptyDate)} yet.</div>`;
+    updateTodayDisplayButton();
     return;
   }
 
-  panel.innerHTML = template.map(section => `
-    <div class="section-card">
-      <div class="section-card-header">
-        ${section.section}
-      </div>
-      ${section.exercises.map(ex => `
-        <div class="exercise-row">
-          <div style="flex:1">
-            <div class="exercise-name">${ex.name}</div>
-            <div class="exercise-detail">${ex.sets} sets × ${ex.reps}${ex.tempo && ex.tempo !== '—' ? ' · % Lift: ' + ex.tempo : ''}${ex.rest && ex.rest !== '—' ? ' · Rest: ' + ex.rest : ''}</div>
+  panel.innerHTML = `<div class="today-workout-grid">${workouts.map(record => {
+    const selected = record.id === todaySelectedWorkoutId;
+    return `
+      <div class="today-workout-card ${selected ? 'selected' : ''}" onclick="selectTodayWorkout(${jsArg(record.id)})" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectTodayWorkout(${jsArg(record.id)});}">
+        <div class="today-workout-card-head">
+          <div>
+            <div class="workout-title-row">
+              <span class="team-pill">${escHtml(record.teamName)}</span>
+              ${selected ? '<span class="team-pill" style="background:rgba(199,154,43,.18);color:#7a5a0b;">Selected</span>' : ''}
+            </div>
+            <div class="workout-record-title">${escHtml(record.title)}</div>
+            <div class="workout-record-meta">${escHtml(formatWorkoutDate(record.date, { month: 'long', day: 'numeric', year: 'numeric' }))} · ${getWorkoutExerciseCount(record)} exercises</div>
           </div>
+          <button class="btn-sm ${selected ? 'green' : ''}" onclick="event.stopPropagation();selectTodayWorkout(${jsArg(record.id)})">${selected ? 'Selected' : 'Select'}</button>
         </div>
-      `).join('')}
-    </div>
-  `).join('');
+        ${renderWorkoutSectionsReadOnly(record.sections)}
+      </div>`;
+  }).join('')}</div>`;
+  updateTodayDisplayButton();
+}
+
+function displaySelectedTodayWorkout() {
+  if (!todaySelectedWorkoutId || !getWorkoutById(todaySelectedWorkoutId)) {
+    toast('Select a workout first');
+    updateTodayDisplayButton();
+    return;
+  }
+  openTVDisplay(todaySelectedWorkoutId);
 }
 
 // ===================== EDIT WORKOUTS PAGE =====================
-let editCurrentDay = 'Monday';
-let editWorkouts = {}; // working copy while on edit page
-
 function showEditWorkoutsPage() {
-  editWorkouts = JSON.parse(JSON.stringify(getLiveTemplates()));
-  renderEditDayTabs();
+  editCalendarMonth = editSelectedDate ? startOfLocalMonth(dateFromDateStr(editSelectedDate)) : startOfLocalMonth(new Date());
+  editSelectedDate = null;
+  editSelectedWorkoutId = null;
+  editWorkoutDraft = null;
+  editCreateFormOpen = false;
+  renderEditWorkoutCalendar();
+}
+
+function renderEditWorkoutCalendar() {
+  const shell = document.getElementById('edit-workout-shell');
+  if (!shell) return;
+  const year = editCalendarMonth.getFullYear();
+  const month = editCalendarMonth.getMonth();
+  const first = new Date(year, month, 1, 12);
+  const start = new Date(first);
+  start.setDate(start.getDate() - start.getDay());
+  const today = toLocalDateStr();
+  const counts = {};
+  dateTeamWorkouts.forEach(w => { counts[w.date] = (counts[w.date] || 0) + 1; });
+  const cells = Array.from({ length: 42 }, (_, idx) => {
+    const cellDate = new Date(start);
+    cellDate.setDate(start.getDate() + idx);
+    const dateStr = toLocalDateStr(cellDate);
+    const count = counts[dateStr] || 0;
+    const classes = [
+      'edit-calendar-day',
+      cellDate.getMonth() !== month ? 'muted' : '',
+      dateStr === today ? 'today' : '',
+      count ? 'has-workouts' : ''
+    ].filter(Boolean).join(' ');
+    return `<button type="button" class="${classes}" onclick="selectEditDate(${jsArg(dateStr)})">
+      <div class="edit-calendar-number">${cellDate.getDate()}</div>
+      ${count ? `<div class="edit-calendar-count">${count}</div>` : ''}
+    </button>`;
+  }).join('');
+
+  shell.innerHTML = `
+    <div class="edit-calendar-card">
+      <div class="edit-calendar-head">
+        <div>
+          <div class="edit-month-title">${editCalendarMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
+          <div class="edit-date-subtitle">Choose a date to view, create, copy, or delete team workouts.</div>
+        </div>
+        <div class="edit-month-actions">
+          <button class="btn-sm" onclick="changeEditMonth(-1)">Prev</button>
+          <button class="btn-sm" onclick="jumpEditCalendarToToday()">Today</button>
+          <button class="btn-sm" onclick="changeEditMonth(1)">Next</button>
+        </div>
+      </div>
+      <div class="edit-calendar-weekdays">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => `<div class="edit-calendar-weekday">${d}</div>`).join('')}</div>
+      <div class="edit-calendar-grid">${cells}</div>
+    </div>`;
+}
+
+function changeEditMonth(delta) {
+  editCalendarMonth = new Date(editCalendarMonth.getFullYear(), editCalendarMonth.getMonth() + delta, 1, 12);
+  renderEditWorkoutCalendar();
+}
+
+function jumpEditCalendarToToday() {
+  editCalendarMonth = startOfLocalMonth(new Date());
+  renderEditWorkoutCalendar();
+}
+
+function selectEditDate(dateStr) {
+  editSelectedDate = dateStr;
+  editSelectedWorkoutId = null;
+  editWorkoutDraft = null;
+  editCreateFormOpen = false;
+  renderEditDateWorkouts();
+}
+
+function backToWorkoutCalendar() {
+  editSelectedDate = null;
+  editSelectedWorkoutId = null;
+  editWorkoutDraft = null;
+  editCreateFormOpen = false;
+  renderEditWorkoutCalendar();
+}
+
+function renderEditDateWorkouts() {
+  const shell = document.getElementById('edit-workout-shell');
+  if (!shell || !editSelectedDate) return;
+  const workouts = getWorkoutsForDate(editSelectedDate);
+  const cards = workouts.length ? workouts.map(record => `
+    <div class="workout-record-card ${record.id === editSelectedWorkoutId ? 'selected' : ''}">
+      <div>
+        <div class="workout-title-row">
+          <span class="team-pill">${escHtml(record.teamName)}</span>
+          <span class="workout-record-title">${escHtml(record.title)}</span>
+        </div>
+        <div class="workout-record-meta">${escHtml(formatWorkoutDate(record.date, { month: 'long', day: 'numeric', year: 'numeric' }))} · ${getWorkoutExerciseCount(record)} exercises</div>
+      </div>
+      <div class="edit-workout-actions">
+        <button class="btn-sm green" onclick="editWorkoutRecord(${jsArg(record.id)})">Edit</button>
+        <button class="btn-sm" onclick="openCopyWorkoutModal(${jsArg(record.id)})">Copy</button>
+        <button class="btn-sm danger" onclick="deleteWorkoutFromDate(${jsArg(record.id)})">Delete</button>
+      </div>
+    </div>`).join('') : `<div class="empty-state">No workouts have been created for this date yet.</div>`;
+
+  shell.innerHTML = `
+    <div class="edit-date-head">
+      <div>
+        <button class="btn-sm" onclick="backToWorkoutCalendar()">Back to Calendar</button>
+        <div class="edit-date-title" style="margin-top:10px;">${escHtml(formatWorkoutDate(editSelectedDate))}</div>
+        <div class="edit-date-subtitle">${workouts.length} workout${workouts.length === 1 ? '' : 's'} scheduled for this date</div>
+      </div>
+      <button class="btn-save-workout" onclick="toggleCreateWorkoutForm()">Create Workout</button>
+    </div>
+    <div class="edit-create-card" id="edit-create-form" style="${editCreateFormOpen ? '' : 'display:none;'}">
+      <div style="margin-bottom:10px;">
+        <label class="form-label">Workout Name</label>
+        <input class="form-input" id="new-workout-title" placeholder="Optional workout name" />
+      </div>
+      <div class="team-create-grid">
+        <div>
+          <label class="form-label">Sport/Team</label>
+          <select class="form-input" id="new-workout-team-select">${renderTeamOptions('', 'Choose existing team')}</select>
+        </div>
+        <div>
+          <label class="form-label">New Sport/Team</label>
+          <input class="form-input" id="new-workout-team-custom" placeholder="Type new team name" />
+        </div>
+        <button class="btn-sm green" onclick="createWorkoutForSelectedDate()">Create</button>
+      </div>
+    </div>
+    <div class="workout-card-list">${cards}</div>
+    <div id="edit-workout-editor"></div>`;
   renderEditWorkoutEditor();
 }
 
-function renderEditDayTabs() {
-  document.getElementById('edit-day-tabs').innerHTML = DAYS.map(d => `
-    <button class="edit-day-tab ${d === editCurrentDay ? 'active' : ''}" onclick="selectEditDay('${d}')">${d}</button>
-  `).join('');
+function toggleCreateWorkoutForm() {
+  editCreateFormOpen = !editCreateFormOpen;
+  renderEditDateWorkouts();
+  if (editCreateFormOpen) setTimeout(() => document.getElementById('new-workout-team-select')?.focus(), 30);
 }
 
-function selectEditDay(day) {
-  editCurrentDay = day;
-  renderEditDayTabs();
-  renderEditWorkoutEditor();
+function createBlankWorkout(date, teamName, title = '') {
+  const cleanTeam = normalizeTeamName(teamName);
+  const nowIso = new Date().toISOString();
+  return {
+    id: makeWorkoutId(),
+    date,
+    teamName: cleanTeam,
+    title: String(title || defaultWorkoutTitle(cleanTeam)).trim() || defaultWorkoutTitle(cleanTeam),
+    sections: [{
+      section: 'New Section',
+      exercises: [{ name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' }]
+    }],
+    createdBy: currentCoach?.username || currentAuthUser?.email || '',
+    createdAt: nowIso,
+    updatedAt: nowIso
+  };
+}
+
+async function createWorkoutForSelectedDate() {
+  const selectTeam = document.getElementById('new-workout-team-select')?.value || '';
+  const customTeam = document.getElementById('new-workout-team-custom')?.value || '';
+  const teamName = normalizeTeamName(customTeam || selectTeam);
+  if (!teamName) {
+    toast('Choose or enter a sport/team');
+    return;
+  }
+  await rememberWorkoutTeam(teamName);
+  const title = document.getElementById('new-workout-title')?.value || '';
+  const saved = await saveWorkoutRecord(createBlankWorkout(editSelectedDate, teamName, title));
+  if (!saved) return;
+  editSelectedWorkoutId = saved.id;
+  editWorkoutDraft = deepClone(saved);
+  editCreateFormOpen = false;
+  renderEditDateWorkouts();
+  toast(`${saved.teamName} workout created`);
+}
+
+function editWorkoutRecord(id) {
+  const record = getWorkoutById(id);
+  if (!record) return;
+  editSelectedWorkoutId = id;
+  editWorkoutDraft = deepClone(record);
+  renderEditDateWorkouts();
+  setTimeout(() => document.getElementById('edit-workout-editor')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
 }
 
 function renderEditWorkoutEditor() {
-  const template = editWorkouts[editCurrentDay] || [];
   const container = document.getElementById('edit-workout-editor');
-
-  container.innerHTML = template.map((section, si) => `
-    <div class="edit-section-card" id="edit-sec-${si}">
-      <div class="edit-section-header">
-        <div class="edit-section-title-input" style="border-bottom:none;padding:2px 4px;">${section.section}</div>
-        <button class="btn-del" style="color:rgba(255,255,255,0.5);" onclick="deleteSection(${si})" title="Delete section">✕</button>
-      </div>
-      <div class="edit-col-header">
-        <span>Exercise Name</span><span>Sets</span><span>Reps</span><span>% Lift</span><span>Rest</span><span>Work Time</span><span></span>
-      </div>
-      ${section.exercises.map((ex, ei) => `
-        <div class="edit-exercise-row">
-          <input class="edit-input" value="${ex.name}" onchange="updateExField(${si},${ei},'name',this.value)" placeholder="Exercise name" />
-          <input class="edit-input" value="${ex.sets}" onchange="updateExField(${si},${ei},'sets',this.value)" placeholder="3" />
-          <div class="edit-input set-box-wrap">${buildSetBoxes(ex.sets, ex.reps, si, ei, 'reps')}</div>
-          <div class="edit-input set-box-wrap">${buildSetBoxes(ex.sets, ex.tempo || '', si, ei, 'tempo')}</div>
-          <input class="edit-input" value="${ex.rest || '—'}" onchange="updateExField(${si},${ei},'rest',this.value)" placeholder="60s" />
-          <input class="edit-input" value="${ex.workTime || ''}" onchange="updateExField(${si},${ei},'workTime',this.value)" placeholder="30s" title="Work countdown duration (e.g. 30s, 2min). Leave blank for manual advance." />
-          <button class="btn-del" onclick="deleteExercise(${si},${ei})">🗑</button>
+  if (!container) return;
+  if (!editWorkoutDraft) {
+    container.innerHTML = '';
+    return;
+  }
+  const template = editWorkoutDraft.sections || [];
+  container.innerHTML = `
+    <div class="edit-section-card">
+      <div style="padding:14px;display:grid;grid-template-columns:minmax(180px,1fr) minmax(160px,260px);gap:12px;">
+        <div>
+          <label class="form-label">Workout Name</label>
+          <input class="form-input" value="${escHtml(editWorkoutDraft.title)}" onchange="updateWorkoutDraftField('title', this.value)" />
         </div>
-      `).join('')}
-      <button class="add-exercise-btn" onclick="addExercise(${si})">+ Add Exercise</button>
+        <div>
+          <label class="form-label">Sport/Team</label>
+          <select class="form-input" onchange="updateWorkoutDraftField('teamName', this.value)">${renderTeamOptions(editWorkoutDraft.teamName)}</select>
+        </div>
+      </div>
     </div>
-  `).join('') + `<button class="add-section-btn" onclick="addSection()">+ Add Section</button>`;
+    ${template.map((section, si) => `
+      <div class="edit-section-card" id="edit-sec-${si}">
+        <div class="edit-section-header">
+          <input class="edit-section-title-input" value="${escHtml(section.section)}" onchange="updateSectionTitle(${si},this.value)" placeholder="Section name" />
+          <button class="btn-del" style="color:rgba(255,255,255,0.5);" onclick="deleteSection(${si})" title="Delete section">x</button>
+        </div>
+        <div class="edit-col-header">
+          <span>Exercise Name</span><span>Sets</span><span>Reps</span><span>% Lift</span><span>Rest</span><span>Work Time</span><span></span>
+        </div>
+        ${(section.exercises || []).map((ex, ei) => `
+          <div class="edit-exercise-row">
+            <input class="edit-input" value="${escHtml(ex.name)}" onchange="updateExField(${si},${ei},'name',this.value)" placeholder="Exercise name" />
+            <input class="edit-input" value="${escHtml(ex.sets)}" onchange="updateExField(${si},${ei},'sets',this.value)" placeholder="3" />
+            <div class="edit-input set-box-wrap">${buildSetBoxes(ex.sets, ex.reps, si, ei, 'reps')}</div>
+            <div class="edit-input set-box-wrap">${buildSetBoxes(ex.sets, ex.tempo || '', si, ei, 'tempo')}</div>
+            <input class="edit-input" value="${escHtml(ex.rest || '—')}" onchange="updateExField(${si},${ei},'rest',this.value)" placeholder="60s" />
+            <input class="edit-input" value="${escHtml(ex.workTime || '')}" onchange="updateExField(${si},${ei},'workTime',this.value)" placeholder="30s" title="Work countdown duration (e.g. 30s, 2min). Leave blank for manual advance." />
+            <button class="btn-del" onclick="deleteExercise(${si},${ei})">x</button>
+          </div>
+        `).join('')}
+        <button class="add-exercise-btn" onclick="addExercise(${si})">+ Add Exercise</button>
+      </div>
+    `).join('')}
+    <button class="add-section-btn" onclick="addSection()">+ Add Section</button>
+    <div class="edit-save-bar" style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="save-msg big" id="edit-total-time">Total workout time: —</div>
+      <button class="btn-save-workout" onclick="saveEditedWorkout()">Save Workout</button>
+    </div>`;
   updateEditWorkoutTotalTime();
 }
+
 function parseDurationToSecs(v) {
   const t = String(v || '').trim().toLowerCase();
   if (!t || t === '—') return 0;
@@ -2659,25 +3379,30 @@ function parseDurationToSecs(v) {
   const n = parseFloat(t);
   return Number.isFinite(n) ? Math.round(n) : 0;
 }
+
 function splitSetValues(v) {
   return String(v || '').split(/[-, ]+/).map(x => x.trim()).filter(Boolean);
 }
+
 function buildSetBoxes(sets, value, si, ei, field) {
   const n = Math.max(parseInt(sets) || 0, 0);
   const vals = splitSetValues(value);
   return Array.from({ length: n }, (_, idx) => {
     const val = vals[idx] || '';
-    return `<input class="edit-input" style="width:46px;padding:6px;" value="${val}" onchange="updateSetValue(${si},${ei},'${field}',${idx},this.value)" placeholder="${field === 'tempo' ? '%' : '#'}" />`;
+    return `<input class="edit-input" style="width:46px;padding:6px;" value="${escHtml(val)}" onchange="updateSetValue(${si},${ei},'${field}',${idx},this.value)" placeholder="${field === 'tempo' ? '%' : '#'}" />`;
   }).join('');
 }
+
 function updateSetValue(si, ei, field, idx, val) {
-  const ex = editWorkouts[editCurrentDay][si].exercises[ei];
+  if (!editWorkoutDraft?.sections?.[si]?.exercises?.[ei]) return;
+  const ex = editWorkoutDraft.sections[si].exercises[ei];
   const arr = splitSetValues(ex[field]);
   arr[idx] = val;
   ex[field] = arr.filter(x => String(x).trim() !== '').join('-');
 }
+
 function updateEditWorkoutTotalTime() {
-  const template = editWorkouts[editCurrentDay] || [];
+  const template = editWorkoutDraft?.sections || [];
   let total = 0;
   template.forEach(section => (section.exercises || []).forEach(ex => {
     const sets = parseInt(ex.sets) || 0;
@@ -2690,44 +3415,134 @@ function updateEditWorkoutTotalTime() {
   el.textContent = `Total workout time: ${m}m ${String(s).padStart(2, '0')}s`;
 }
 
-function updateSectionTitle(si, val) {
-  editWorkouts[editCurrentDay][si].section = val;
+function updateWorkoutDraftField(field, val) {
+  if (!editWorkoutDraft) return;
+  editWorkoutDraft[field] = field === 'teamName' ? normalizeTeamName(val) : val;
 }
+
+function updateSectionTitle(si, val) {
+  if (!editWorkoutDraft?.sections?.[si]) return;
+  editWorkoutDraft.sections[si].section = val;
+}
+
 function updateExField(si, ei, field, val) {
-  editWorkouts[editCurrentDay][si].exercises[ei][field] = val;
+  if (!editWorkoutDraft?.sections?.[si]?.exercises?.[ei]) return;
+  editWorkoutDraft.sections[si].exercises[ei][field] = val;
   if (field === 'sets') renderEditWorkoutEditor();
   updateEditWorkoutTotalTime();
 }
+
 function deleteExercise(si, ei) {
-  editWorkouts[editCurrentDay][si].exercises.splice(ei, 1);
+  if (!editWorkoutDraft?.sections?.[si]?.exercises) return;
+  editWorkoutDraft.sections[si].exercises.splice(ei, 1);
   renderEditWorkoutEditor();
 }
+
 async function deleteSection(si) {
+  if (!editWorkoutDraft?.sections?.[si]) return;
   if (!await appConfirm('Delete Section', 'Delete this section?')) return;
-  editWorkouts[editCurrentDay].splice(si, 1);
+  editWorkoutDraft.sections.splice(si, 1);
   renderEditWorkoutEditor();
 }
+
 function addExercise(si) {
-  editWorkouts[editCurrentDay][si].exercises.push({ name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' });
+  if (!editWorkoutDraft?.sections?.[si]) return;
+  editWorkoutDraft.sections[si].exercises.push({ name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' });
   renderEditWorkoutEditor();
-  // scroll to bottom of section
   setTimeout(() => {
     const rows = document.querySelectorAll(`#edit-sec-${si} .edit-exercise-row`);
     if (rows.length) rows[rows.length-1].scrollIntoView({ behavior:'smooth', block:'nearest' });
   }, 50);
 }
+
 function addSection() {
-  if (!editWorkouts[editCurrentDay]) editWorkouts[editCurrentDay] = [];
-  editWorkouts[editCurrentDay].push({ section: 'New Section', exercises: [
+  if (!editWorkoutDraft) return;
+  if (!Array.isArray(editWorkoutDraft.sections)) editWorkoutDraft.sections = [];
+  editWorkoutDraft.sections.push({ section: 'New Section', exercises: [
     { name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' }
   ]});
   renderEditWorkoutEditor();
 }
+
 async function saveEditedWorkout() {
-  const ok = await saveWorkoutTemplates(editWorkouts);
+  if (!editWorkoutDraft) return;
+  editWorkoutDraft.teamName = normalizeTeamName(editWorkoutDraft.teamName);
+  editWorkoutDraft.title = String(editWorkoutDraft.title || defaultWorkoutTitle(editWorkoutDraft.teamName)).trim();
+  if (!editWorkoutDraft.teamName) {
+    toast('Choose a sport/team before saving');
+    return;
+  }
+  await rememberWorkoutTeam(editWorkoutDraft.teamName);
+  const saved = await saveWorkoutRecord(editWorkoutDraft);
+  if (!saved) return;
+  editSelectedWorkoutId = saved.id;
+  editWorkoutDraft = deepClone(saved);
+  await auditAction('save_dated_workout', `Saved ${saved.teamName} workout for ${saved.date}`);
+  renderEditDateWorkouts();
+  toast(`${saved.teamName} workout saved`);
+}
+
+function openCopyWorkoutModal(id) {
+  const record = getWorkoutById(id);
+  if (!record) return;
+  copyWorkoutSourceId = id;
+  document.getElementById('copy-workout-summary').innerHTML = `
+    <strong>${escHtml(record.title)}</strong><br>
+    ${escHtml(record.teamName)} · ${escHtml(formatWorkoutDate(record.date))}
+  `;
+  document.getElementById('copy-workout-date').value = record.date;
+  document.getElementById('copy-workout-modal').style.display = 'flex';
+}
+
+function closeCopyWorkoutModal(event) {
+  const modal = document.getElementById('copy-workout-modal');
+  if (event && event.target !== modal) return;
+  modal.style.display = 'none';
+  copyWorkoutSourceId = null;
+}
+
+async function submitCopyWorkout() {
+  const source = getWorkoutById(copyWorkoutSourceId);
+  const newDate = document.getElementById('copy-workout-date')?.value || '';
+  if (!source || !newDate) {
+    toast('Choose a date for the copied workout');
+    return;
+  }
+  const nowIso = new Date().toISOString();
+  const copy = deepClone(source);
+  copy.id = makeWorkoutId();
+  copy.date = newDate;
+  copy.createdAt = nowIso;
+  copy.updatedAt = nowIso;
+  copy.createdBy = currentCoach?.username || currentAuthUser?.email || copy.createdBy || '';
+  const saved = await saveWorkoutRecord(copy);
+  if (!saved) return;
+  closeCopyWorkoutModal();
+  editSelectedDate = newDate;
+  editCalendarMonth = startOfLocalMonth(dateFromDateStr(newDate));
+  editSelectedWorkoutId = saved.id;
+  editWorkoutDraft = deepClone(saved);
+  editCreateFormOpen = false;
+  renderEditDateWorkouts();
+  toast(`Copied workout to ${formatWorkoutDate(newDate, { month: 'long', day: 'numeric' })}`);
+}
+
+async function deleteWorkoutFromDate(id) {
+  const record = getWorkoutById(id);
+  if (!record) return;
+  const ok = await appConfirm(
+    'Delete Workout',
+    `Are you sure you want to delete the ${record.teamName} workout for ${formatWorkoutDate(record.date, { month: 'long', day: 'numeric' })}? This cannot be undone.`
+  );
   if (!ok) return;
-  auditAction('save_workout_templates', `Saved templates for ${editCurrentDay}`);
-  toast(`${editCurrentDay} workout saved!`);
+  if (!await deleteWorkoutRecordById(id)) return;
+  if (editSelectedWorkoutId === id) {
+    editSelectedWorkoutId = null;
+    editWorkoutDraft = null;
+  }
+  await auditAction('delete_dated_workout', `Deleted ${record.teamName} workout for ${record.date}`);
+  renderEditDateWorkouts();
+  toast('Workout deleted');
 }
 
 // ===================== TV DISPLAY =====================
@@ -2738,20 +3553,20 @@ let tvPhase = 'work';   // 'work' | 'rest'
 let tvTimer = null;
 let tvSecondsLeft = 0;
 let tvIsPlaying = false;
+let tvCurrentWorkoutRecord = null;
 // Per-step skipped-sets tracking: tvSkippedSets[stepIndex] = Set of set indices skipped
 let tvSkippedSets = {};
 
-function buildTVSteps(dayName) {
-  const templates = getLiveTemplates();
-  const template = templates[dayName];
-  if (!template) return [];
+function buildTVSteps(workoutRecord) {
+  const template = workoutRecord?.sections || [];
   const steps = [];
   template.forEach(section => {
-    section.exercises.forEach(ex => {
+    (section.exercises || []).forEach(ex => {
       const totalSets = parseInt(ex.sets) || 1;
       const restSecs = parseRestSecs(ex.rest);
       // Default workTime to 60s if not set
-      const rawWork = ex.workTime && ex.workTime.trim() && ex.workTime.trim() !== '—' ? ex.workTime : '60s';
+      const workLabel = String(ex.workTime || '').trim();
+      const rawWork = workLabel && workLabel !== '—' ? workLabel : '60s';
       const workSecs = parseRestSecs(rawWork);
       steps.push({ section: section.section, name: ex.name, sets: totalSets, reps: ex.reps, tempo: ex.tempo || '—', restSecs, workSecs, level: ex.level });
     });
@@ -2785,22 +3600,22 @@ function buildTvSetBreakdown(ex) {
   return Array.from({ length: setCount }, (_, idx) => {
     const rep = reps[idx] || reps[reps.length - 1] || '—';
     const pct = percents[idx] || percents[percents.length - 1] || '—';
-    return `<div class="tv-workout-set-row">${rep} × ${pct}</div>`;
+    return `<div class="tv-workout-set-row">${escHtml(rep)} x ${escHtml(pct)}</div>`;
   }).join('');
 }
 
 
-function renderTvFullWorkout(dayName) {
+function renderTvFullWorkout(label) {
   const workoutRows = tvDisplayExercises.map((ex, idx) => `
     <div class="tv-workout-card" role="button" tabindex="0" onclick="showTvLiftFocus(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showTvLiftFocus(${idx});}">
       <div>
-        <div class="tv-workout-title">${ex.name}</div>
-        <div class="tv-workout-sub">Rest: ${ex.rest || '—'} · Work: ${ex.workTime || '—'}</div>
+        <div class="tv-workout-title">${escHtml(ex.name || 'Untitled Exercise')}</div>
+        <div class="tv-workout-sub">Rest: ${escHtml(ex.rest || '—')} · Work: ${escHtml(ex.workTime || '—')}</div>
       </div>
       <div class="tv-workout-set-list">${buildTvSetBreakdown(ex)}</div>
     </div>`).join('');
   document.getElementById('tv-main').innerHTML = `
-    <div class="tv-section-label">${dayName} Workout Breakdown</div>
+    <div class="tv-section-label">${escHtml(label)} Workout Breakdown</div>
     <div class="tv-workout-layout">
       <div class="tv-workout-center">${workoutRows || '<div class="tv-workout-card"><div class="tv-workout-title">No Workout Scheduled</div></div>'}</div>
       <aside class="tv-stopwatch-panel" aria-label="Stopwatch controls">
@@ -2823,19 +3638,24 @@ function showTvLiftFocus(idx) {
   document.getElementById('tv-main').innerHTML = `
     <div class="tv-focus-wrap">
       <button class="tv-focus-back" onclick="openTVDisplay()">← Full Workout</button>
-      <div class="tv-focus-title">${ex.name}</div>
+      <div class="tv-focus-title">${escHtml(ex.name || 'Untitled Exercise')}</div>
       <div class="tv-focus-set-list">${buildTvSetBreakdown(ex)}</div>
     </div>`;
 }
 
-function openTVDisplay() {
-  const now = new Date();
-  const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
-  document.getElementById('tv-day-label').textContent = dayName;
-  const template = (getLiveTemplates()[dayName] || []);
+function openTVDisplay(workoutId = null) {
+  const record = workoutId ? getWorkoutById(workoutId) : tvCurrentWorkoutRecord;
+  if (!record) {
+    toast('Select a workout to display first');
+    return;
+  }
+  tvCurrentWorkoutRecord = record;
+  const label = `${record.teamName} · ${formatWorkoutDate(record.date, { month: 'short', day: 'numeric' })}`;
+  document.getElementById('tv-day-label').textContent = label;
   tvDisplayExercises = [];
-  template.forEach(section => (section.exercises || []).forEach(ex => tvDisplayExercises.push(ex)));
-  renderTvFullWorkout(dayName);
+  (record.sections || []).forEach(section => (section.exercises || []).forEach(ex => tvDisplayExercises.push(ex)));
+  tvSteps = buildTVSteps(record);
+  renderTvFullWorkout(label);
   document.getElementById('tv-queue').innerHTML = '';
   document.getElementById('tv-queue').style.display = 'none';
   document.querySelector('.tv-controls').style.display = 'none';
@@ -3263,7 +4083,7 @@ function closeAppDialog(e) {
 }
 function appAlert(title, message, asHtml = false) { return openAppDialog({ title, message, confirmMode: false, okText: 'OK', asHtml }); }
 function appConfirm(title, message) { return openAppDialog({ title, message, confirmMode: true, okText: 'Confirm' }); }
-function getTodayDateStr(){ return new Date().toISOString().split('T')[0]; }
+function getTodayDateStr(){ return toLocalDateStr(); }
 function renderAttendanceGroupOptions(){
   const sel=document.getElementById('attendance-group'); if(!sel) return;
   const current = sel.value || '';

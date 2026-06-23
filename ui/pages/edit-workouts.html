@@ -7,18 +7,20 @@
   <!-- SEGMENT: Page title. -->
   <div class="dash-heading" style="margin-bottom:16px;">Edit Workouts</div>
 
-  <!-- SEGMENT: Day tab strip.
-       renderEditDayTabs() populates tabs from DAYS (Mon-Thu). -->
-  <div class="edit-day-tabs" id="edit-day-tabs"></div>
+  <!-- SEGMENT: Date-first workout editor.
+       showEditWorkoutsPage() starts with a calendar and drills into one date. -->
+  <div id="edit-workout-shell"></div>
 
-  <!-- SEGMENT: Workout editor mount point.
-       renderEditWorkoutEditor() injects sections/exercises editing controls. -->
-  <div id="edit-workout-editor"></div>
-
-  <!-- SEGMENT: Sticky save area.
-       saveEditedWorkout() persists the edited template set. -->
-  <div class="edit-save-bar" style="display:flex;justify-content:space-between;align-items:center;">
-    <div class="save-msg big" id="edit-total-time">Total workout time: —</div>
-    <button class="btn-save-workout" onclick="saveEditedWorkout()">Save</button>
+  <div class="modal-overlay" id="copy-workout-modal" style="display:none;" onclick="closeCopyWorkoutModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-title">Copy Workout</div>
+      <div id="copy-workout-summary" style="color:var(--text-main);margin-bottom:14px;line-height:1.45;"></div>
+      <label class="modal-label">Copy to date</label>
+      <input type="date" id="copy-workout-date" class="modal-input" />
+      <div class="modal-btns">
+        <button class="btn-sm green" onclick="submitCopyWorkout()">Copy Workout</button>
+        <button class="btn-sm" onclick="closeCopyWorkoutModal()">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>

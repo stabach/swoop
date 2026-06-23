@@ -13,8 +13,14 @@
     </div>
 
     <!-- SEGMENT: TV/Display mode action button.
-         Opens fullscreen guided workout queue via openTVDisplay(). -->
-    <button class="btn-display" onclick="openTVDisplay()">📺 Display on TV</button>
+         showTodayPage() enables it after a workout is selected. -->
+    <div class="today-header-actions">
+      <div class="today-date-picker">
+        <input type="date" class="date-input" id="today-workout-date" />
+        <button class="btn-sm" onclick="applyTodayWorkoutDate()">Select Date</button>
+      </div>
+      <button class="btn-display" id="display-tv-btn" onclick="displaySelectedTodayWorkout()" disabled>Display on TV</button>
+    </div>
   </div>
 
   <!-- SEGMENT: Today's workout panel mount point.
