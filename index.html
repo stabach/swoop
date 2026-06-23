@@ -2640,8 +2640,8 @@ async function submitLog() {
       .eq('athlete_id', currentAthleteId)
       .eq('date', date)
       .eq('exercise', logModalExercise);
-    if (context.workoutId) saveQuery = saveQuery.eq('workout_id', context.workoutId);
-    if (context.workoutItemId) saveQuery = saveQuery.eq('workout_item_id', context.workoutItemId);
+    if (existing.workout_id) saveQuery = saveQuery.eq('workout_id', existing.workout_id);
+    if (existing.workout_item_id) saveQuery = saveQuery.eq('workout_item_id', existing.workout_item_id);
   } else {
     saveQuery = supabase.from('workout_logs').upsert(payload, { onConflict: 'athlete_id,date,workout_id,workout_item_id' });
   }
@@ -3254,8 +3254,8 @@ async function deleteWorkoutLog(exercise, workoutId = '', workoutItemIdValue = '
       .eq('athlete_id', currentAthleteId)
       .eq('date', log.date || currentDate)
       .eq('exercise', exercise);
-    if (context.workoutId) deleteQuery = deleteQuery.eq('workout_id', context.workoutId);
-    if (context.workoutItemId) deleteQuery = deleteQuery.eq('workout_item_id', context.workoutItemId);
+    if (log.workout_id) deleteQuery = deleteQuery.eq('workout_id', log.workout_id);
+    if (log.workout_item_id) deleteQuery = deleteQuery.eq('workout_item_id', log.workout_item_id);
   }
   const { error } = await deleteQuery;
   if (error) return toast('Could not delete log. Please try again.');
