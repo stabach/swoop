@@ -66,6 +66,32 @@
           <div class="form-group"><label class="form-label">Sport</label><input type="text" id="edit-sport" class="form-input" /></div>
           <div class="form-group"><label class="form-label">Groups / Team (comma separated)</label><input type="text" id="edit-groups" class="form-input" /></div>
         </div>
+        <div class="credential-card">
+          <div class="credential-head">
+            <div>
+              <div class="credential-title">Athlete Login</div>
+              <div class="credential-help">Use these credentials for the athlete-only login.</div>
+            </div>
+            <button type="button" class="btn-sm" onclick="resetAthletePassword()">Reset Password</button>
+          </div>
+          <div class="credential-grid">
+            <div class="form-group">
+              <label class="form-label">Username</label>
+              <div class="credential-row">
+                <input type="text" id="edit-athlete-username" class="form-input" readonly />
+                <button type="button" class="btn-sm" onclick="copyAthleteCredential('username')">Copy</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <div class="credential-row">
+                <input type="text" id="edit-athlete-password" class="form-input" readonly />
+                <button type="button" class="btn-sm" onclick="copyAthleteCredential('password')">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div class="credential-status" id="edit-athlete-credential-status">Credentials load when this athlete is opened.</div>
+        </div>
         <div class="admin-modal-actions">
           <button class="btn-sm" onclick="closeAdminAthleteModal()">Cancel</button>
           <button class="btn-sm green" onclick="saveEditAthlete()">Save</button>

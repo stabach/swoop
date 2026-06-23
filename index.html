@@ -1602,6 +1602,27 @@
   .attendance-row.absent .attendance-status { background:#f1b5b0; color:#7f1d1d; }
   .attendance-row.present .attendance-status { background:#8de8a9; color:var(--green-900); }
   @media (max-width: 700px) { .attendance-toolbar { flex-direction:column; align-items:stretch; } }
+  .credential-card { margin-top:16px; border:1px solid var(--border); border-radius:12px; background:var(--surface-2); padding:14px; }
+  .credential-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:12px; }
+  .credential-title { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:900; color:var(--green-900); text-transform:uppercase; letter-spacing:.5px; }
+  .credential-help, .credential-status { font-size:13px; color:var(--text-muted); line-height:1.4; }
+  .credential-grid { display:grid; grid-template-columns:repeat(2,minmax(180px,1fr)); gap:12px; }
+  .credential-row { display:flex; gap:8px; align-items:center; }
+  .credential-row .form-input { flex:1; font-family:'IBM Plex Mono',monospace; font-size:14px; }
+  .credential-row .form-input[readonly] { background:white; color:var(--green-900); font-weight:800; }
+  .athlete-dashboard-shell { display:grid; gap:16px; }
+  .athlete-hero { background:linear-gradient(135deg,var(--green-900),#155a2d); color:white; border-radius:18px; padding:22px; display:flex; justify-content:space-between; gap:16px; align-items:center; }
+  .athlete-hero-title { font-family:'Barlow Condensed',sans-serif; font-size:36px; font-weight:900; line-height:1; }
+  .athlete-hero-meta { color:var(--green-100); font-weight:700; margin-top:6px; }
+  .athlete-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+  .athlete-workout-card { background:white; border:1px solid var(--border); border-radius:12px; padding:18px; }
+  .athlete-workout-heading { font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--green-900); margin-bottom:4px; }
+  .athlete-workout-date { color:var(--text-muted); font-weight:700; margin-bottom:14px; }
+  @media (max-width: 760px) {
+    .credential-grid { grid-template-columns:1fr; }
+    .credential-head, .athlete-hero { flex-direction:column; align-items:stretch; }
+    .athlete-actions { justify-content:flex-start; }
+  }
 </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -1642,11 +1663,12 @@
     </div>
   </div>
   <div style="display:flex;gap:8px;">
-    <button class="header-nav-btn" onclick="showPage('today')">Today's Workout</button>
-    <button class="header-nav-btn" onclick="showPage('edit-workouts')">Edit Workouts</button>
-    <button class="header-nav-btn" onclick="showPage('admin')">Manage Athletes</button>
-    <button class="header-nav-btn" onclick="showPage('attendance')">Attendance</button>
-    <button class="header-nav-btn" onclick="showPage('calendar')">Calendar</button>
+    <button class="header-nav-btn" data-athlete-only onclick="showPage('athlete-dashboard')" style="display:none;">My Workout</button>
+    <button class="header-nav-btn" data-coach-only onclick="showPage('today')">Today's Workout</button>
+    <button class="header-nav-btn" data-coach-only onclick="showPage('edit-workouts')">Edit Workouts</button>
+    <button class="header-nav-btn" data-coach-only onclick="showPage('admin')">Manage Athletes</button>
+    <button class="header-nav-btn" data-coach-only onclick="showPage('attendance')">Attendance</button>
+    <button class="header-nav-btn" data-coach-only onclick="showPage('calendar')">Calendar</button>
     <button class="header-nav-btn" onclick="showPage('tutorials')">Tutorials</button>
     <button class="header-nav-btn" onclick="logoutCoach()" style="color:#ff6b6b;font-size:12px;">Logout</button>
   </div>
@@ -1657,6 +1679,29 @@
 
   <!-- DASHBOARD -->
   <!-- include:page-dashboard --><div data-include="ui/pages/dashboard.html"></div><!-- /include:page-dashboard -->
+
+  <!-- ATHLETE DASHBOARD -->
+  <div id="page-athlete-dashboard" class="page">
+    <div class="athlete-dashboard-shell">
+      <div class="athlete-hero">
+        <div>
+          <div class="athlete-hero-title" id="athlete-dashboard-name">Athlete</div>
+          <div class="athlete-hero-meta" id="athlete-dashboard-meta">Today&apos;s workout</div>
+        </div>
+        <div class="athlete-actions">
+          <button class="btn-sm" onclick="showPage('tutorials')">Tutorials</button>
+          <button class="btn-sm" onclick="logoutCoach()">Logout</button>
+        </div>
+      </div>
+      <div class="athlete-workout-card">
+        <div class="athlete-workout-heading">Today&apos;s Workout</div>
+        <div class="athlete-workout-date" id="athlete-workout-date">Today</div>
+        <div id="athlete-workout-panel">
+          <div class="empty-state">Loading today&apos;s workout...</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ATHLETE PROFILE -->
   <div id="page-profile" class="page">
@@ -1910,10 +1955,15 @@ let supabase = null;
 const SUPABASE_URL = 'https://ispmelxwebnhnoflbeoj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_RV-YgGToZ9yfk4RNVvfMQQ_Peh_NVIF';
 const TUTORIALS_API_URL = window.TUTORIALS_API_URL || `${SUPABASE_URL}/functions/v1/tutorials`;
+const ATHLETE_AUTH_API_URL = window.ATHLETE_AUTH_API_URL || `${SUPABASE_URL}/functions/v1/athlete-auth`;
 const LEGACY_COACH_SESSION_KEY = 'coach_session_username';
 const COACH_AUTH_EMAIL_DOMAIN = 'eaglestrength.local';
+const ATHLETE_AUTH_EMAIL_DOMAIN = 'athletes.eaglestrength.local';
 let currentCoach = null;
+let currentAthlete = null;
 let currentAuthUser = null;
+let currentRole = null;
+let athleteCredentialBackfillDone = false;
 let appDialogResolver = null;
 function onLoginKeydown(event) {
   if (event.key !== 'Enter') return;
@@ -1927,6 +1977,14 @@ function coachLoginToEmail(loginValue) {
   if (value.includes('@')) return value;
   const username = value.replace(/[^a-z0-9._+-]/g, '');
   return username ? `${username}@${COACH_AUTH_EMAIL_DOMAIN}` : '';
+}
+
+function athleteLoginToEmail(loginValue) {
+  const value = (loginValue || '').trim().toLowerCase();
+  if (!value) return '';
+  if (value.includes('@')) return value;
+  const username = value.replace(/[^a-z0-9]/g, '');
+  return username ? `${username}@${ATHLETE_AUTH_EMAIL_DOMAIN}` : '';
 }
 
 async function getCoachProfileForAuthUser(user) {
@@ -1943,44 +2001,120 @@ async function getCoachProfileForAuthUser(user) {
   return data || null;
 }
 
+async function getAthleteProfileForAuthUser(user) {
+  if (!user?.id) return null;
+  const { data, error } = await supabase
+    .from('athletes')
+    .select('id,name,grade,sport,groups,active_status,notes,username,auth_user_id,role')
+    .eq('auth_user_id', user.id)
+    .maybeSingle();
+  if (error) {
+    console.error('Unable to load athlete profile:', error);
+    return null;
+  }
+  return data || null;
+}
+
+function setSessionChrome(role) {
+  const isAthlete = role === 'athlete';
+  document.querySelectorAll('[data-coach-only]').forEach(el => { el.style.display = isAthlete ? 'none' : ''; });
+  document.querySelectorAll('[data-athlete-only]').forEach(el => { el.style.display = isAthlete ? '' : 'none'; });
+  const sub = document.querySelector('.header-subtitle');
+  if (sub) sub.textContent = isAthlete ? 'Athlete Portal' : 'Coaching Platform';
+  const loginSub = document.querySelector('.config-sub');
+  if (loginSub) loginSub.textContent = 'Coach / Athlete Login';
+}
+
+function isCoachSession() {
+  return currentRole === 'coach' && !!currentCoach;
+}
+
+function isAthleteSession() {
+  return currentRole === 'athlete' && !!currentAthlete;
+}
+
+function requireCoachAction(message = 'That area is coach-only') {
+  if (isCoachSession()) return true;
+  toast(message);
+  if (isAthleteSession()) showPage('athlete-dashboard');
+  return false;
+}
+
 async function applyCoachSession(profile, authUser = null) {
+  currentRole = 'coach';
   currentCoach = profile;
+  currentAthlete = null;
   currentAuthUser = authUser || { id: profile?.auth_user_id, email: profile?.email };
+  setSessionChrome('coach');
   document.getElementById('config-screen').style.display = 'none';
   document.getElementById('app-header').style.display = 'flex';
   document.getElementById('main-content').style.display = 'block';
   await loadAthletes();
   await loadWorkoutTemplates();
+  await backfillAthleteCredentials({ silent: true });
   renderDashboard();
+}
+
+async function applyAthleteSession(profile, authUser = null) {
+  currentRole = 'athlete';
+  currentCoach = null;
+  currentAthlete = profile;
+  currentAuthUser = authUser || { id: profile?.auth_user_id, email: profile?.username };
+  currentAthleteId = profile.id;
+  athletes = [profile];
+  setSessionChrome('athlete');
+  document.getElementById('config-screen').style.display = 'none';
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'block';
+  await loadWorkoutTemplates();
+  renderAthleteDashboard();
+  showPage('athlete-dashboard');
 }
 
 async function loginCoach() {
   const loginValue = (document.getElementById('login-username').value || '').trim();
-  const email = coachLoginToEmail(loginValue);
   const password = (document.getElementById('login-password').value || '').trim();
-  if (!email || !password) return toast('Enter username/email and password');
+  if (!loginValue || !password) return toast('Enter username/email and password');
   if (!supabase) await connectToSupabase(SUPABASE_URL, SUPABASE_KEY);
   if (!supabase) return;
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error || !data?.user) return toast('Invalid login');
+  const candidates = loginValue.includes('@')
+    ? [loginValue.trim().toLowerCase()]
+    : [...new Set([coachLoginToEmail(loginValue), athleteLoginToEmail(loginValue)].filter(Boolean))];
 
-  const profile = await getCoachProfileForAuthUser(data.user);
-  if (!profile) {
+  for (const email of candidates) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data?.user) continue;
+
+    const coachProfile = await getCoachProfileForAuthUser(data.user);
+    if (coachProfile) {
+      await applyCoachSession(coachProfile, data.user);
+      await auditAction('login', 'Coach signed in');
+      return;
+    }
+
+    const athleteProfile = await getAthleteProfileForAuthUser(data.user);
+    if (athleteProfile) {
+      await applyAthleteSession(athleteProfile, data.user);
+      return;
+    }
+
     await supabase.auth.signOut();
-    return toast('Coach profile not linked to this login');
   }
 
-  await applyCoachSession(profile, data.user);
-  await auditAction('login', 'Coach signed in');
+  toast('Invalid login');
 }
 
 async function logoutCoach() {
-  if (currentCoach) await auditAction('logout', 'Coach signed out');
+  if (isCoachSession()) await auditAction('logout', 'Coach signed out');
   if (supabase?.auth) await supabase.auth.signOut();
   currentCoach = null;
+  currentAthlete = null;
   currentAuthUser = null;
+  currentRole = null;
+  athleteCredentialBackfillDone = false;
   localStorage.removeItem(LEGACY_COACH_SESSION_KEY);
+  setSessionChrome(null);
   document.getElementById('login-username').value = '';
   document.getElementById('login-password').value = '';
   document.getElementById('app-header').style.display = 'none';
@@ -2122,19 +2256,116 @@ async function initApp() {
 
 // ===================== DATA =====================
 async function loadAthletes() {
+  if (!requireCoachAction('Athletes are coach-only')) return;
   const { data, error } = await supabase.from('athletes').select('*').order('name');
   if (error) { toast('Error loading athletes: ' + error.message); return; }
   athletes = data || [];
 }
 
+function mergeAthleteRecord(record) {
+  if (!record?.id) return;
+  const idx = athletes.findIndex(a => String(a.id) === String(record.id));
+  if (idx >= 0) athletes[idx] = { ...athletes[idx], ...record };
+  else athletes.push(record);
+  if (currentAthlete && String(currentAthlete.id) === String(record.id)) currentAthlete = { ...currentAthlete, ...record };
+}
+
+function populateAthleteLoginFields(athlete, credentials = {}) {
+  const usernameEl = document.getElementById('edit-athlete-username');
+  const passwordEl = document.getElementById('edit-athlete-password');
+  const statusEl = document.getElementById('edit-athlete-credential-status');
+  if (!usernameEl || !passwordEl || !statusEl) return;
+  usernameEl.value = credentials.username || athlete?.username || '';
+  passwordEl.value = credentials.password || credentials.temporaryPassword || '';
+  if (usernameEl.value && passwordEl.value) {
+    statusEl.textContent = 'Ready to share with this athlete.';
+  } else if (athlete?.role === 'coach' || (athlete?.groups || []).some(g => String(g).toLowerCase() === 'coach')) {
+    statusEl.textContent = 'Coach records do not receive athlete login credentials.';
+  } else {
+    statusEl.textContent = 'Generating credentials...';
+  }
+}
+
+async function getSessionAccessToken() {
+  const { data } = await supabase.auth.getSession();
+  return data?.session?.access_token || '';
+}
+
+async function callAthleteAuth(action, payload = {}) {
+  if (!requireCoachAction()) throw new Error('Coach login required');
+  const token = await getSessionAccessToken();
+  if (!token) throw new Error('Coach session expired');
+  const res = await fetch(ATHLETE_AUTH_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({ action, ...payload })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Athlete auth returned ${res.status}`);
+  return data;
+}
+
+async function ensureAthleteCredentials(athleteId, options = {}) {
+  const data = await callAthleteAuth('ensure', { athleteId });
+  if (data.athlete) mergeAthleteRecord(data.athlete);
+  if (!options.silent) toast('Athlete login ready');
+  return data;
+}
+
+async function backfillAthleteCredentials(options = {}) {
+  if (!isCoachSession() || athleteCredentialBackfillDone) return;
+  athleteCredentialBackfillDone = true;
+  try {
+    const data = await callAthleteAuth('backfill');
+    (data.athletes || []).forEach(mergeAthleteRecord);
+    if (!options.silent && data.createdCount) toast(`Generated ${data.createdCount} athlete logins`);
+  } catch (error) {
+    console.warn('Athlete credential backfill skipped:', error);
+    if (!options.silent) toast('Athlete credential setup needs the athlete-auth function deployed');
+  }
+}
+
+async function copyAthleteCredential(kind) {
+  const id = kind === 'password' ? 'edit-athlete-password' : 'edit-athlete-username';
+  const value = document.getElementById(id)?.value || '';
+  if (!value) return toast('No credential to copy yet');
+  await navigator.clipboard.writeText(value);
+  toast(kind === 'password' ? 'Password copied' : 'Username copied');
+}
+
+async function resetAthletePassword() {
+  if (!requireCoachAction()) return;
+  const athleteId = document.getElementById('edit-id')?.value;
+  const athlete = athletes.find(a => String(a.id) === String(athleteId));
+  if (!athlete) return;
+  if (!await appConfirm('Reset Athlete Password', `Generate a new password for ${athlete.name}?`)) return;
+  try {
+    const data = await callAthleteAuth('reset-password', { athleteId });
+    if (data.athlete) mergeAthleteRecord(data.athlete);
+    populateAthleteLoginFields(data.athlete || athlete, data.credentials || {});
+    toast('Athlete password reset');
+  } catch (error) {
+    toast('Could not reset password: ' + error.message);
+  }
+}
+
 async function addAthlete() {
+  if (!requireCoachAction()) return;
   const name = document.getElementById('new-name').value.trim();
   const grade = parseInt(document.getElementById('new-grade').value);
   const sport = document.getElementById('new-sport').value.trim();
   const groups = parseGroups(document.getElementById('new-groups').value);
   if (!name) { toast('Please enter athlete name'); return; }
-  const { error } = await supabase.from('athletes').insert([{ name, grade, sport, groups, active_status: true, notes: '' }]);
+  const { data: created, error } = await supabase.from('athletes').insert([{ name, grade, sport, groups, active_status: true, notes: '', role: 'athlete' }]).select('*').single();
   if (error) { toast('Error: ' + error.message); return; }
+  if (created?.id) {
+    try { await ensureAthleteCredentials(created.id, { silent: true }); }
+    catch (credentialError) { console.warn('Unable to generate athlete credentials:', credentialError); }
+  }
   await auditAction('add_athlete', `Added athlete: ${name}`);
   toast('Athlete added!');
   document.getElementById('new-name').value = '';
@@ -2148,6 +2379,7 @@ async function addAthlete() {
 
 
 async function updateAthleteStatus(val) {
+  if (!requireCoachAction()) return;
   const active = val === 'true';
   const { error } = await supabase.from('athletes').update({ active_status: active }).eq('id', currentAthleteId);
   if (error) { toast('Error saving status'); return; }
@@ -2157,6 +2389,7 @@ async function updateAthleteStatus(val) {
 }
 
 async function saveAthleteNotes() {
+  if (!requireCoachAction()) return;
   const notes = document.getElementById('profile-notes').value;
   const { error } = await supabase.from('athletes').update({ notes }).eq('id', currentAthleteId);
   if (error) return;
@@ -2165,6 +2398,7 @@ async function saveAthleteNotes() {
 }
 
 async function saveEditAthlete() {
+  if (!requireCoachAction()) return;
   const id = document.getElementById('edit-id').value;
   const name = document.getElementById('edit-name').value.trim();
   const grade = parseInt(document.getElementById('edit-grade').value);
@@ -2182,6 +2416,7 @@ async function saveEditAthlete() {
 }
 
 async function toggleAthleteStatus(id) {
+  if (!requireCoachAction()) return;
   const athlete = athletes.find(a => String(a.id) === String(id));
   if (!athlete) return;
   const newStatus = !athlete.active_status;
@@ -2194,6 +2429,7 @@ async function toggleAthleteStatus(id) {
 }
 
 async function deleteAthlete(id) {
+  if (!requireCoachAction()) return;
   const athlete = athletes.find(a => a.id === id);
   if (!await appConfirm('Delete Athlete', `Delete ${athlete?.name}? This cannot be undone.`)) return;
   const { error } = await supabase.from('athletes').delete().eq('id', id);
@@ -2213,9 +2449,14 @@ async function loadWorkoutLogs(athleteId) {
 
 async function submitLog() {
   if (!logModalExercise || !currentAthleteId) return;
+  if (isAthleteSession()) currentAthleteId = currentAthlete.id;
   const notes = document.getElementById('log-notes').value;
   const dateInput = document.getElementById('log-date');
   const date = dateInput.value || currentDate || new Date().toISOString().split('T')[0];
+  if (isAthleteSession() && date !== toLocalDateStr()) {
+    toast('Athletes can only log today\'s workout');
+    return;
+  }
   if (!enforceWorkoutLogDate(dateInput)) return;
   const repsInputs = Array.from(document.querySelectorAll('.log-set-reps'));
   const weightInputs = Array.from(document.querySelectorAll('.log-set-weight'));
@@ -2407,7 +2648,8 @@ function renderAdminTeamOptions() {
   if (teams.includes(current)) sel.value = current;
 }
 
-function renderAdminList() {
+async function renderAdminList() {
+  if (!isCoachSession()) return;
   const wrap = document.getElementById('admin-athlete-list');
   if (!wrap) return;
   renderAdminTeamOptions();
@@ -2472,7 +2714,8 @@ function openAddAthlete() {
   setTimeout(() => document.getElementById('new-name')?.focus(), 0);
 }
 
-function openEditAthlete(id) {
+async function openEditAthlete(id) {
+  if (!requireCoachAction()) return;
   const a = athletes.find(x => String(x.id) === String(id));
   if (!a) return;
   document.getElementById('edit-id').value = a.id;
@@ -2480,11 +2723,27 @@ function openEditAthlete(id) {
   document.getElementById('edit-grade').value = a.grade;
   document.getElementById('edit-sport').value = a.sport || '';
   document.getElementById('edit-groups').value = formatGroups(a.groups);
+  populateAthleteLoginFields(a);
   openAdminAthleteModal('edit');
   setTimeout(() => document.getElementById('edit-name')?.focus(), 0);
+  try {
+    const data = await ensureAthleteCredentials(a.id, { silent: true });
+    populateAthleteLoginFields(data.athlete || a, data.credentials || {});
+    renderAdminList();
+  } catch (error) {
+    const statusEl = document.getElementById('edit-athlete-credential-status');
+    if (statusEl) statusEl.textContent = 'Credentials unavailable until the athlete-auth function and migration are deployed.';
+    console.warn('Unable to load athlete credentials:', error);
+  }
 }
 
 async function openAthleteProfile(id) {
+  if (isAthleteSession() && String(id) !== String(currentAthlete?.id)) {
+    toast('Athletes can only view their own profile');
+    showPage('athlete-dashboard');
+    return;
+  }
+  if (!isCoachSession() && !isAthleteSession()) return;
   currentAthleteId = id;
   let a = athletes.find(x => String(x.id) === String(id));
   if (!a) {
@@ -2607,6 +2866,47 @@ function renderWorkoutPanel() {
   refreshLoggedExercisesForCurrentDate().then(updateWorkoutLogButtons);
 }
 
+function renderAthleteDashboard() {
+  const athlete = currentAthlete;
+  if (!athlete) return;
+  currentAthleteId = athlete.id;
+  currentDate = toLocalDateStr();
+  const d = dateFromDateStr(currentDate);
+  currentDay = d.toLocaleDateString('en-US', { weekday: 'long' });
+  const teams = getAthleteTeams(athlete);
+  const nameEl = document.getElementById('athlete-dashboard-name');
+  const metaEl = document.getElementById('athlete-dashboard-meta');
+  const dateEl = document.getElementById('athlete-workout-date');
+  const panel = document.getElementById('athlete-workout-panel');
+  if (nameEl) nameEl.textContent = athlete.name || 'Athlete';
+  if (metaEl) metaEl.textContent = `${teams.join(', ') || 'No team set'} · Grade ${athlete.grade || '—'}`;
+  if (dateEl) dateEl.textContent = formatWorkoutDate(currentDate);
+  if (!panel) return;
+
+  const workouts = getWorkoutsForDate(currentDate).filter(record => workoutMatchesAthlete(record, athlete));
+  if (!workouts.length) {
+    panel.innerHTML = `<div class="empty-state">No workout has been posted for your team today.</div>`;
+    return;
+  }
+
+  panel.innerHTML = workouts.map(record => `
+    <div class="workout-record-card" style="display:block;margin-bottom:14px;">
+      <div class="workout-title-row">
+        <span class="team-pill">${escHtml(record.teamName)}</span>
+        <span class="workout-record-title">${escHtml(record.title)}</span>
+      </div>
+      <div class="workout-record-meta" style="margin-bottom:12px;">${escHtml(formatWorkoutDate(record.date, { month: 'long', day: 'numeric', year: 'numeric' }))} · ${getWorkoutExerciseCount(record)} exercises</div>
+      ${(record.sections || []).map(section => `
+        <div class="section-card">
+          <div class="section-card-header">${escHtml(section.section)}</div>
+          ${renderExercises(section.exercises || [])}
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+  refreshLoggedExercisesForCurrentDate().then(updateWorkoutLogButtons);
+}
+
 function getMondayOfCurrentWeek(baseDate = new Date()) {
   const monday = new Date(baseDate);
   const day = monday.getDay();
@@ -2695,6 +2995,10 @@ async function hydrateLogModalExistingValues() {
 }
 
 async function openLogModal(exercise, level) {
+  if (isAthleteSession()) {
+    currentAthleteId = currentAthlete.id;
+    currentDate = toLocalDateStr();
+  }
   logModalExercise = exercise;
   logModalLevel = level;
   document.getElementById('log-modal-title').textContent = 'Log: ' + exercise;
@@ -2703,16 +3007,21 @@ async function openLogModal(exercise, level) {
     .filter(record => workoutMatchesAthlete(record, athlete))
     .flatMap(record => (record.sections || []).flatMap(s => s.exercises || []));
   const ex = template.find(x => x.name === exercise);
+  if (isAthleteSession() && !ex) {
+    toast('You can only log exercises from today\'s workout');
+    return;
+  }
   const setCount = Math.max(parseInt(ex?.sets) || 1, 1);
   const repTargets = splitSetValues(ex?.reps || '');
   const logDateInput = document.getElementById('log-date');
   initLogDatePicker();
-  const defaultLogDate = currentDate || toLocalDateStr();
+  const defaultLogDate = isAthleteSession() ? toLocalDateStr() : (currentDate || toLocalDateStr());
   if (logDatePicker && typeof logDatePicker.setDate === 'function') {
     logDatePicker.setDate(defaultLogDate, true);
   } else {
     logDateInput.value = defaultLogDate;
   }
+  logDateInput.disabled = isAthleteSession();
   logDateInput.onchange = async () => {
     if (enforceWorkoutLogDate(logDateInput)) await hydrateLogModalExistingValues();
   };
@@ -2977,6 +3286,12 @@ async function searchTutorials(event) {
 
 // ===================== NAVIGATION =====================
 function showPage(page) {
+  const coachOnlyPages = new Set(['dashboard', 'profile', 'admin', 'today', 'edit-workouts', 'attendance', 'calendar']);
+  if (isAthleteSession() && coachOnlyPages.has(page)) {
+    toast('That page is coach-only');
+    page = 'athlete-dashboard';
+  }
+  if (isCoachSession() && page === 'athlete-dashboard') page = 'dashboard';
   const target = document.getElementById('page-' + page);
   if (!target) {
     toast(`Page failed to load: ${page}. Open via http://localhost, not file://`);
@@ -2986,6 +3301,7 @@ function showPage(page) {
   target.classList.add('active');
   if (page === 'admin') { renderAdminList(); }
   if (page === 'dashboard') { renderDashboard(); }
+  if (page === 'athlete-dashboard') { renderAthleteDashboard(); }
   if (page === 'today') { showTodayPage({ resetToToday: true }); }
   if (page === 'edit-workouts') { showEditWorkoutsPage(); }
   if (page === 'tutorials') { showTutorialsPage(); }
@@ -3179,6 +3495,7 @@ async function loadWorkoutTemplates() {
 }
 
 async function saveWorkoutTemplates(templates) {
+  if (!requireCoachAction()) return false;
   const rows = Object.keys(templates).map(day => ({
     day_name: day,
     template_json: deepClone(templates[day])
@@ -3206,6 +3523,7 @@ function upsertLocalWorkoutRecord(record) {
 }
 
 async function saveWorkoutRecord(record) {
+  if (!requireCoachAction()) return null;
   const normalized = normalizeWorkoutRecord(record);
   if (!normalized) return null;
   normalized.updatedAt = new Date().toISOString();
@@ -3222,6 +3540,7 @@ async function saveWorkoutRecord(record) {
 }
 
 async function deleteWorkoutRecordById(id) {
+  if (!requireCoachAction()) return false;
   const { error } = await supabase.from('workout_templates').delete().eq('day_name', workoutStorageKey(id));
   if (error) {
     toast('Error deleting workout: ' + error.message);
@@ -3232,6 +3551,7 @@ async function deleteWorkoutRecordById(id) {
 }
 
 async function saveWorkoutTeamList() {
+  if (!requireCoachAction()) return;
   const teams = [...new Set(savedWorkoutTeams.map(normalizeTeamName).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
   savedWorkoutTeams = teams;
   const { error } = await supabase
@@ -4574,9 +4894,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (profile) {
       await applyCoachSession(profile, session.user);
     } else {
-      await supabase.auth.signOut();
-      document.getElementById('config-screen').style.display = 'block';
-      setTimeout(() => document.getElementById('login-username')?.focus(), 0);
+      const athleteProfile = await getAthleteProfileForAuthUser(session.user);
+      if (athleteProfile) {
+        await applyAthleteSession(athleteProfile, session.user);
+      } else {
+        await supabase.auth.signOut();
+        document.getElementById('config-screen').style.display = 'block';
+        setTimeout(() => document.getElementById('login-username')?.focus(), 0);
+      }
     }
   } else {
     document.getElementById('config-screen').style.display = 'block';
