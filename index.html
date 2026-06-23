@@ -655,6 +655,20 @@
   .modal-btns { display: flex; gap: 8px; margin-top: 16px; }
   .modal-btns .btn-sm { flex: 1; text-align: center; }
   .log-set-row { display:grid; grid-template-columns: 80px 1fr 1fr; gap:10px; margin-bottom:8px; align-items:center; }
+  .log-context { background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:12px; }
+  .log-context-title { font-weight:800; color:var(--green-900); margin-bottom:3px; }
+  .log-context-detail { font-size:13px; color:var(--text-muted); font-weight:700; }
+  .log-control-row { display:grid; grid-template-columns:minmax(150px,220px) 1fr; gap:12px; margin-bottom:12px; align-items:end; }
+  .exercise-log-summary { margin-top:10px; padding:10px 12px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; }
+  .exercise-log-title { font-size:12px; font-weight:900; color:var(--green-900); text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px; }
+  .exercise-log-list { display:grid; gap:4px; color:var(--text-main); font-size:14px; font-weight:700; }
+  .exercise-log-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .log-delete-btn { background:#fff1f1; border-color:#f0c4c4; color:#9f1d1d; }
+  @media (max-width: 640px) {
+    .modal-box { max-height:92vh; overflow:auto; padding:18px; }
+    .modal-grid, .log-control-row, .log-set-row { grid-template-columns:1fr; }
+    .modal-btns { flex-direction:column; }
+  }
   /* ---- CHARTS ---- */
   .chart-toggle-btn {
     padding: 8px 16px;
@@ -1887,15 +1901,23 @@
 <div class="modal-overlay" id="log-modal" style="display:none;" onclick="closeLogModal(event)">
   <div class="modal-box">
     <div class="modal-title" id="log-modal-title">Log: Exercise</div>
-    <div class="modal-grid">
+    <div class="log-context">
+      <div class="log-context-title" id="log-modal-exercise">Exercise</div>
+      <div class="log-context-detail" id="log-modal-assigned">Assigned workout details</div>
+    </div>
+    <div class="log-control-row">
       <div>
-        <label class="modal-label">Set-by-Set Log</label>
-        <div style="margin-bottom:8px;">
-          <label class="modal-label">Log Date</label>
-          <input type="date" id="log-date" class="modal-input" />
-        </div>
-        <div id="log-set-rows"></div>
+        <label class="modal-label">Log Date</label>
+        <input type="date" id="log-date" class="modal-input" />
       </div>
+      <div>
+        <label class="modal-label">Sets Completed</label>
+        <input type="number" id="log-sets-completed" class="modal-input" min="1" max="20" step="1" value="1" oninput="renderDynamicLogSetRows()" />
+      </div>
+    </div>
+    <div>
+      <label class="modal-label">Set-by-Set Log</label>
+      <div id="log-set-rows"></div>
     </div>
     <div>
       <label class="modal-label">Performance Notes</label>
@@ -2189,6 +2211,8 @@ let logModalLevel = null;
 let workoutLogs = {};
 let progressionChart = null;
 let loggedExercisesForDate = new Set();
+let loggedWorkoutLogsForDate = new Map();
+let currentLogContext = null;
 const LOGGABLE_LIFTS = ['BENCHPRESS', 'BACKSQUAT', 'BACKSQUATS', 'POWERCLEANMSDEADLIFTS'];
 function normLiftName(n){ return String(n||'').toUpperCase().replace(/[-_.]/g,' ').replace(/\s+/g,' ').trim(); }
 function normLiftKey(n){ return String(n || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
@@ -2447,6 +2471,109 @@ async function loadWorkoutLogs(athleteId) {
   return data || [];
 }
 
+const MAX_LOG_SETS = 20;
+
+function workoutItemId(record, sectionIndex, exerciseIndex, exercise) {
+  const exKey = normLiftKey(exercise?.name || `exercise${exerciseIndex + 1}`) || `exercise${exerciseIndex + 1}`;
+  return `${record?.id || 'workout'}:${sectionIndex + 1}:${exerciseIndex + 1}:${exKey}`;
+}
+
+function workoutLogKey(workoutId, workoutItemIdValue, exercise) {
+  return `${String(workoutId || 'legacy')}__${String(workoutItemIdValue || normLiftName(exercise) || 'exercise')}`;
+}
+
+function workoutLogLegacyKey(exercise) {
+  return `legacy__${normLiftName(exercise)}`;
+}
+
+function getSetEntriesFromLog(log) {
+  if (!log) return [];
+  if (Array.isArray(log.set_entries)) return log.set_entries;
+  return parseSetLogFromNotes(log.performance_notes);
+}
+
+function getLoggedExerciseForContext(context) {
+  if (!context) return null;
+  const exact = loggedWorkoutLogsForDate.get(workoutLogKey(context.workoutId, context.workoutItemId, context.exerciseName));
+  if (exact) return exact;
+  return loggedWorkoutLogsForDate.get(workoutLogLegacyKey(context.exerciseName)) || null;
+}
+
+function formatSetEntry(entry) {
+  const weight = entry?.weight === null || entry?.weight === undefined || entry?.weight === '' ? 'Bodyweight' : `${entry.weight}`;
+  const reps = entry?.reps === null || entry?.reps === undefined || entry?.reps === '' ? '0' : `${entry.reps}`;
+  return `${weight} x ${reps}`;
+}
+
+function renderExerciseLogSummary(log, context) {
+  if (!log) {
+    const label = isCoachSession() ? `Log for ${athletes.find(a => String(a.id) === String(currentAthleteId))?.name || 'Athlete'}` : 'Log';
+    return `<div class="exercise-log-summary">
+      <div class="exercise-log-title">${isCoachSession() ? 'Athlete Log' : 'Your Log'}: Not logged yet</div>
+      <button class="log-btn" data-log-exercise="${escHtml(context.exerciseName)}" onclick="openLogModal(${jsArg(context.exerciseName)}, '', ${jsArg(context.workoutId)}, ${jsArg(context.workoutItemId)})">${escHtml(label)}</button>
+    </div>`;
+  }
+  const entries = getSetEntriesFromLog(log);
+  const ownerLabel = isCoachSession()
+    ? `${athletes.find(a => String(a.id) === String(currentAthleteId))?.name || 'Athlete'}'s Log`
+    : 'Your Log';
+  return `<div class="exercise-log-summary">
+    <div class="exercise-log-title">${escHtml(ownerLabel)}: ${escHtml(log.sets_completed || entries.length || 0)} sets</div>
+    <div class="exercise-log-list">
+      ${entries.length ? entries.map((entry, idx) => `<div>Set ${escHtml(entry.set || idx + 1)}: ${escHtml(formatSetEntry(entry))}</div>`).join('') : '<div>No set details saved yet.</div>'}
+    </div>
+    ${log.performance_notes ? `<div class="exercise-detail" style="margin-top:6px;">${escHtml(stripSetLogFromNotes(log.performance_notes))}</div>` : ''}
+    <div class="exercise-log-actions">
+      <button class="btn-sm green" onclick="openLogModal(${jsArg(context.exerciseName)}, '', ${jsArg(context.workoutId)}, ${jsArg(context.workoutItemId)})">Edit Log</button>
+      <button class="btn-sm log-delete-btn" onclick="deleteWorkoutLog(${jsArg(context.exerciseName)}, ${jsArg(context.workoutId)}, ${jsArg(context.workoutItemId)})">Delete Log</button>
+    </div>
+  </div>`;
+}
+
+function getLogSetRowValues() {
+  return Array.from(document.querySelectorAll('.log-set-row')).map(row => ({
+    reps: row.querySelector('.log-set-reps')?.value || '',
+    weight: row.querySelector('.log-set-weight')?.value || '',
+  }));
+}
+
+function renderDynamicLogSetRows(presetRows = null) {
+  const countInput = document.getElementById('log-sets-completed');
+  const rowsEl = document.getElementById('log-set-rows');
+  if (!countInput || !rowsEl) return;
+  const existingValues = presetRows || getLogSetRowValues();
+  let count = parseInt(countInput.value, 10);
+  if (!Number.isInteger(count)) count = 1;
+  count = Math.max(1, Math.min(MAX_LOG_SETS, count));
+  countInput.value = String(count);
+  rowsEl.innerHTML = Array.from({ length: count }, (_, i) => {
+    const existing = existingValues[i] || {};
+    return `<div class="log-set-row">
+      <div style="font-weight:700;font-size:12px;">Set ${i + 1}</div>
+      <input type="number" class="modal-input log-set-weight" data-idx="${i}" placeholder="Weight" min="0" step="0.5" value="${escHtml(existing.weight ?? '')}" />
+      <input type="number" class="modal-input log-set-reps" data-idx="${i}" placeholder="Reps" min="0" max="100" step="1" value="${escHtml(existing.reps ?? '')}" />
+    </div>`;
+  }).join('');
+}
+
+function getPlannedExerciseForLog(context, date = currentDate || toLocalDateStr()) {
+  const athlete = athletes.find(a => String(a.id) === String(currentAthleteId));
+  const workouts = getWorkoutsForDate(date).filter(record => workoutMatchesAthlete(record, athlete));
+  for (const record of workouts) {
+    if (context?.workoutId && String(record.id) !== String(context.workoutId)) continue;
+    for (let sectionIndex = 0; sectionIndex < (record.sections || []).length; sectionIndex += 1) {
+      const exercises = record.sections[sectionIndex].exercises || [];
+      for (let exerciseIndex = 0; exerciseIndex < exercises.length; exerciseIndex += 1) {
+        const ex = exercises[exerciseIndex];
+        const itemId = workoutItemId(record, sectionIndex, exerciseIndex, ex);
+        if (context?.workoutItemId && itemId !== context.workoutItemId) continue;
+        if (normLiftName(ex.name) === normLiftName(context?.exerciseName)) return { record, exercise: ex, itemId };
+      }
+    }
+  }
+  return null;
+}
+
 async function submitLog() {
   if (!logModalExercise || !currentAthleteId) return;
   if (isAthleteSession()) currentAthleteId = currentAthlete.id;
@@ -2458,13 +2585,23 @@ async function submitLog() {
     return;
   }
   if (!enforceWorkoutLogDate(dateInput)) return;
-  const repsInputs = Array.from(document.querySelectorAll('.log-set-reps'));
-  const weightInputs = Array.from(document.querySelectorAll('.log-set-weight'));
-  const setRows = repsInputs.map((r, i) => ({
-    set: i + 1,
-    reps: parseInt(r.value) || null,
-    weight: parseFloat(weightInputs[i]?.value) || null,
-  })).filter(x => x.reps || x.weight);
+  const setCount = parseInt(document.getElementById('log-sets-completed')?.value || '', 10);
+  if (!Number.isInteger(setCount) || setCount < 1 || setCount > MAX_LOG_SETS) {
+    toast(`Sets completed must be between 1 and ${MAX_LOG_SETS}`);
+    return;
+  }
+  const setRows = Array.from(document.querySelectorAll('.log-set-row')).map((row, i) => {
+    const repsRaw = row.querySelector('.log-set-reps')?.value;
+    const weightRaw = row.querySelector('.log-set-weight')?.value;
+    const reps = repsRaw === '' ? null : parseInt(repsRaw, 10);
+    const weight = weightRaw === '' ? null : parseFloat(weightRaw);
+    return { set: i + 1, reps, weight };
+  });
+  const invalidReps = setRows.some(x => x.reps === null || !Number.isInteger(x.reps) || x.reps < 0);
+  const invalidWeight = setRows.some(x => x.weight !== null && (!Number.isFinite(x.weight) || x.weight < 0));
+  if (invalidReps) return toast('Enter whole-number reps for every set');
+  if (invalidWeight) return toast('Weight must be a positive number or blank');
+  if (!setRows.some(x => x.reps > 0 || (x.weight || 0) > 0 || notes.trim())) return toast('Enter reps, weight, or notes before saving');
   const totalSetsDone = setRows.length;
   let best = { epley: 0, reps: null, weight: null };
   setRows.forEach(s => {
@@ -2473,25 +2610,51 @@ async function submitLog() {
     if (e > best.epley) best = { epley: e, reps: s.reps, weight: s.weight };
   });
   const combinedNotes = `${notes || ''}${notes ? '\n' : ''}[Set Log] ${JSON.stringify(setRows)}`;
+  const context = currentLogContext || {};
   const payload = {
     athlete_id: currentAthleteId,
     date,
     exercise: logModalExercise,
+    workout_id: context.workoutId || null,
+    workout_item_id: context.workoutItemId || null,
+    sport_team: context.teamName || null,
+    set_entries: setRows,
     sets_completed: totalSetsDone || null,
     reps_completed: best.reps,
     weight_used: best.weight,
-    performance_notes: combinedNotes
+    performance_notes: combinedNotes,
+    created_by: currentAuthUser?.id || null,
+    created_by_role: currentRole || 'coach',
+    updated_at: new Date().toISOString()
   };
-  const { error } = await supabase.from('workout_logs').upsert(payload, { onConflict: 'athlete_id,date,exercise' });
+  const existing = await getExistingWorkoutLog(logModalExercise, date, context);
+  if (!existing?.id) payload.created_at = new Date().toISOString();
+  let saveQuery = null;
+  if (existing?.id) {
+    payload.id = existing.id;
+    saveQuery = supabase.from('workout_logs').update(payload).eq('id', existing.id);
+  } else if (existing) {
+    saveQuery = supabase
+      .from('workout_logs')
+      .update(payload)
+      .eq('athlete_id', currentAthleteId)
+      .eq('date', date)
+      .eq('exercise', logModalExercise);
+    if (context.workoutId) saveQuery = saveQuery.eq('workout_id', context.workoutId);
+    if (context.workoutItemId) saveQuery = saveQuery.eq('workout_item_id', context.workoutItemId);
+  } else {
+    saveQuery = supabase.from('workout_logs').upsert(payload, { onConflict: 'athlete_id,date,workout_id,workout_item_id' });
+  }
+  const { error } = await saveQuery;
 
-  if (error) { toast('Error saving log: ' + error.message); return; }
+  if (error) { toast('Could not save log. Please check the fields and try again.'); return; }
   document.getElementById('log-modal').style.display = 'none';
   await renderEstimated1RM();
-  await auditAction('log_workout', `${logModalExercise} on ${date}`);
+  if (isCoachSession()) await auditAction('log_workout', `${logModalExercise} on ${date}`);
   toast('Lift logged! ✓');
 
   await refreshLoggedExercisesForCurrentDate();
-  updateWorkoutLogButtons();
+  refreshCurrentWorkoutView();
 }
 
 // ===================== RENDER =====================
@@ -2837,7 +3000,7 @@ function setDayFilter(filter) {
   }
 }
 
-function renderWorkoutPanel() {
+function renderWorkoutPanel(logsReady = false) {
   const athlete = athletes.find(a => a.id === currentAthleteId);
   const dateStr = currentDate || toLocalDateStr();
   const workouts = getWorkoutsForDate(dateStr).filter(record => workoutMatchesAthlete(record, athlete));
@@ -2855,18 +3018,18 @@ function renderWorkoutPanel() {
         <span class="workout-record-title">${escHtml(record.title)}</span>
       </div>
       <div class="workout-record-meta" style="margin-bottom:12px;">${escHtml(formatWorkoutDate(record.date, { month: 'long', day: 'numeric', year: 'numeric' }))} · ${getWorkoutExerciseCount(record)} exercises</div>
-      ${(record.sections || []).map(section => `
+      ${(record.sections || []).map((section, sectionIndex) => `
         <div class="section-card">
           <div class="section-card-header">${escHtml(section.section)}</div>
-          ${renderExercises(section.exercises || [])}
+          ${renderExercises(section.exercises || [], { record, sectionIndex })}
         </div>
       `).join('')}
     </div>
   `).join('');
-  refreshLoggedExercisesForCurrentDate().then(updateWorkoutLogButtons);
+  if (!logsReady) refreshLoggedExercisesForCurrentDate().then(() => renderWorkoutPanel(true));
 }
 
-function renderAthleteDashboard() {
+function renderAthleteDashboard(logsReady = false) {
   const athlete = currentAthlete;
   if (!athlete) return;
   currentAthleteId = athlete.id;
@@ -2896,15 +3059,15 @@ function renderAthleteDashboard() {
         <span class="workout-record-title">${escHtml(record.title)}</span>
       </div>
       <div class="workout-record-meta" style="margin-bottom:12px;">${escHtml(formatWorkoutDate(record.date, { month: 'long', day: 'numeric', year: 'numeric' }))} · ${getWorkoutExerciseCount(record)} exercises</div>
-      ${(record.sections || []).map(section => `
+      ${(record.sections || []).map((section, sectionIndex) => `
         <div class="section-card">
           <div class="section-card-header">${escHtml(section.section)}</div>
-          ${renderExercises(section.exercises || [])}
+          ${renderExercises(section.exercises || [], { record, sectionIndex })}
         </div>
       `).join('')}
     </div>
   `).join('');
-  refreshLoggedExercisesForCurrentDate().then(updateWorkoutLogButtons);
+  if (!logsReady) refreshLoggedExercisesForCurrentDate().then(() => renderAthleteDashboard(true));
 }
 
 function getMondayOfCurrentWeek(baseDate = new Date()) {
@@ -2925,14 +3088,29 @@ function getDateForWeekday(dayName) {
 }
 
 async function refreshLoggedExercisesForCurrentDate() {
-  if (!currentAthleteId || !currentDate) { loggedExercisesForDate = new Set(); return; }
+  if (!currentAthleteId || !currentDate) {
+    loggedExercisesForDate = new Set();
+    loggedWorkoutLogsForDate = new Map();
+    return;
+  }
   const { data, error } = await supabase
     .from('workout_logs')
-    .select('exercise')
+    .select('*')
     .eq('athlete_id', currentAthleteId)
     .eq('date', currentDate);
-  if (error) { loggedExercisesForDate = new Set(); return; }
+  if (error) {
+    loggedExercisesForDate = new Set();
+    loggedWorkoutLogsForDate = new Map();
+    return;
+  }
   loggedExercisesForDate = new Set((data || []).map(x => x.exercise));
+  loggedWorkoutLogsForDate = new Map();
+  (data || []).forEach(log => {
+    loggedWorkoutLogsForDate.set(workoutLogKey(log.workout_id, log.workout_item_id, log.exercise), log);
+    if (!log.workout_id || !log.workout_item_id) {
+      loggedWorkoutLogsForDate.set(workoutLogLegacyKey(log.exercise), log);
+    }
+  });
 }
 
 function updateWorkoutLogButtons() {
@@ -2944,29 +3122,43 @@ function updateWorkoutLogButtons() {
   });
 }
 
-function renderExercises(exercises) {
-  return exercises.map(ex => `
+function renderExercises(exercises, context = {}) {
+  return exercises.map((ex, exerciseIndex) => {
+    const record = context.record || {};
+    const itemId = workoutItemId(record, context.sectionIndex || 0, exerciseIndex, ex);
+    const logContext = {
+      workoutId: record.id || '',
+      workoutItemId: itemId,
+      exerciseName: ex.name || 'Untitled Exercise',
+      teamName: record.teamName || ''
+    };
+    const existingLog = getLoggedExerciseForContext(logContext);
+    return `
     <div class="exercise-row">
       <div style="flex:1">
         <div class="exercise-name">${escHtml(ex.name || 'Untitled Exercise')}</div>
         <div class="exercise-detail">${escHtml(exerciseDetailText(ex))}</div>
+        ${renderExerciseLogSummary(existingLog, logContext)}
       </div>
-      ${canLogExercise(ex.name) ? `<button class="log-btn" data-log-exercise="${escHtml(ex.name)}" onclick="openLogModal(${jsArg(ex.name)}, '')">Log</button>` : ''}
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 
-async function getExistingWorkoutLog(exercise, date) {
+async function getExistingWorkoutLog(exercise, date, context = {}) {
   if (!currentAthleteId || !exercise || !date) return null;
   const { data, error } = await supabase
     .from('workout_logs')
     .select('*')
     .eq('athlete_id', currentAthleteId)
     .eq('date', date)
-    .eq('exercise', exercise)
-    .maybeSingle();
+    .eq('exercise', exercise);
   if (error) return null;
-  return data || null;
+  const rows = data || [];
+  return rows.find(log => String(log.workout_id || '') === String(context.workoutId || '') && String(log.workout_item_id || '') === String(context.workoutItemId || ''))
+    || rows.find(log => !log.workout_id && !log.workout_item_id)
+    || rows[0]
+    || null;
 }
 
 function parseSetLogFromNotes(notes) {
@@ -2981,39 +3173,43 @@ function stripSetLogFromNotes(notes) {
 
 async function hydrateLogModalExistingValues() {
   const date = document.getElementById('log-date')?.value || currentDate || '';
-  const existing = await getExistingWorkoutLog(logModalExercise, date);
-  const setRows = parseSetLogFromNotes(existing?.performance_notes);
-  document.querySelectorAll('.log-set-row').forEach((row, i) => {
-    const set = setRows.find(x => Number(x.set) === i + 1) || setRows[i] || {};
-    const reps = row.querySelector('.log-set-reps');
-    const weight = row.querySelector('.log-set-weight');
-    if (reps) reps.value = set.reps ?? '';
-    if (weight) weight.value = set.weight ?? '';
-  });
+  const existing = await getExistingWorkoutLog(logModalExercise, date, currentLogContext || {});
+  const setRows = getSetEntriesFromLog(existing);
+  const setCount = Math.max(1, Math.min(MAX_LOG_SETS, parseInt(existing?.sets_completed || setRows.length || document.getElementById('log-sets-completed')?.value || '1', 10) || 1));
+  const countEl = document.getElementById('log-sets-completed');
+  if (countEl) countEl.value = String(setCount);
+  renderDynamicLogSetRows(setRows.map(row => ({ reps: row.reps ?? '', weight: row.weight ?? '' })));
   document.getElementById('log-notes').value = stripSetLogFromNotes(existing?.performance_notes || '');
   document.getElementById('log-modal-title').textContent = `${existing ? 'Edit' : 'Log'}: ${logModalExercise}`;
 }
 
-async function openLogModal(exercise, level) {
+async function openLogModal(exercise, level, workoutId = '', workoutItemIdValue = '') {
   if (isAthleteSession()) {
     currentAthleteId = currentAthlete.id;
     currentDate = toLocalDateStr();
   }
   logModalExercise = exercise;
   logModalLevel = level;
-  document.getElementById('log-modal-title').textContent = 'Log: ' + exercise;
-  const athlete = athletes.find(a => a.id === currentAthleteId);
-  const template = getWorkoutsForDate(currentDate || toLocalDateStr())
-    .filter(record => workoutMatchesAthlete(record, athlete))
-    .flatMap(record => (record.sections || []).flatMap(s => s.exercises || []));
-  const ex = template.find(x => x.name === exercise);
-  if (isAthleteSession() && !ex) {
+  currentLogContext = { workoutId, workoutItemId: workoutItemIdValue, exerciseName: exercise, teamName: '' };
+  const planned = getPlannedExerciseForLog(currentLogContext, currentDate || toLocalDateStr());
+  if (!planned && isAthleteSession()) {
     toast('You can only log exercises from today\'s workout');
     return;
   }
-  const setCount = Math.max(parseInt(ex?.sets) || 1, 1);
-  const repTargets = splitSetValues(ex?.reps || '');
+  if (planned) {
+    currentLogContext = {
+      workoutId: planned.record.id,
+      workoutItemId: planned.itemId,
+      exerciseName: planned.exercise.name,
+      teamName: planned.record.teamName || ''
+    };
+  }
+  const ex = planned?.exercise || { name: exercise, sets: 1, reps: '' };
+  const setCount = Math.max(1, Math.min(MAX_LOG_SETS, parseInt(ex?.sets, 10) || 1));
   const logDateInput = document.getElementById('log-date');
+  document.getElementById('log-modal-title').textContent = 'Log: ' + exercise;
+  document.getElementById('log-modal-exercise').textContent = exercise;
+  document.getElementById('log-modal-assigned').textContent = `${currentLogContext.teamName ? currentLogContext.teamName + ' · ' : ''}Assigned: ${exerciseDetailText(ex) || 'No assigned details'}`;
   initLogDatePicker();
   const defaultLogDate = isAthleteSession() ? toLocalDateStr() : (currentDate || toLocalDateStr());
   if (logDatePicker && typeof logDatePicker.setDate === 'function') {
@@ -3026,13 +3222,8 @@ async function openLogModal(exercise, level) {
     if (enforceWorkoutLogDate(logDateInput)) await hydrateLogModalExistingValues();
   };
   enforceWorkoutLogDate(logDateInput);
-  document.getElementById('log-set-rows').innerHTML = Array.from({length:setCount}, (_,i)=>`
-    <div class="log-set-row">
-      <div style="font-weight:700;font-size:12px;">Set ${i+1}</div>
-      <input type="number" class="modal-input log-set-reps" data-idx="${i}" placeholder="${repTargets[i] || 'Reps'}" min="0" max="100" />
-      <input type="number" class="modal-input log-set-weight" data-idx="${i}" placeholder="Weight" min="0" />
-    </div>
-  `).join('');
+  document.getElementById('log-sets-completed').value = String(setCount);
+  renderDynamicLogSetRows();
   document.getElementById('log-notes').value = '';
   await hydrateLogModalExistingValues();
   document.getElementById('log-modal').style.display = 'flex';
@@ -3042,6 +3233,44 @@ function closeLogModal(e) {
   if (e.target === document.getElementById('log-modal')) {
     document.getElementById('log-modal').style.display = 'none';
   }
+}
+
+async function deleteWorkoutLog(exercise, workoutId = '', workoutItemIdValue = '') {
+  if (!currentAthleteId) return;
+  if (isAthleteSession()) {
+    currentAthleteId = currentAthlete.id;
+    currentDate = toLocalDateStr();
+  }
+  const context = { workoutId, workoutItemId: workoutItemIdValue, exerciseName: exercise };
+  const log = await getExistingWorkoutLog(exercise, currentDate || toLocalDateStr(), context);
+  if (!log) return toast('No saved log found');
+  const dateLabel = formatWorkoutDate(log.date || currentDate, { month: 'long', day: 'numeric' });
+  if (!await appConfirm('Delete Lift Log', `Delete ${exercise} log for ${dateLabel}?`)) return;
+  let deleteQuery = supabase.from('workout_logs').delete();
+  if (log.id) {
+    deleteQuery = deleteQuery.eq('id', log.id);
+  } else {
+    deleteQuery = deleteQuery
+      .eq('athlete_id', currentAthleteId)
+      .eq('date', log.date || currentDate)
+      .eq('exercise', exercise);
+    if (context.workoutId) deleteQuery = deleteQuery.eq('workout_id', context.workoutId);
+    if (context.workoutItemId) deleteQuery = deleteQuery.eq('workout_item_id', context.workoutItemId);
+  }
+  const { error } = await deleteQuery;
+  if (error) return toast('Could not delete log. Please try again.');
+  toast('Lift log deleted');
+  await refreshLoggedExercisesForCurrentDate();
+  refreshCurrentWorkoutView();
+}
+
+function refreshCurrentWorkoutView() {
+  if (isAthleteSession()) {
+    renderAthleteDashboard(true);
+    return;
+  }
+  renderWorkoutPanel(true);
+  if (document.getElementById('tabcontent-log')?.classList.contains('active')) renderLogTable();
 }
 
 async function renderLogTable() {
@@ -3058,11 +3287,6 @@ async function renderLogTable() {
       .filter(record => workoutMatchesAthlete(record, athlete))
       .flatMap(record => (record.sections || []).flatMap(s => s.exercises || []));
     return planned.find(ex => normLiftName(ex.name) === normLiftName(log.exercise));
-  };
-  const parseSetLog = (notes) => {
-    const m = String(notes || '').match(/\[Set Log\]\s*(\[.*\])$/);
-    if (!m) return [];
-    try { return JSON.parse(m[1]); } catch { return []; }
   };
   const estimate1RMForExercise = (exerciseName) => {
     const candidates = logs
@@ -3092,7 +3316,7 @@ async function renderLogTable() {
         ${logs.map((l, logIndex) => `
           ${(() => {
             const planned = findPlannedExercise(l);
-            const setLog = parseSetLog(l.performance_notes);
+            const setLog = getSetEntriesFromLog(l);
             const plannedReps = splitSetValues(planned?.reps || '');
             const setsOk = setLog.length >= 4 ? '✅' : '❌';
             const repsOk = setLog.length > 0 && plannedReps.length > 0 && setLog.every((s, i) => (parseInt(s.reps) || 0) >= (parseInt(plannedReps[i] || 0) || 0)) ? '✅' : '❌';
@@ -3115,15 +3339,15 @@ async function renderLogTable() {
 function showWorkoutLogDetails(logIndex) {
   const log = (window.currentRenderedLogs || [])[logIndex];
   if (!log) return;
-  const setLog = parseSetLogFromNotes(log.performance_notes);
+  const setLog = getSetEntriesFromLog(log);
   const notes = stripSetLogFromNotes(log.performance_notes || '');
   const setRows = setLog.length
-    ? setLog.map(s => `<tr><td>${escHtml(s.set ?? '')}</td><td>${escHtml(s.reps ?? '')}</td><td>${escHtml(s.weight ?? '')}</td></tr>`).join('')
+    ? setLog.map(s => `<tr><td>${escHtml(s.set ?? '')}</td><td>${escHtml(s.weight ?? '')}</td><td>${escHtml(s.reps ?? '')}</td></tr>`).join('')
     : '<tr><td colspan="3">No set-by-set entries saved.</td></tr>';
   const html = `
     <div style="text-align:left;">
       <div style="font-weight:800;margin-bottom:6px;">${escHtml(log.exercise)} — ${escHtml(log.date)}</div>
-      <table class="log-table" style="margin:8px 0 12px;"><thead><tr><th>Set</th><th>Reps</th><th>Weight</th></tr></thead><tbody>${setRows}</tbody></table>
+      <table class="log-table" style="margin:8px 0 12px;"><thead><tr><th>Set</th><th>Weight</th><th>Reps</th></tr></thead><tbody>${setRows}</tbody></table>
       <div style="font-size:12px;color:var(--text-muted);font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;">Notes</div>
       <div>${escHtml(notes || 'No notes entered.')}</div>
     </div>`;
