@@ -1290,15 +1290,15 @@
     position: absolute;
     top: 0; left: 0; right: 0;
     z-index: 2;
-    padding: 32px 50px 10px;
+    padding: 22px 44px 6px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: linear-gradient(180deg, rgba(0,0,0,0.78), transparent);
   }
-  .tv-logo { display:flex; align-items:center; gap:22px; min-width:360px; font-size: clamp(22px, 1.8vw, 34px); font-weight: 800; letter-spacing: 9px; color: #fff; text-transform: uppercase; }
-  .tv-brand-mark { width: 70px; height: 70px; border-radius: 50%; border: 4px solid #5dff62; display:flex; align-items:center; justify-content:center; color:#5dff62; box-shadow: 0 0 26px rgba(89,255,104,.34); }
-  .tv-brand-mark svg { width: 46px; height: 46px; }
+  .tv-logo { display:flex; align-items:center; gap:20px; min-width:340px; font-size: clamp(20px, 1.62vw, 31px); font-weight: 800; letter-spacing: 9px; color: #fff; text-transform: uppercase; }
+  .tv-brand-mark { width: 62px; height: 62px; border-radius: 50%; border: 4px solid #5dff62; display:flex; align-items:center; justify-content:center; color:#5dff62; box-shadow: 0 0 26px rgba(89,255,104,.34); overflow:hidden; }
+  .tv-brand-mark img { width: 116%; height: 116%; object-fit: contain; display:block; filter: drop-shadow(0 0 8px rgba(93,255,98,.35)); }
   .tv-day-label { flex:1; display:flex; align-items:center; justify-content:center; gap:28px; font-size: clamp(18px, 1.5vw, 28px); font-weight: 700; color: #f2fff2; letter-spacing: 3px; white-space: nowrap; }
   .tv-day-label::before,
   .tv-day-label::after { content:''; width:min(220px, 18vw); height:1px; background:linear-gradient(90deg, transparent, #54ff5c 55%, transparent); box-shadow:0 0 14px rgba(84,255,92,.8); }
@@ -1331,23 +1331,23 @@
     justify-content: center;
     width: 100%;
     height: 100vh;
-    padding: 118px 50px 36px;
+    padding: 96px 42px 28px;
     text-align: center;
     overflow: hidden;
   }
   .tv-breakdown-shell {
-    width: min(1840px, calc(100vw - 96px));
+    width: min(1848px, calc(100vw - 84px));
     height: 100%;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
-    gap: clamp(16px, 2.2vh, 26px);
+    gap: clamp(12px, 1.7vh, 20px);
   }
   .tv-display-title {
     display:flex;
     align-items:center;
     justify-content:center;
     gap: clamp(18px, 2vw, 34px);
-    font-size: clamp(46px, 4.35vw, 88px);
+    font-size: clamp(40px, 3.75vw, 72px);
     line-height: .92;
     font-weight: 800;
     letter-spacing: clamp(4px, .45vw, 10px);
@@ -1512,7 +1512,7 @@
   .tv-workout-layout {
     min-height: 0;
     display: grid;
-    grid-template-columns: repeat(3, minmax(250px, 1fr)) minmax(270px, 0.86fr);
+    grid-template-columns: repeat(3, minmax(260px, 1fr)) minmax(250px, 0.72fr);
     gap: clamp(16px, 1.2vw, 24px);
     align-items: stretch;
   }
@@ -1530,10 +1530,10 @@
     grid-template-rows: auto minmax(0, 1fr);
   }
   .tv-station-header {
-    min-height: clamp(76px, 9vh, 112px);
+    min-height: clamp(66px, 7.2vh, 86px);
     color: #fff;
     font-family: 'Barlow Condensed', sans-serif;
-    padding: clamp(16px, 2vh, 24px) clamp(18px, 1.6vw, 28px);
+    padding: clamp(12px, 1.35vh, 18px) clamp(16px, 1.35vw, 24px);
     display:flex;
     align-items:center;
     gap: clamp(14px, 1.3vw, 22px);
@@ -1541,8 +1541,8 @@
     background: linear-gradient(180deg, rgba(8,15,11,0.78), rgba(4,12,8,0.52));
   }
   .tv-station-number {
-    width: clamp(54px, 4vw, 74px);
-    height: clamp(54px, 4vw, 74px);
+    width: clamp(46px, 3.35vw, 62px);
+    height: clamp(46px, 3.35vw, 62px);
     flex: 0 0 auto;
     clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0 50%);
     background: linear-gradient(180deg, #58ff5c, #1c9d36);
@@ -1550,7 +1550,7 @@
     align-items:center;
     justify-content:center;
     color:#07100a;
-    font-size: clamp(28px, 2.3vw, 42px);
+    font-size: clamp(24px, 1.9vw, 34px);
     font-weight:800;
     box-shadow:0 0 24px rgba(84,255,92,.36);
   }
@@ -1566,7 +1566,7 @@
   }
   .tv-station-title {
     flex:1;
-    font-size: clamp(28px, 2.45vw, 44px);
+    font-size: clamp(24px, 2vw, 36px);
     font-weight: 800;
     letter-spacing: clamp(3px, .35vw, 7px);
     text-transform: uppercase;
@@ -1582,8 +1582,8 @@
     min-height: 0;
     display: grid;
     grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: clamp(12px, 1.4vh, 18px);
-    padding: clamp(14px, 1.4vw, 24px);
+    gap: clamp(12px, 1.35vh, 17px);
+    padding: clamp(13px, 1.25vw, 21px);
   }
   .tv-station-exercise {
     min-height: 0;
@@ -1593,10 +1593,10 @@
       radial-gradient(circle at 20% 0%, rgba(84,255,92,0.13), transparent 46%),
       linear-gradient(180deg, rgba(11,31,18,0.76), rgba(6,13,9,0.86));
     box-shadow: inset 0 0 18px rgba(84,255,92,0.05);
-    padding: clamp(16px, 1.35vw, 24px);
+    padding: clamp(15px, 1.2vw, 22px);
     text-align: left;
     display: grid;
-    grid-template-columns: clamp(54px, 4.4vw, 76px) minmax(0, 1fr);
+    grid-template-columns: clamp(50px, 3.9vw, 70px) minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr);
     column-gap: clamp(14px, 1.35vw, 22px);
     row-gap: clamp(10px, 1.1vh, 18px);
@@ -1609,8 +1609,8 @@
   .tv-exercise-icon-hex {
     grid-row: 1 / span 2;
     align-self: start;
-    width: clamp(54px, 4.4vw, 76px);
-    height: clamp(54px, 4.4vw, 76px);
+    width: clamp(50px, 3.9vw, 70px);
+    height: clamp(50px, 3.9vw, 70px);
     color: #5dff62;
     clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0 50%);
     background: rgba(84,255,92,0.55);
@@ -1631,12 +1631,14 @@
   .tv-station-exercise-name {
     min-width: 0;
     color: #fff;
-    font-size: clamp(26px, 2.05vw, 40px);
+    font-size: 40px;
     font-weight: 800;
     letter-spacing: clamp(1px, .18vw, 3px);
-    line-height: .98;
+    line-height: .94;
     text-transform: uppercase;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
   }
   .tv-workout-card { background: linear-gradient(180deg, rgba(23,63,40,0.85), rgba(10,29,18,0.9)); border: 1px solid rgba(78,203,113,0.35); border-radius: 18px; padding: 18px 22px; text-align: left; box-shadow: 0 14px 40px rgba(0,0,0,0.35); }
   .tv-workout-title { font-size: clamp(30px, 4.3vw, 56px); color: #fff; font-weight: 800; letter-spacing: 0.8px; line-height: 1.05; }
@@ -1655,8 +1657,8 @@
     display: grid;
     grid-template-rows: auto auto auto;
     align-content: center;
-    gap: clamp(22px, 3vh, 40px);
-    padding: clamp(28px, 3.2vw, 56px) clamp(20px, 2vw, 36px);
+    gap: clamp(16px, 2.2vh, 28px);
+    padding: clamp(22px, 2.4vw, 40px) clamp(16px, 1.55vw, 28px);
     border: 1px solid rgba(255,255,255,0.20);
     border-radius: 22px;
     background:
@@ -1664,32 +1666,32 @@
       linear-gradient(180deg, rgba(19,25,22,0.76), rgba(5,12,9,0.92));
     box-shadow: inset 0 0 28px rgba(84,255,92,0.05), 0 20px 60px rgba(0,0,0,0.45);
   }
-  .tv-stopwatch-heading { display:flex; flex-direction:column; align-items:center; gap:16px; }
-  .tv-stopwatch-icon { width: clamp(42px, 3.8vw, 64px); height: clamp(42px, 3.8vw, 64px); color:#5dff62; filter: drop-shadow(0 0 12px rgba(93,255,98,.48)); }
+  .tv-stopwatch-heading { display:flex; flex-direction:column; align-items:center; gap:12px; }
+  .tv-stopwatch-icon { width: clamp(34px, 3vw, 52px); height: clamp(34px, 3vw, 52px); color:#5dff62; filter: drop-shadow(0 0 12px rgba(93,255,98,.48)); }
   .tv-stopwatch-label-wrap { width:100%; display:flex; align-items:center; justify-content:center; gap:18px; }
   .tv-stopwatch-label-wrap::before,
   .tv-stopwatch-label-wrap::after { content:''; height:1px; flex:1; background:linear-gradient(90deg, transparent, rgba(93,255,98,.65), transparent); }
-  .tv-stopwatch-label { text-transform: uppercase; letter-spacing: clamp(5px, .45vw, 9px); font-size: clamp(16px, 1.25vw, 24px); color: #f4fff3; font-weight: 800; }
+  .tv-stopwatch-label { text-transform: uppercase; letter-spacing: clamp(4px, .36vw, 7px); font-size: clamp(14px, 1.05vw, 20px); color: #f4fff3; font-weight: 800; }
   .tv-stopwatch-shell {
     position: relative;
     margin: 0;
     width: 100%;
     border-radius: 18px;
-    padding: clamp(24px, 3vh, 42px) 14px;
+    padding: clamp(18px, 2.2vh, 30px) 12px;
     background: linear-gradient(180deg, rgba(9,28,13,0.94), rgba(2,9,5,0.96));
     border: 1px solid rgba(84,255,92,0.42);
     box-shadow: inset 0 0 26px rgba(84,255,92,0.15), 0 0 34px rgba(84,255,92,0.12);
   }
-  .tv-stopwatch-time { font-family: 'Courier New', monospace; font-size: clamp(44px, 3.45vw, 66px); font-weight: 800; line-height: .95; color: #5dff62; text-shadow: 0 0 18px rgba(93,255,98,.52); font-variant-numeric: tabular-nums; letter-spacing: -3px; }
-  .tv-stopwatch-actions { display: grid; grid-template-rows: repeat(2, auto); gap: clamp(16px, 2.5vh, 28px); margin-top: 0; }
+  .tv-stopwatch-time { font-family: 'Courier New', monospace; font-size: clamp(38px, 3vw, 58px); font-weight: 800; line-height: .95; color: #5dff62; text-shadow: 0 0 18px rgba(93,255,98,.52); font-variant-numeric: tabular-nums; letter-spacing: -3px; }
+  .tv-stopwatch-actions { display: grid; grid-template-rows: repeat(2, auto); gap: clamp(12px, 1.8vh, 20px); margin-top: 0; }
   .tv-sw-btn {
     width: 100%;
-    min-height: clamp(64px, 7.4vh, 90px);
+    min-height: clamp(54px, 6vh, 72px);
     border-radius: 999px;
     border: 2px solid rgba(255,255,255,0.28);
     background: rgba(255,255,255,0.06);
     color: #fff;
-    font-size: clamp(28px, 2.35vw, 44px);
+    font-size: clamp(23px, 1.9vw, 34px);
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 800;
     letter-spacing: 2px;
@@ -2148,10 +2150,7 @@
   <div class="tv-top-bar">
     <div class="tv-logo">
       <span class="tv-brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 64 64" fill="none">
-          <path d="M12 35c10-19 25-25 43-19-8 3-13 7-16 13 6-1 10 1 13 5-11-2-20 1-27 10 2-8-2-12-13-9Z" fill="currentColor"/>
-          <path d="M22 25c8-2 15-1 21 3M31 30l7 1" stroke="#061006" stroke-width="3" stroke-linecap="round"/>
-        </svg>
+        <img src="eagle-head-transparent.png" alt="" />
       </span>
       <span>Eagle Strength</span>
     </div>
@@ -4959,6 +4958,27 @@ function exerciseIconSvg(name) {
   return tvIconSvg(getExerciseIconKind(name));
 }
 
+function fitTvExerciseTitles() {
+  document.querySelectorAll('.tv-station-exercise-name').forEach(el => {
+    el.style.fontSize = '40px';
+    el.style.letterSpacing = '';
+    let size = 40;
+    while (el.scrollWidth > el.clientWidth && size > 18) {
+      size -= 1;
+      el.style.fontSize = `${size}px`;
+    }
+    if (el.scrollWidth > el.clientWidth) {
+      el.style.letterSpacing = '0';
+    }
+  });
+}
+
+window.addEventListener('resize', () => {
+  if (document.getElementById('tv-display')?.classList.contains('active')) {
+    requestAnimationFrame(fitTvExerciseTitles);
+  }
+});
+
 
 function buildTvSetBreakdown(ex) {
   const setCount = Math.max(parseInt(ex?.sets) || 0, 0);
@@ -5032,6 +5052,7 @@ function renderTvFullWorkout(label) {
       </aside>
     </div>
     </div>`;
+  requestAnimationFrame(fitTvExerciseTitles);
 }
 
 function showTvLiftFocus(idx) {
