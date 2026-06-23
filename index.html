@@ -1551,6 +1551,21 @@
     object-fit: cover;
     display: block;
   }
+  .tutorial-fallback-thumb {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    color: white;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, var(--green-900), #1d6a3a);
+  }
   .tutorial-badge {
     position: absolute;
     left: 8px;
@@ -2887,6 +2902,10 @@ function tutorialEmbedUrl(videoId) {
   return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0&modestbranding=1`;
 }
 
+function tutorialSearchEmbedUrl(query) {
+  return `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(query)}&rel=0&modestbranding=1`;
+}
+
 function tutorialCard(video) {
   const selected = video.id === selectedTutorialVideoId;
   const badge = video.isShort ? 'Shorts' : 'Quick Video';
@@ -2901,6 +2920,79 @@ function tutorialCard(video) {
         <div class="tutorial-card-channel">${escHtml(video.channelTitle || 'YouTube')}</div>
       </div>
     </button>`;
+}
+
+function tutorialFallbackCard(item) {
+  const selected = item.id === selectedTutorialVideoId;
+  return `
+    <button class="tutorial-card ${selected ? 'selected' : ''}" type="button" onclick="selectTutorialFallback(${jsArg(item.id)})">
+      <div class="tutorial-thumb-wrap">
+        <div class="tutorial-fallback-thumb">YouTube</div>
+        <span class="tutorial-badge">Search</span>
+      </div>
+      <div class="tutorial-card-body">
+        <div class="tutorial-card-title">${escHtml(item.title)}</div>
+        <div class="tutorial-card-channel">${escHtml(item.channelTitle)}</div>
+      </div>
+    </button>`;
+}
+
+function buildTutorialFallbacks(term) {
+  const clean = String(term || '').trim();
+  const base = `How to ${clean}`;
+  return [
+    { id: 'fallback-basic', title: `${base}`, channelTitle: 'Short how-to results', query: `${base} exercise tutorial shorts` },
+    { id: 'fallback-form', title: `${clean} form tutorial`, channelTitle: 'Technique and form', query: `${base} proper form shorts` },
+    { id: 'fallback-demo', title: `${clean} quick demo`, channelTitle: 'Quick demonstrations', query: `${base} quick demo shorts` },
+    { id: 'fallback-mistakes', title: `${clean} common mistakes`, channelTitle: 'Form checks', query: `${base} common mistakes shorts` },
+    { id: 'fallback-strength', title: `${clean} strength training`, channelTitle: 'Strength and conditioning', query: `${base} strength and conditioning shorts` }
+  ];
+}
+
+function renderTutorialSearchPlayer(item) {
+  const player = document.getElementById('tutorial-player');
+  if (!player || !item) return;
+  player.style.display = 'block';
+  player.innerHTML = `
+    <div class="tutorial-player-frame">
+      <iframe src="${tutorialSearchEmbedUrl(item.query)}" title="${escHtml(item.title)}" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="tutorial-player-meta">
+      <div>
+        <div class="tutorial-player-title">${escHtml(item.title)}</div>
+        <div class="tutorial-player-channel">Embedded YouTube search results</div>
+      </div>
+      <a class="btn-sm" href="https://www.youtube.com/results?search_query=${encodeURIComponent(item.query)}" target="_blank" rel="noopener">Open on YouTube</a>
+    </div>`;
+}
+
+function renderTutorialFallback(term) {
+  tutorialVideos = buildTutorialFallbacks(term);
+  selectedTutorialVideoId = tutorialVideos[0]?.id || null;
+  const results = document.getElementById('tutorial-results');
+  if (results) {
+    results.innerHTML = `
+      <div style="color:var(--text-muted);font-size:13px;margin-bottom:10px;text-align:center;">
+        Live video API is unavailable on this static host, so these cards open embedded YouTube how-to searches.
+      </div>
+      <div class="tutorial-grid">${tutorialVideos.map(tutorialFallbackCard).join('')}</div>`;
+  }
+  renderTutorialSearchPlayer(tutorialVideos[0]);
+}
+
+function selectTutorialFallback(id) {
+  const item = tutorialVideos.find(v => v.id === id);
+  if (!item) return;
+  selectedTutorialVideoId = id;
+  renderTutorialSearchPlayer(item);
+  const results = document.getElementById('tutorial-results');
+  if (results) {
+    results.innerHTML = `
+      <div style="color:var(--text-muted);font-size:13px;margin-bottom:10px;text-align:center;">
+        Live video API is unavailable on this static host, so these cards open embedded YouTube how-to searches.
+      </div>
+      <div class="tutorial-grid">${tutorialVideos.map(tutorialFallbackCard).join('')}</div>`;
+  }
 }
 
 function renderTutorialResults() {
@@ -2964,9 +3056,7 @@ async function searchTutorials(event) {
     if (tutorialVideos.length) selectTutorialVideo(tutorialVideos[0].id);
   } catch (error) {
     console.error('Tutorial search failed:', error);
-    tutorialVideos = [];
-    selectedTutorialVideoId = null;
-    if (results) results.innerHTML = `<div class="empty-state">Could not load tutorial videos right now. Please try again.</div>`;
+    renderTutorialFallback(term);
   }
 }
 
