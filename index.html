@@ -1629,6 +1629,10 @@
   .athlete-hero-title { font-family:'Barlow Condensed',sans-serif; font-size:36px; font-weight:900; line-height:1; }
   .athlete-hero-meta { color:var(--green-100); font-weight:700; margin-top:6px; }
   .athlete-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+  .athlete-rm-card { background:white; border:1px solid var(--border); border-radius:12px; padding:18px; }
+  .athlete-rm-title { font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:900; color:var(--green-900); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; }
+  .athlete-rm-card .rm-card { background:var(--surface-2); border:1px solid var(--border); color:var(--green-900); }
+  .athlete-rm-card .rm-lift { color:var(--text-muted); opacity:1; text-transform:uppercase; letter-spacing:.4px; }
   .athlete-workout-card { background:white; border:1px solid var(--border); border-radius:12px; padding:18px; }
   .athlete-workout-heading { font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:900; color:var(--green-900); margin-bottom:4px; }
   .athlete-workout-date { color:var(--text-muted); font-weight:700; margin-bottom:14px; }
@@ -1704,7 +1708,16 @@
         </div>
         <div class="athlete-actions">
           <button class="btn-sm" onclick="showPage('tutorials')">Tutorials</button>
+          <button class="btn-sm" id="exit-student-view-btn" onclick="exitStudentView()" style="display:none;">Exit Student View</button>
           <button class="btn-sm" onclick="logoutCoach()">Logout</button>
+        </div>
+      </div>
+      <div class="athlete-rm-card">
+        <div class="athlete-rm-title">Your 1RM Lifts</div>
+        <div class="rm-grid">
+          <div class="rm-card"><div class="rm-lift">Bench Press</div><div class="rm-val" id="athlete-rm-bench">N/A</div></div>
+          <div class="rm-card"><div class="rm-lift">Squat</div><div class="rm-val" id="athlete-rm-squat">N/A</div></div>
+          <div class="rm-card"><div class="rm-lift">Deadlift</div><div class="rm-val" id="athlete-rm-deadlift">N/A</div></div>
         </div>
       </div>
       <div class="athlete-workout-card">
@@ -1741,12 +1754,13 @@
               <option value="false">Inactive</option>
             </select>
           </div>
+          <button class="btn-sm" onclick="showStudentViewForCurrentAthlete()">Student View</button>
         </div>
         <textarea class="profile-notes" id="profile-notes" placeholder="Athlete notes (injuries, goals, reminders)..." onblur="saveAthleteNotes()" rows="2"></textarea>
         <div class="rm-grid">
           <div class="rm-card"><div class="rm-lift">BENCH PRESS 1RM</div><div class="rm-val" id="rm-bench">N/A</div></div>
           <div class="rm-card"><div class="rm-lift">BACK SQUAT 1RM</div><div class="rm-val" id="rm-squat">N/A</div></div>
-          <div class="rm-card"><div class="rm-lift">POWER CLEAN 1RM</div><div class="rm-val" id="rm-clean">N/A</div></div>
+          <div class="rm-card"><div class="rm-lift">DEADLIFT 1RM</div><div class="rm-val" id="rm-deadlift">N/A</div></div>
         </div>
       </div>
     </div>
@@ -2213,12 +2227,50 @@ let progressionChart = null;
 let loggedExercisesForDate = new Set();
 let loggedWorkoutLogsForDate = new Map();
 let currentLogContext = null;
+let currentRenderedOneRepMaxes = { bench: null, squat: null, deadlift: null };
+let studentViewAthlete = null;
 const LOGGABLE_LIFTS = ['BENCHPRESS', 'BACKSQUAT', 'BACKSQUATS', 'POWERCLEANMSDEADLIFTS'];
 function normLiftName(n){ return String(n||'').toUpperCase().replace(/[-_.]/g,' ').replace(/\s+/g,' ').trim(); }
 function normLiftKey(n){ return String(n || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
 function canLogExercise(name){
   const key = normLiftKey(name);
   return LOGGABLE_LIFTS.includes(key);
+}
+function getLiftTypeFromExerciseName(exerciseName) {
+  const key = String(exerciseName || '').toLowerCase().replace(/[^a-z]/g, '');
+  if (key.includes('bench')) return 'bench';
+  if (key.includes('squat')) return 'squat';
+  if (key.includes('deadlift')) return 'deadlift';
+  return null;
+}
+function roundToNearestFive(weight) {
+  return Math.round(Number(weight || 0) / 5) * 5;
+}
+function oneRepMaxFromLog(log) {
+  const w = parseFloat(log?.weight_used) || 0;
+  const r = parseFloat(log?.reps_completed) || 0;
+  if (w <= 0 || r <= 0) return 0;
+  return w * (1 + (r / 30));
+}
+async function getAthleteOneRepMaxes(athleteId) {
+  const logs = await loadWorkoutLogs(athleteId);
+  const maxes = { bench: null, squat: null, deadlift: null };
+  logs.forEach(log => {
+    const liftType = getLiftTypeFromExerciseName(log.exercise);
+    if (!liftType) return;
+    const estimate = oneRepMaxFromLog(log);
+    if (estimate > (maxes[liftType] || 0)) maxes[liftType] = estimate;
+  });
+  return maxes;
+}
+function formatOneRepMax(value) {
+  return value ? `${Math.round(value)} lbs` : 'N/A';
+}
+function renderOneRepMaxFields(maxes, prefix) {
+  ['bench', 'squat', 'deadlift'].forEach(lift => {
+    const el = document.getElementById(`${prefix}-${lift}`);
+    if (el) el.textContent = formatOneRepMax(maxes?.[lift]);
+  });
 }
 let dashboardAnchorDate = new Date();
 let logDatePicker = null;
@@ -2941,28 +2993,8 @@ async function openAthleteProfile(id) {
 }
 
 async function renderEstimated1RM() {
-  const logs = await loadWorkoutLogs(currentAthleteId);
-  const lifts = [
-    { key: 'rm-bench', names: ['Bench Press'] },
-    { key: 'rm-squat', names: ['Back Squats'] },
-    { key: 'rm-clean', names: ['Power Clean (M.S- DEADLIFTS)','POWER CLEAN (M S DEADLIFTS)'] },
-  ];
-  lifts.forEach(l => { const el=document.getElementById(l.key); if (el) el.textContent = 'N/A'; });
-  lifts.forEach(lift => {
-    const normalizedNames = lift.names.map(normLiftName);
-    const candidates = logs.filter(l => normalizedNames.includes(normLiftName(l.exercise))).filter(l => l.weight_used && l.reps_completed);
-    if (!candidates.length) return;
-    let best = 0;
-    candidates.forEach(l => {
-      const w = parseFloat(l.weight_used) || 0;
-      const r = parseFloat(l.reps_completed) || 0;
-      if (w <= 0 || r <= 0) return;
-      const epley = w * (1 + (r / 30));
-      if (epley > best) best = epley;
-    });
-    const el = document.getElementById(lift.key);
-    if (el && best > 0) el.textContent = `${Math.round(best)} lbs`;
-  });
+  const maxes = await getAthleteOneRepMaxes(currentAthleteId);
+  renderOneRepMaxFields(maxes, 'rm');
 }
 
 function renderDaySelector() {
@@ -2997,6 +3029,7 @@ function setDayFilter(filter) {
 function renderWorkoutPanel(logsReady = false) {
   const athlete = athletes.find(a => a.id === currentAthleteId);
   const dateStr = currentDate || toLocalDateStr();
+  if (!logsReady) currentRenderedOneRepMaxes = { bench: null, squat: null, deadlift: null };
   const workouts = getWorkoutsForDate(dateStr).filter(record => workoutMatchesAthlete(record, athlete));
   if (!workouts.length) {
     const teamText = getAthleteTeams(athlete).join(', ') || 'this athlete';
@@ -3020,14 +3053,20 @@ function renderWorkoutPanel(logsReady = false) {
       `).join('')}
     </div>
   `).join('');
-  if (!logsReady) refreshLoggedExercisesForCurrentDate().then(() => renderWorkoutPanel(true));
+  if (!logsReady) {
+    Promise.all([
+      refreshLoggedExercisesForCurrentDate(),
+      getAthleteOneRepMaxes(currentAthleteId).then(maxes => { currentRenderedOneRepMaxes = maxes; })
+    ]).then(() => renderWorkoutPanel(true));
+  }
 }
 
 function renderAthleteDashboard(logsReady = false) {
-  const athlete = currentAthlete;
+  const athlete = studentViewAthlete || currentAthlete;
   if (!athlete) return;
   currentAthleteId = athlete.id;
   currentDate = toLocalDateStr();
+  if (!logsReady) currentRenderedOneRepMaxes = { bench: null, squat: null, deadlift: null };
   const d = dateFromDateStr(currentDate);
   currentDay = d.toLocaleDateString('en-US', { weekday: 'long' });
   const teams = getAthleteTeams(athlete);
@@ -3038,7 +3077,16 @@ function renderAthleteDashboard(logsReady = false) {
   if (nameEl) nameEl.textContent = athlete.name || 'Athlete';
   if (metaEl) metaEl.textContent = `${teams.join(', ') || 'No team set'} · Grade ${athlete.grade || '—'}`;
   if (dateEl) dateEl.textContent = formatWorkoutDate(currentDate);
+  renderOneRepMaxFields(currentRenderedOneRepMaxes, 'athlete-rm');
+  const exitBtn = document.getElementById('exit-student-view-btn');
+  if (exitBtn) exitBtn.style.display = studentViewAthlete && isCoachSession() ? '' : 'none';
   if (!panel) return;
+  if (!logsReady) {
+    Promise.all([
+      refreshLoggedExercisesForCurrentDate(),
+      getAthleteOneRepMaxes(athlete.id).then(maxes => { currentRenderedOneRepMaxes = maxes; })
+    ]).then(() => renderAthleteDashboard(true));
+  }
 
   const workouts = getWorkoutsForDate(currentDate).filter(record => workoutMatchesAthlete(record, athlete));
   if (!workouts.length) {
@@ -3061,7 +3109,21 @@ function renderAthleteDashboard(logsReady = false) {
       `).join('')}
     </div>
   `).join('');
-  if (!logsReady) refreshLoggedExercisesForCurrentDate().then(() => renderAthleteDashboard(true));
+}
+
+function showStudentViewForCurrentAthlete() {
+  if (!requireCoachAction()) return;
+  const athlete = athletes.find(a => String(a.id) === String(currentAthleteId));
+  if (!athlete) return toast('Open an athlete first');
+  studentViewAthlete = athlete;
+  showPage('athlete-dashboard');
+}
+
+function exitStudentView() {
+  const athleteId = studentViewAthlete?.id || currentAthleteId;
+  studentViewAthlete = null;
+  if (athleteId) openAthleteProfile(athleteId);
+  else showPage('dashboard');
 }
 
 function getMondayOfCurrentWeek(baseDate = new Date()) {
@@ -3355,10 +3417,13 @@ async function renderProgressionChart() {
 
   if (progressionChart) { progressionChart.destroy(); progressionChart = null; }
 
-  const tracked = ['Bench Press', 'Back Squats', 'Power Clean (M.S- Deadlifts)'];
-  const normTracked = tracked.map(normLiftName);
+  const tracked = [
+    { label: 'Bench Press', liftType: 'bench' },
+    { label: 'Squat', liftType: 'squat' },
+    { label: 'Deadlift', liftType: 'deadlift' },
+  ];
 
-  const hasTrackedData = logs.some(l => l.weight_used && normTracked.includes(normLiftName(l.exercise)));
+  const hasTrackedData = logs.some(l => l.weight_used && getLiftTypeFromExerciseName(l.exercise));
   if (!hasTrackedData) {
     document.getElementById('chart-empty').style.display = 'block';
     document.getElementById('progression-chart').style.display = 'none';
@@ -3367,17 +3432,17 @@ async function renderProgressionChart() {
   document.getElementById('chart-empty').style.display = 'none';
   document.getElementById('progression-chart').style.display = 'block';
 
-  const trackedLogs = logs.filter(l => l.weight_used && normTracked.includes(normLiftName(l.exercise)));
+  const trackedLogs = logs.filter(l => l.weight_used && getLiftTypeFromExerciseName(l.exercise));
   const allDates = [...new Set(trackedLogs.map(l => l.date))].sort((a, b) => a.localeCompare(b));
   const colors = ['#22883f','#D4A017','#c0392b'];
-  const datasets = tracked.map((ex, i) => {
+  const datasets = tracked.map((trackedLift, i) => {
     const exLogs = trackedLogs
-      .filter(l => normLiftName(l.exercise) === normLiftName(ex))
+      .filter(l => getLiftTypeFromExerciseName(l.exercise) === trackedLift.liftType)
       .sort((a, b) => a.date.localeCompare(b.date));
     const byDate = {};
     exLogs.forEach(l => { byDate[l.date] = Math.max(byDate[l.date] || 0, Number(l.weight_used) || 0); });
     return {
-      label: ex,
+      label: trackedLift.label,
       data: allDates.map(d => (byDate[d] ? byDate[d] : null)),
       borderColor: colors[i % colors.length],
       backgroundColor: colors[i % colors.length] + '20',
@@ -3510,7 +3575,7 @@ function showPage(page) {
     toast('That page is coach-only');
     page = 'athlete-dashboard';
   }
-  if (isCoachSession() && page === 'athlete-dashboard') page = 'dashboard';
+  if (isCoachSession() && page === 'athlete-dashboard' && !studentViewAthlete) page = 'dashboard';
   const target = document.getElementById('page-' + page);
   if (!target) {
     toast(`Page failed to load: ${page}. Open via http://localhost, not file://`);
@@ -3832,10 +3897,36 @@ function workoutMatchesAthlete(record, athlete) {
   return athleteTeams.includes(workoutTeam);
 }
 
+function parsePercentValues(value) {
+  return (String(value || '').match(/\d+(?:\.\d+)?/g) || [])
+    .map(Number)
+    .filter(n => Number.isFinite(n) && n > 0 && n <= 150);
+}
+
+function calculatePercentageWeight(oneRepMax, percentage) {
+  if (!oneRepMax || !percentage) return null;
+  return roundToNearestFive((oneRepMax * percentage) / 100);
+}
+
+function workoutPercentTargetText(ex) {
+  const liftType = getLiftTypeFromExerciseName(ex?.name);
+  if (!liftType) return '';
+  const percentages = parsePercentValues(ex?.tempo);
+  if (!percentages.length) return '';
+  const oneRepMax = currentRenderedOneRepMaxes?.[liftType] || null;
+  return percentages.map(percent => {
+    const weight = calculatePercentageWeight(oneRepMax, percent);
+    return `${percent}% (${weight ? `${weight} lbs` : 'N/A'})`;
+  }).join(' / ');
+}
+
 function exerciseDetailText(ex) {
   const bits = [];
   if (ex.sets || ex.reps) bits.push(`${ex.sets || '—'} sets x ${ex.reps || '—'}`);
-  if (ex.tempo && ex.tempo !== '—') bits.push(`% Lift: ${ex.tempo}`);
+  if (ex.tempo && ex.tempo !== '—') {
+    const targetText = workoutPercentTargetText(ex);
+    bits.push(`% Lift: ${targetText || ex.tempo}`);
+  }
   if (ex.rest && ex.rest !== '—') bits.push(`Rest: ${ex.rest}`);
   if (ex.workTime && ex.workTime !== '—') bits.push(`Work: ${ex.workTime}`);
   return bits.join(' · ');
