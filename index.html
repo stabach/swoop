@@ -2506,13 +2506,7 @@ function formatSetEntry(entry) {
 }
 
 function renderExerciseLogSummary(log, context) {
-  if (!log) {
-    const label = isCoachSession() ? `Log for ${athletes.find(a => String(a.id) === String(currentAthleteId))?.name || 'Athlete'}` : 'Log';
-    return `<div class="exercise-log-summary">
-      <div class="exercise-log-title">${isCoachSession() ? 'Athlete Log' : 'Your Log'}: Not logged yet</div>
-      <button class="log-btn" data-log-exercise="${escHtml(context.exerciseName)}" onclick="openLogModal(${jsArg(context.exerciseName)}, '', ${jsArg(context.workoutId)}, ${jsArg(context.workoutItemId)})">${escHtml(label)}</button>
-    </div>`;
-  }
+  if (!log) return '';
   const entries = getSetEntriesFromLog(log);
   const ownerLabel = isCoachSession()
     ? `${athletes.find(a => String(a.id) === String(currentAthleteId))?.name || 'Athlete'}'s Log`
@@ -3135,6 +3129,7 @@ function renderExercises(exercises, context = {}) {
     const existingLog = getLoggedExerciseForContext(logContext);
     return `
     <div class="exercise-row">
+      <button class="log-btn" data-log-exercise="${escHtml(logContext.exerciseName)}" onclick="openLogModal(${jsArg(logContext.exerciseName)}, '', ${jsArg(logContext.workoutId)}, ${jsArg(logContext.workoutItemId)})">Log</button>
       <div style="flex:1">
         <div class="exercise-name">${escHtml(ex.name || 'Untitled Exercise')}</div>
         <div class="exercise-detail">${escHtml(exerciseDetailText(ex))}</div>
