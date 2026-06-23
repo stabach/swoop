@@ -842,6 +842,48 @@
     align-items: center;
   }
   .edit-exercise-row:last-child { border-bottom: none; }
+  .edit-station-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    gap: 12px;
+    align-items: start;
+  }
+  .edit-station-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+  .edit-station-exercise {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface-2);
+    padding: 10px;
+  }
+  .edit-station-exercise-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--green-800);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .edit-station-fields {
+    display: grid;
+    grid-template-columns: 72px 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .edit-set-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin: 8px 0 4px;
+  }
   .edit-input {
     padding: 5px 8px;
     border: 1px solid var(--border);
@@ -915,6 +957,9 @@
   }
   .edit-save-bar .save-msg { color: var(--green-200); font-size: 13px; }
   .edit-save-bar .save-msg.big { font-size: 20px; font-weight: 800; color: #fff; }
+  @media (max-width: 980px) {
+    .edit-station-grid { grid-template-columns: 1fr; }
+  }
   .edit-calendar-card {
     background: white;
     border: 1px solid var(--border);
@@ -1395,13 +1440,19 @@
   .tv-queue-item.done:hover { opacity: 0.6; background: rgba(255,255,255,0.06); cursor: pointer; }
   .tv-queue-item-name { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; color: white; }
   .tv-queue-item-detail { font-size: 12px; color: var(--green-300); margin-top: 2px; }
-  .tv-workout-layout { width: min(1500px, 96vw); display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
-  .tv-workout-center { width: 100%; margin: 0; display: flex; flex-direction: column; gap: 12px; }
-  .tv-workout-card { background: linear-gradient(180deg, rgba(23,63,40,0.85), rgba(10,29,18,0.9)); border: 1px solid rgba(78,203,113,0.35); border-radius: 999px; padding: 16px 28px 16px 34px; text-align: left; box-shadow: 0 14px 40px rgba(0,0,0,0.35); display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 28px; cursor: pointer; transition: transform .16s ease, border-color .16s ease, background .16s ease; }
-  .tv-workout-card:hover { transform: scale(1.015); border-color: var(--green-300); background: linear-gradient(180deg, rgba(29,85,51,0.9), rgba(10,37,21,0.94)); }
+  .tv-workout-layout { width: min(1560px, 96vw); display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; }
+  .tv-station-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; width: 100%; }
+  .tv-station-card { min-height: 520px; background: linear-gradient(180deg, rgba(23,63,40,0.92), rgba(8,26,16,0.94)); border: 1px solid rgba(126,223,154,0.38); border-radius: 18px; box-shadow: 0 18px 44px rgba(0,0,0,0.36); overflow: hidden; display: flex; flex-direction: column; }
+  .tv-station-header { background: rgba(2,18,10,0.74); border-bottom: 1px solid rgba(126,223,154,0.25); color: #fff; font-family: 'Barlow Condensed', sans-serif; font-size: clamp(30px, 3.6vw, 48px); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 18px 22px; }
+  .tv-station-body { display: flex; flex-direction: column; gap: 16px; padding: 18px; flex: 1; }
+  .tv-station-exercise { flex: 1; min-height: 0; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; background: rgba(255,255,255,0.055); padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 16px; cursor: pointer; transition: transform .16s ease, border-color .16s ease, background .16s ease; }
+  .tv-station-exercise:hover { transform: translateY(-2px); border-color: var(--green-300); background: rgba(78,203,113,0.13); }
+  .tv-station-exercise-name { font-size: clamp(30px, 3.5vw, 52px); color: #fff; font-weight: 800; letter-spacing: 0.4px; line-height: 1.02; }
+  .tv-station-exercise-detail { color: var(--green-200); font-size: clamp(17px, 1.5vw, 24px); font-weight: 700; line-height: 1.2; }
+  .tv-workout-card { background: linear-gradient(180deg, rgba(23,63,40,0.85), rgba(10,29,18,0.9)); border: 1px solid rgba(78,203,113,0.35); border-radius: 18px; padding: 18px 22px; text-align: left; box-shadow: 0 14px 40px rgba(0,0,0,0.35); }
   .tv-workout-title { font-size: clamp(30px, 4.3vw, 56px); color: #fff; font-weight: 800; letter-spacing: 0.8px; line-height: 1.05; }
-  .tv-workout-set-list { min-width: 180px; border-left: 2px solid rgba(141,232,169,0.35); padding-left: 24px; display: flex; flex-direction: column; gap: 4px; }
-  .tv-workout-set-row { color: var(--green-100); font-size: clamp(20px, 2.5vw, 32px); font-weight: 800; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .tv-workout-set-list { display: flex; flex-direction: column; gap: 4px; }
+  .tv-workout-set-row { color: var(--green-100); font-size: clamp(20px, 2.2vw, 30px); font-weight: 800; line-height: 1.08; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .tv-focus-wrap { width: min(1120px, 92vw); min-height: calc(100vh - 170px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px; }
   .tv-focus-title { font-size: clamp(72px, 12vw, 160px); line-height: .9; font-weight: 800; text-align: center; color: #fff; text-shadow: 0 12px 46px rgba(0,0,0,.55); }
   .tv-focus-set-list { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -1420,6 +1471,8 @@
   .tv-sw-btn:hover { filter: brightness(1.06); }
   @media (max-width: 1100px) {
     .tv-workout-layout { grid-template-columns: 1fr; }
+    .tv-station-board { grid-template-columns: 1fr; }
+    .tv-station-card { min-height: 0; }
     .tv-stopwatch-panel { position: static; padding-top: 8px; padding-bottom: 20px; }
   }
   .calendar-grid { display:grid; grid-template-columns: repeat(7, minmax(120px,1fr)); gap:8px; }
@@ -2596,10 +2649,12 @@ function getPlannedExerciseForLog(context, date = currentDate || toLocalDateStr(
   const workouts = getWorkoutsForDate(date).filter(record => workoutMatchesAthlete(record, athlete));
   for (const record of workouts) {
     if (context?.workoutId && String(record.id) !== String(context.workoutId)) continue;
-    for (let sectionIndex = 0; sectionIndex < (record.sections || []).length; sectionIndex += 1) {
-      const exercises = record.sections[sectionIndex].exercises || [];
+    const stations = getWorkoutStations(record);
+    for (let sectionIndex = 0; sectionIndex < stations.length; sectionIndex += 1) {
+      const exercises = stations[sectionIndex].exercises || [];
       for (let exerciseIndex = 0; exerciseIndex < exercises.length; exerciseIndex += 1) {
         const ex = exercises[exerciseIndex];
+        if (!hasExerciseName(ex)) continue;
         const itemId = workoutItemId(record, sectionIndex, exerciseIndex, ex);
         if (context?.workoutItemId && itemId !== context.workoutItemId) continue;
         if (normLiftName(ex.name) === normLiftName(context?.exerciseName)) return { record, exercise: ex, itemId };
@@ -3033,7 +3088,7 @@ function renderWorkoutPanel(logsReady = false) {
         <span class="workout-record-title">${escHtml(record.title)}</span>
       </div>
       <div class="workout-record-meta" style="margin-bottom:12px;">${escHtml(formatWorkoutDate(record.date, { month: 'long', day: 'numeric', year: 'numeric' }))} · ${getWorkoutExerciseCount(record)} exercises</div>
-      ${(record.sections || []).map((section, sectionIndex) => `
+      ${getWorkoutStations(record).map((section, sectionIndex) => `
         <div class="section-card">
           <div class="section-card-header">${escHtml(section.section)}</div>
           ${renderExercises(section.exercises || [], { record, sectionIndex })}
@@ -3089,7 +3144,7 @@ function renderAthleteDashboard(logsReady = false) {
         <span class="workout-record-title">${escHtml(record.title)}</span>
       </div>
       <div class="workout-record-meta" style="margin-bottom:12px;">${escHtml(formatWorkoutDate(record.date, { month: 'long', day: 'numeric', year: 'numeric' }))} · ${getWorkoutExerciseCount(record)} exercises</div>
-      ${(record.sections || []).map((section, sectionIndex) => `
+      ${getWorkoutStations(record).map((section, sectionIndex) => `
         <div class="section-card">
           <div class="section-card-header">${escHtml(section.section)}</div>
           ${renderExercises(section.exercises || [], { record, sectionIndex })}
@@ -3167,13 +3222,14 @@ function updateWorkoutLogButtons() {
 }
 
 function renderExercises(exercises, context = {}) {
-  return exercises.map((ex, exerciseIndex) => {
+  const rows = exercises.map((ex, exerciseIndex) => {
+    if (!hasExerciseName(ex)) return '';
     const record = context.record || {};
     const itemId = workoutItemId(record, context.sectionIndex || 0, exerciseIndex, ex);
     const logContext = {
       workoutId: record.id || '',
       workoutItemId: itemId,
-      exerciseName: ex.name || 'Untitled Exercise',
+      exerciseName: ex.name,
       teamName: record.teamName || ''
     };
     const existingLog = getLoggedExerciseForContext(logContext);
@@ -3187,6 +3243,7 @@ function renderExercises(exercises, context = {}) {
       </div>
     </div>`;
   }).join('');
+  return rows || `<div class="empty-state">No exercises in this section</div>`;
 }
 
 
@@ -3330,7 +3387,7 @@ async function renderLogTable() {
   const findPlannedExercise = (log) => {
     const planned = getWorkoutsForDate(log.date || '')
       .filter(record => workoutMatchesAthlete(record, athlete))
-      .flatMap(record => (record.sections || []).flatMap(s => s.exercises || []));
+      .flatMap(record => getWorkoutStations(record).flatMap(s => s.exercises || []).filter(hasExerciseName));
     return planned.find(ex => normLiftName(ex.name) === normLiftName(log.exercise));
   };
   const estimate1RMForExercise = (exerciseName) => {
@@ -3711,6 +3768,129 @@ function normalizeWorkoutSections(sections) {
   }));
 }
 
+const WORKOUT_STATION_COUNT = 3;
+const WORKOUT_STATION_EXERCISE_COUNT = 2;
+
+function stationTitle(index) {
+  return `Station ${index + 1}`;
+}
+
+function blankStationExercise(overrides = {}) {
+  return {
+    name: '',
+    level: '',
+    sets: overrides.sets ?? 3,
+    reps: overrides.reps ?? '',
+    tempo: overrides.tempo ?? '',
+    rest: overrides.rest ?? '',
+    workTime: overrides.workTime ?? '',
+    ...overrides
+  };
+}
+
+function cloneWorkoutExercise(ex = {}, nameOverride = null) {
+  return blankStationExercise({
+    name: nameOverride === null ? String(ex.name || '').trim() : String(nameOverride || '').trim(),
+    level: ex.level || '',
+    sets: ex.sets ?? 3,
+    reps: ex.reps ?? '',
+    tempo: ex.tempo ?? '',
+    rest: ex.rest ?? '',
+    workTime: ex.workTime ?? ''
+  });
+}
+
+function splitPairedExerciseName(name) {
+  const parts = String(name || '').trim().split(/\s*\/\s*/).filter(Boolean);
+  if (!parts.length) return ['', ''];
+  return [parts[0] || '', parts.slice(1).join(' / ') || ''];
+}
+
+function hasExerciseName(ex) {
+  return String(ex?.name || '').trim() !== '';
+}
+
+function parseStationIndex(sectionName) {
+  const match = String(sectionName || '').match(/station\s*(\d+)/i);
+  if (!match) return -1;
+  const idx = parseInt(match[1], 10) - 1;
+  return idx >= 0 && idx < WORKOUT_STATION_COUNT ? idx : -1;
+}
+
+function createBlankStationSections() {
+  return Array.from({ length: WORKOUT_STATION_COUNT }, (_, stationIndex) => ({
+    section: stationTitle(stationIndex),
+    exercises: Array.from({ length: WORKOUT_STATION_EXERCISE_COUNT }, () => blankStationExercise())
+  }));
+}
+
+function getWorkoutStations(source) {
+  const sections = Array.isArray(source) ? source : (source?.sections || []);
+  const stations = createBlankStationSections();
+  const hasStationSections = sections.some(section => parseStationIndex(section.section || section.title) >= 0);
+
+  if (hasStationSections) {
+    sections.forEach((section, fallbackIndex) => {
+      const parsedIndex = parseStationIndex(section.section || section.title);
+      const stationIndex = parsedIndex >= 0 ? parsedIndex : fallbackIndex;
+      if (stationIndex < 0 || stationIndex >= WORKOUT_STATION_COUNT) return;
+      const exercises = Array.isArray(section.exercises) ? section.exercises : [];
+      stations[stationIndex].section = stationTitle(stationIndex);
+      if (exercises.length === 1 && String(exercises[0]?.name || '').includes('/')) {
+        const [firstName, secondName] = splitPairedExerciseName(exercises[0].name);
+        stations[stationIndex].exercises[0] = cloneWorkoutExercise(exercises[0], firstName);
+        stations[stationIndex].exercises[1] = cloneWorkoutExercise(exercises[0], secondName);
+        return;
+      }
+      for (let exerciseIndex = 0; exerciseIndex < WORKOUT_STATION_EXERCISE_COUNT; exerciseIndex++) {
+        stations[stationIndex].exercises[exerciseIndex] = cloneWorkoutExercise(exercises[exerciseIndex] || {});
+      }
+    });
+    return stations;
+  }
+
+  const flatExercises = sections.flatMap(section => Array.isArray(section.exercises) ? section.exercises : []);
+  const rowPerStationMode = flatExercises.length <= WORKOUT_STATION_COUNT
+    || flatExercises.some(ex => String(ex?.name || '').includes('/'));
+
+  if (rowPerStationMode) {
+    flatExercises.slice(0, WORKOUT_STATION_COUNT).forEach((ex, stationIndex) => {
+      const [firstName, secondName] = splitPairedExerciseName(ex.name);
+      stations[stationIndex].exercises[0] = cloneWorkoutExercise(ex, firstName || ex.name);
+      stations[stationIndex].exercises[1] = cloneWorkoutExercise(ex, secondName);
+    });
+    return stations;
+  }
+
+  flatExercises.slice(0, WORKOUT_STATION_COUNT * WORKOUT_STATION_EXERCISE_COUNT).forEach((ex, index) => {
+    const stationIndex = Math.floor(index / WORKOUT_STATION_EXERCISE_COUNT);
+    const exerciseIndex = index % WORKOUT_STATION_EXERCISE_COUNT;
+    stations[stationIndex].exercises[exerciseIndex] = cloneWorkoutExercise(ex);
+  });
+  return stations;
+}
+
+function normalizeStationSectionsForSave(sections) {
+  return getWorkoutStations(sections).map((station, stationIndex) => ({
+    section: stationTitle(stationIndex),
+    exercises: station.exercises.map(ex => cloneWorkoutExercise(ex))
+  }));
+}
+
+function shouldShowPercentages(value) {
+  const text = String(value ?? '').trim();
+  if (!text) return false;
+  const lower = text.toLowerCase();
+  if (['-', '--', '---', '—', 'n/a', 'na', 'none', 'null', 'undefined'].includes(lower)) return false;
+  return parsePercentValues(text).length > 0;
+}
+
+function formatPercentToken(value) {
+  const text = String(value || '').trim();
+  if (!text) return '';
+  return text.includes('%') ? text : `${text}%`;
+}
+
 function normalizeWorkoutRecord(raw, fallbackKey = '') {
   if (!raw || typeof raw !== 'object') return null;
   const fallbackId = String(fallbackKey || '').startsWith(WORKOUT_RECORD_PREFIX)
@@ -3870,7 +4050,9 @@ function getWorkoutsForDate(dateStr) {
 }
 
 function getWorkoutExerciseCount(record) {
-  return (record.sections || []).reduce((sum, section) => sum + ((section.exercises || []).length), 0);
+  return getWorkoutStations(record).reduce((sum, station) => (
+    sum + (station.exercises || []).filter(hasExerciseName).length
+  ), 0);
 }
 
 function getAthleteTeams(athlete) {
@@ -3911,7 +4093,7 @@ function workoutPercentTargetText(ex) {
 function exerciseDetailText(ex) {
   const bits = [];
   if (ex.sets || ex.reps) bits.push(`${ex.sets || '—'} sets x ${ex.reps || '—'}`);
-  if (ex.tempo && ex.tempo !== '—') {
+  if (shouldShowPercentages(ex.tempo)) {
     const targetText = workoutPercentTargetText(ex);
     bits.push(`% Lift: ${targetText || ex.tempo}`);
   }
@@ -3921,16 +4103,17 @@ function exerciseDetailText(ex) {
 }
 
 function renderWorkoutSectionsReadOnly(sections) {
-  if (!sections || !sections.length) {
+  const stations = getWorkoutStations(sections);
+  if (!stations.some(station => (station.exercises || []).some(hasExerciseName))) {
     return `<div class="empty-state">No exercises yet</div>`;
   }
-  return sections.map(section => `
+  return stations.map(section => `
     <div class="section-card">
       <div class="section-card-header">${escHtml(section.section)}</div>
-      ${(section.exercises || []).map(ex => `
+      ${(section.exercises || []).filter(hasExerciseName).map(ex => `
         <div class="exercise-row">
           <div style="flex:1">
-            <div class="exercise-name">${escHtml(ex.name || 'Untitled Exercise')}</div>
+            <div class="exercise-name">${escHtml(ex.name)}</div>
             <div class="exercise-detail">${escHtml(exerciseDetailText(ex))}</div>
           </div>
         </div>
@@ -4163,10 +4346,7 @@ function createBlankWorkout(date, teamName, title = '') {
     date,
     teamName: cleanTeam,
     title: String(title || defaultWorkoutTitle(cleanTeam)).trim() || defaultWorkoutTitle(cleanTeam),
-    sections: [{
-      section: 'New Section',
-      exercises: [{ name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' }]
-    }],
+    sections: createBlankStationSections(),
     createdBy: currentCoach?.username || currentAuthUser?.email || '',
     createdAt: nowIso,
     updatedAt: nowIso
@@ -4197,6 +4377,7 @@ function editWorkoutRecord(id) {
   if (!record) return;
   editSelectedWorkoutId = id;
   editWorkoutDraft = deepClone(record);
+  editWorkoutDraft.sections = normalizeStationSectionsForSave(editWorkoutDraft.sections || []);
   renderEditDateWorkouts();
   setTimeout(() => document.getElementById('edit-workout-editor')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
 }
@@ -4208,6 +4389,7 @@ function renderEditWorkoutEditor() {
     container.innerHTML = '';
     return;
   }
+  editWorkoutDraft.sections = normalizeStationSectionsForSave(editWorkoutDraft.sections || []);
   const template = editWorkoutDraft.sections || [];
   container.innerHTML = `
     <div class="edit-section-card">
@@ -4222,30 +4404,35 @@ function renderEditWorkoutEditor() {
         </div>
       </div>
     </div>
+    <div class="edit-station-grid">
     ${template.map((section, si) => `
       <div class="edit-section-card" id="edit-sec-${si}">
         <div class="edit-section-header">
-          <input class="edit-section-title-input" value="${escHtml(section.section)}" onchange="updateSectionTitle(${si},this.value)" placeholder="Section name" />
-          <button class="btn-del" style="color:rgba(255,255,255,0.5);" onclick="deleteSection(${si})" title="Delete section">x</button>
+          <span>${escHtml(stationTitle(si))}</span>
         </div>
-        <div class="edit-col-header">
-          <span>Exercise Name</span><span>Sets</span><span>Reps</span><span>% Lift</span><span>Rest</span><span>Work Time</span><span></span>
+        <div class="edit-station-body">
+        ${Array.from({ length: WORKOUT_STATION_EXERCISE_COUNT }, (_, ei) => {
+          const ex = section.exercises?.[ei] || blankStationExercise();
+          const exerciseLabel = ei === 0 ? 'Exercise A' : 'Exercise B';
+          return `
+          <div class="edit-station-exercise">
+            <div class="edit-station-exercise-title">${exerciseLabel}</div>
+            <input class="edit-input" value="${escHtml(ex.name)}" onchange="updateExField(${si},${ei},'name',this.value)" placeholder="${exerciseLabel} name" />
+            <div class="edit-station-fields">
+              <input class="edit-input" value="${escHtml(ex.sets)}" onchange="updateExField(${si},${ei},'sets',this.value)" placeholder="Sets" />
+              <input class="edit-input" value="${escHtml(ex.rest || '')}" onchange="updateExField(${si},${ei},'rest',this.value)" placeholder="Rest" />
+              <input class="edit-input" value="${escHtml(ex.workTime || '')}" onchange="updateExField(${si},${ei},'workTime',this.value)" placeholder="Work" title="Work countdown duration (e.g. 30s, 2min). Leave blank for manual advance." />
+            </div>
+            <label class="edit-set-label">Reps</label>
+            <div class="set-box-wrap">${buildSetBoxes(ex.sets, ex.reps, si, ei, 'reps')}</div>
+            <label class="edit-set-label">% Lift</label>
+            <div class="set-box-wrap">${buildSetBoxes(ex.sets, ex.tempo || '', si, ei, 'tempo')}</div>
+          </div>`;
+        }).join('')}
         </div>
-        ${(section.exercises || []).map((ex, ei) => `
-          <div class="edit-exercise-row">
-            <input class="edit-input" value="${escHtml(ex.name)}" onchange="updateExField(${si},${ei},'name',this.value)" placeholder="Exercise name" />
-            <input class="edit-input" value="${escHtml(ex.sets)}" onchange="updateExField(${si},${ei},'sets',this.value)" placeholder="3" />
-            <div class="edit-input set-box-wrap">${buildSetBoxes(ex.sets, ex.reps, si, ei, 'reps')}</div>
-            <div class="edit-input set-box-wrap">${buildSetBoxes(ex.sets, ex.tempo || '', si, ei, 'tempo')}</div>
-            <input class="edit-input" value="${escHtml(ex.rest || '—')}" onchange="updateExField(${si},${ei},'rest',this.value)" placeholder="60s" />
-            <input class="edit-input" value="${escHtml(ex.workTime || '')}" onchange="updateExField(${si},${ei},'workTime',this.value)" placeholder="30s" title="Work countdown duration (e.g. 30s, 2min). Leave blank for manual advance." />
-            <button class="btn-del" onclick="deleteExercise(${si},${ei})">x</button>
-          </div>
-        `).join('')}
-        <button class="add-exercise-btn" onclick="addExercise(${si})">+ Add Exercise</button>
       </div>
     `).join('')}
-    <button class="add-section-btn" onclick="addSection()">+ Add Section</button>
+    </div>
     <div class="edit-save-bar" style="display:flex;justify-content:space-between;align-items:center;">
       <div class="save-msg big" id="edit-total-time">Total workout time: —</div>
       <button class="btn-save-workout" onclick="saveEditedWorkout()">Save Workout</button>
@@ -4288,6 +4475,7 @@ function updateEditWorkoutTotalTime() {
   const template = editWorkoutDraft?.sections || [];
   let total = 0;
   template.forEach(section => (section.exercises || []).forEach(ex => {
+    if (!hasExerciseName(ex)) return;
     const sets = parseInt(ex.sets) || 0;
     total += parseDurationToSecs(ex.workTime) * Math.max(sets, 1);
     total += parseDurationToSecs(ex.rest) * Math.max((sets || 1) - 1, 0);
@@ -4330,7 +4518,7 @@ async function deleteSection(si) {
 
 function addExercise(si) {
   if (!editWorkoutDraft?.sections?.[si]) return;
-  editWorkoutDraft.sections[si].exercises.push({ name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' });
+  editWorkoutDraft.sections[si].exercises.push(blankStationExercise());
   renderEditWorkoutEditor();
   setTimeout(() => {
     const rows = document.querySelectorAll(`#edit-sec-${si} .edit-exercise-row`);
@@ -4342,7 +4530,7 @@ function addSection() {
   if (!editWorkoutDraft) return;
   if (!Array.isArray(editWorkoutDraft.sections)) editWorkoutDraft.sections = [];
   editWorkoutDraft.sections.push({ section: 'New Section', exercises: [
-    { name: '', sets: 3, reps: '10-10-10', tempo: '60%-60%-60%', rest: '20s', workTime: '35s' }
+    blankStationExercise()
   ]});
   renderEditWorkoutEditor();
 }
@@ -4351,6 +4539,7 @@ async function saveEditedWorkout() {
   if (!editWorkoutDraft) return;
   editWorkoutDraft.teamName = normalizeTeamName(editWorkoutDraft.teamName);
   editWorkoutDraft.title = String(editWorkoutDraft.title || defaultWorkoutTitle(editWorkoutDraft.teamName)).trim();
+  editWorkoutDraft.sections = normalizeStationSectionsForSave(editWorkoutDraft.sections || []);
   if (!editWorkoutDraft.teamName) {
     toast('Choose a sport/team before saving');
     return;
@@ -4441,17 +4630,16 @@ let tvCurrentWorkoutRecord = null;
 let tvSkippedSets = {};
 
 function buildTVSteps(workoutRecord) {
-  const template = workoutRecord?.sections || [];
   const steps = [];
-  template.forEach(section => {
-    (section.exercises || []).forEach(ex => {
+  getWorkoutStations(workoutRecord).forEach(section => {
+    (section.exercises || []).filter(hasExerciseName).forEach(ex => {
       const totalSets = parseInt(ex.sets) || 1;
       const restSecs = parseRestSecs(ex.rest);
       // Default workTime to 60s if not set
       const workLabel = String(ex.workTime || '').trim();
       const rawWork = workLabel && workLabel !== '—' ? workLabel : '60s';
       const workSecs = parseRestSecs(rawWork);
-      steps.push({ section: section.section, name: ex.name, sets: totalSets, reps: ex.reps, tempo: ex.tempo || '—', restSecs, workSecs, level: ex.level });
+      steps.push({ section: section.section, name: ex.name, sets: totalSets, reps: ex.reps, tempo: shouldShowPercentages(ex.tempo) ? ex.tempo : '—', restSecs, workSecs, level: ex.level });
     });
   });
   return steps;
@@ -4478,29 +4666,53 @@ function tvResetState() {
 function buildTvSetBreakdown(ex) {
   const setCount = Math.max(parseInt(ex?.sets) || 0, 0);
   const reps = splitSetValues(ex?.reps || '');
-  const percents = splitSetValues(ex?.tempo || '');
+  const showPercents = shouldShowPercentages(ex?.tempo);
+  const percents = showPercents ? splitSetValues(ex?.tempo || '') : [];
   if (!setCount) return '<div class="tv-workout-set-row">—</div>';
   return Array.from({ length: setCount }, (_, idx) => {
     const rep = reps[idx] || reps[reps.length - 1] || '—';
-    const pct = percents[idx] || percents[percents.length - 1] || '—';
-    return `<div class="tv-workout-set-row">${escHtml(rep)} x ${escHtml(pct)}</div>`;
+    const pct = percents[idx] || percents[percents.length - 1] || '';
+    const rowText = pct ? `${rep} x ${formatPercentToken(pct)}` : rep;
+    return `<div class="tv-workout-set-row">${escHtml(rowText)}</div>`;
   }).join('');
 }
 
+function tvExerciseDetailText(ex) {
+  const bits = [];
+  if (ex.sets || ex.reps) bits.push(`${ex.sets || '—'} sets x ${ex.reps || '—'}`);
+  if (shouldShowPercentages(ex.tempo)) bits.push(`% Lift: ${splitSetValues(ex.tempo).map(formatPercentToken).join(' / ')}`);
+  if (ex.rest && ex.rest !== '—') bits.push(`Rest: ${ex.rest}`);
+  if (ex.workTime && ex.workTime !== '—') bits.push(`Work: ${ex.workTime}`);
+  return bits.join(' · ');
+}
 
 function renderTvFullWorkout(label) {
-  const workoutRows = tvDisplayExercises.map((ex, idx) => `
-    <div class="tv-workout-card" role="button" tabindex="0" onclick="showTvLiftFocus(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showTvLiftFocus(${idx});}">
-      <div>
-        <div class="tv-workout-title">${escHtml(ex.name || 'Untitled Exercise')}</div>
-        <div class="tv-workout-sub">Rest: ${escHtml(ex.rest || '—')} · Work: ${escHtml(ex.workTime || '—')}</div>
-      </div>
-      <div class="tv-workout-set-list">${buildTvSetBreakdown(ex)}</div>
-    </div>`).join('');
+  let focusIndex = 0;
+  const stationCards = getWorkoutStations(tvCurrentWorkoutRecord).map((station, stationIndex) => {
+    const exerciseCards = (station.exercises || []).map(ex => {
+      if (!hasExerciseName(ex)) return '';
+      const idx = focusIndex++;
+      return `
+        <div class="tv-station-exercise" role="button" tabindex="0" onclick="showTvLiftFocus(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showTvLiftFocus(${idx});}">
+          <div>
+            <div class="tv-station-exercise-name">${escHtml(ex.name)}</div>
+            <div class="tv-station-exercise-detail">${escHtml(tvExerciseDetailText(ex))}</div>
+          </div>
+          <div class="tv-workout-set-list">${buildTvSetBreakdown(ex)}</div>
+        </div>`;
+    }).join('');
+    return `
+      <div class="tv-station-card">
+        <div class="tv-station-header">${escHtml(stationTitle(stationIndex))}</div>
+        <div class="tv-station-body">
+          ${exerciseCards || '<div class="tv-workout-card"><div class="tv-workout-title">No Exercise</div></div>'}
+        </div>
+      </div>`;
+  }).join('');
   document.getElementById('tv-main').innerHTML = `
     <div class="tv-section-label">${escHtml(label)} Workout Breakdown</div>
     <div class="tv-workout-layout">
-      <div class="tv-workout-center">${workoutRows || '<div class="tv-workout-card"><div class="tv-workout-title">No Workout Scheduled</div></div>'}</div>
+      <div class="tv-station-board">${stationCards || '<div class="tv-workout-card"><div class="tv-workout-title">No Workout Scheduled</div></div>'}</div>
       <aside class="tv-stopwatch-panel" aria-label="Stopwatch controls">
         <div class="tv-stopwatch-shell">
           <div class="tv-stopwatch-label">Stopwatch</div>
@@ -4535,8 +4747,9 @@ function openTVDisplay(workoutId = null) {
   tvCurrentWorkoutRecord = record;
   const label = `${record.teamName} · ${formatWorkoutDate(record.date, { month: 'short', day: 'numeric' })}`;
   document.getElementById('tv-day-label').textContent = label;
-  tvDisplayExercises = [];
-  (record.sections || []).forEach(section => (section.exercises || []).forEach(ex => tvDisplayExercises.push(ex)));
+  tvDisplayExercises = getWorkoutStations(record)
+    .flatMap((station, stationIndex) => (station.exercises || []).map((ex, exerciseIndex) => ({ ...ex, stationIndex, exerciseIndex })))
+    .filter(hasExerciseName);
   tvSteps = buildTVSteps(record);
   renderTvFullWorkout(label);
   document.getElementById('tv-queue').innerHTML = '';
