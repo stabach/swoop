@@ -2978,7 +2978,7 @@ async function waitForTourTarget(selector) {
   for (let i = 0; i < 35; i += 1) {
     const target = document.querySelector(selector);
     if (target && target.getClientRects().length) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+      target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
       await sleep(180);
       return target;
     }
@@ -3017,8 +3017,10 @@ function positionTutorial(step, target) {
   highlight.style.height = `${safeHeight}px`;
 
   const popRect = popover.getBoundingClientRect();
-  const gap = 18;
+  const arrowWidth = 64;
+  const arrowHeight = 24;
   const placement = step.placement || 'bottom';
+  const gap = placement === 'left' || placement === 'right' ? 96 : 78;
   let top = rect.bottom + gap;
   let left = rect.left + rect.width / 2 - popRect.width / 2;
   if (placement === 'top') top = rect.top - popRect.height - gap;
@@ -3035,20 +3037,28 @@ function positionTutorial(step, target) {
   popover.style.top = `${top}px`;
   popover.style.left = `${left}px`;
   let arrowDirection = 'up';
-  let arrowLeft = rect.left + rect.width / 2 - 32;
-  let arrowTop = top - 30;
+  const highlightRect = {
+    top: safeTop,
+    left: safeLeft,
+    right: safeLeft + safeWidth,
+    bottom: safeTop + safeHeight,
+    width: safeWidth,
+    height: safeHeight
+  };
+  let arrowLeft = highlightRect.left + highlightRect.width / 2 - (arrowWidth / 2);
+  let arrowTop = highlightRect.bottom + 16;
   if (placement === 'top') {
     arrowDirection = 'down';
-    arrowLeft = rect.left + rect.width / 2 - 32;
-    arrowTop = top + popRect.height + 6;
+    arrowLeft = highlightRect.left + highlightRect.width / 2 - (arrowWidth / 2);
+    arrowTop = highlightRect.top - arrowHeight - 16;
   } else if (placement === 'left') {
     arrowDirection = 'right';
-    arrowLeft = left + popRect.width + 4;
-    arrowTop = rect.top + rect.height / 2 - 12;
+    arrowLeft = highlightRect.left - arrowWidth - 16;
+    arrowTop = highlightRect.top + highlightRect.height / 2 - (arrowHeight / 2);
   } else if (placement === 'right') {
     arrowDirection = 'left';
-    arrowLeft = left - 68;
-    arrowTop = rect.top + rect.height / 2 - 12;
+    arrowLeft = highlightRect.right + 16;
+    arrowTop = highlightRect.top + highlightRect.height / 2 - (arrowHeight / 2);
   }
   arrow.className = `tour-arrow arrow-${arrowDirection}`;
   arrow.style.left = `${Math.max(12, Math.min(window.innerWidth - 76, arrowLeft))}px`;
