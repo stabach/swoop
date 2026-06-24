@@ -2855,7 +2855,7 @@ function exitDemoMode() {
 }
 
 const DEMO_TOUR_STEPS = [
-  { id: 'dashboard-intro', route: 'dashboard', targetSelector: '[data-tour="coach-dashboard"]', title: 'Coach Dashboard', description: 'This is the demo coach dashboard. Everything shown here is fake preview data and will not touch real athletes, workouts, attendance, or lift logs.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
+  { id: 'dashboard-intro', route: 'dashboard', targetSelector: '[data-tour="coach-dashboard-intro"]', title: 'Coach Dashboard', description: 'This is the demo coach dashboard. Everything shown here is fake preview data and will not touch real athletes, workouts, attendance, or lift logs.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
   { id: 'dashboard-search', route: 'dashboard', targetSelector: '[data-tour="dashboard-search"]', title: 'Dashboard Search Bar', description: 'This search bar lets coaches quickly find athletes by name, sport, team, group, or grade.', placement: 'left', beforeStepAction: 'demoFilterSearch' },
   { id: 'weekly-bubbles', route: 'dashboard', targetSelector: '[data-tour="weekly-lift-bubbles"]', title: 'Weekly Lift Bubbles', description: 'These bubbles show which athletes logged their lifts during the current week. Filled bubbles mean the athlete logged a workout on that day. Empty bubbles mean no lift was logged.', placement: 'left', beforeStepAction: 'demoClearSearch' },
   { id: 'summary-cards', route: 'dashboard', targetSelector: '[data-tour="dashboard-summary"]', title: 'Dashboard Summary Cards', description: 'These quick-view cards help coaches instantly see participation and logging activity across the weight room.', placement: 'bottom' },
