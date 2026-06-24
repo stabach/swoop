@@ -15,17 +15,17 @@
     <!-- SEGMENT: TV/Display mode action button.
          showTodayPage() enables it after a workout is selected. -->
     <div class="today-header-actions">
-      <div class="today-date-picker">
+      <div class="today-date-picker" data-tour="today-date-selector">
         <input type="date" class="date-input" id="today-workout-date" />
         <button class="btn-sm" onclick="applyTodayWorkoutDate()">Select Date</button>
       </div>
-      <button class="btn-display" id="display-tv-btn" onclick="displaySelectedTodayWorkout()" disabled>Display on TV</button>
+      <button class="btn-display" id="display-tv-btn" data-tour="display-on-tv-button" onclick="displaySelectedTodayWorkout()" disabled>Display on TV</button>
     </div>
   </div>
 
   <!-- SEGMENT: Today's workout panel mount point.
        showTodayPage() injects section/exercise cards into this container. -->
-  <div id="today-workout-panel">
+  <div id="today-workout-panel" data-tour="today-workout-list">
     <div class="empty-state"><span class="empty-icon">⏳</span>Loading today's workout...</div>
   </div>
 </div>

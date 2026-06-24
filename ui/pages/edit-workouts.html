@@ -9,10 +9,10 @@
 
   <!-- SEGMENT: Date-first workout editor.
        showEditWorkoutsPage() starts with a calendar and drills into one date. -->
-  <div id="edit-workout-shell"></div>
+  <div id="edit-workout-shell" data-tour="edit-workout-shell"></div>
 
   <div class="modal-overlay" id="copy-workout-modal" style="display:none;" onclick="closeCopyWorkoutModal(event)">
-    <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-box" data-tour="copy-workout-modal" onclick="event.stopPropagation()">
       <div class="modal-title">Copy Workout</div>
       <div id="copy-workout-summary" style="color:var(--text-main);margin-bottom:14px;line-height:1.45;"></div>
       <label class="modal-label">Copy to date</label>

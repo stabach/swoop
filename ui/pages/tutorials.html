@@ -7,7 +7,7 @@
     <div class="tutorials-hero">
       <div class="tutorials-title">Exercise Tutorials</div>
       <div class="tutorials-subtitle">Search any lift or exercise to find quick how-to videos.</div>
-      <form class="tutorial-search" onsubmit="searchTutorials(event)">
+      <form class="tutorial-search" data-tour="tutorial-search" onsubmit="searchTutorials(event)">
         <input class="tutorial-search-input" id="tutorial-search-input" placeholder="Bench Press, Squat, Power Clean..." autocomplete="off" />
         <button class="btn-save-workout" type="submit">Search</button>
       </form>
@@ -15,7 +15,7 @@
 
     <div id="tutorial-player" class="tutorial-player" style="display:none;"></div>
 
-    <div id="tutorial-results" class="tutorial-results">
+    <div id="tutorial-results" class="tutorial-results" data-tour="tutorial-results">
       <div class="empty-state">Search for an exercise to find quick tutorial videos.</div>
     </div>
   </section>

@@ -2,7 +2,7 @@
   <!-- SEGMENT: Premium dashboard shell.
        This wrapper keeps the homepage feeling like one polished dashboard instead of a long webpage.
        Edit .dashboard-shell in index.html when changing the spacing between the hero, overview cards, and roster panel. -->
-  <div class="dashboard-shell">
+  <div class="dashboard-shell" data-tour="coach-dashboard">
     <!-- SEGMENT: Dashboard hero row (title + week navigation + search).
          This is the top premium area. Edit here when changing the main heading, week arrows,
          date display, or search field placement/behavior wiring. -->
@@ -25,8 +25,8 @@
 
         <!-- SEGMENT: Right side utility tools.
              Search input filters athlete roster rows via filterAthletes(). -->
-        <div class="dash-tool-row">
-          <div class="search-wrap">
+          <div class="dash-tool-row">
+          <div class="search-wrap" data-tour="dashboard-search">
             <span class="search-icon">⌕</span>
             <input type="text" class="search-input" placeholder="Search athletes..." id="search-input" oninput="filterAthletes()" />
           </div>
@@ -40,7 +40,7 @@
       <!-- SEGMENT: KPI cards row.
            Each value is filled by updateDashboardKpis().
            Edit here to change KPI card ordering, labels, or displayed text. -->
-      <div class="dashboard-kpis">
+      <div class="dashboard-kpis" data-tour="dashboard-summary">
         <div class="kpi-card">
           <div class="kpi-label">Athletes Today</div>
           <div class="kpi-value" id="kpi-athletes">0</div>
@@ -105,7 +105,7 @@
 
       <!-- SEGMENT: Athlete roster rows mount point.
            renderAthleteGrid() writes compact Excel-like athlete rows and M/T/W/TH pills here. -->
-      <div class="athlete-grid" id="athlete-grid">
+      <div class="athlete-grid" id="athlete-grid" data-tour="athlete-roster">
         <div class="empty-state"><span class="empty-icon">⏳</span>Loading athletes...</div>
       </div>
     </section>

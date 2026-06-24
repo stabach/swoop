@@ -8,7 +8,7 @@
   <!-- SEGMENT: Page title and right-side add button for athlete management. -->
   <div class="admin-page-head">
     <div class="dash-heading">⚙ Athlete Management</div>
-    <button class="btn-primary admin-add-btn" onclick="openAddAthlete()">+ Add Athlete</button>
+    <button class="btn-primary admin-add-btn" data-tour="add-athlete-button" onclick="openAddAthlete()">+ Add Athlete</button>
   </div>
 
   <!-- SEGMENT: All Athletes table controls.
@@ -30,7 +30,7 @@
 
     <!-- SEGMENT: Excel-style roster table.
          renderAdminList() sorts by last name and paints rows into #admin-athlete-list. -->
-    <div class="admin-table-wrap" id="admin-athlete-list"><div class="empty-state"><span class="empty-icon">⏳</span>Loading...</div></div>
+    <div class="admin-table-wrap" id="admin-athlete-list" data-tour="athlete-management-list"><div class="empty-state"><span class="empty-icon">⏳</span>Loading...</div></div>
   </div>
 
   <!-- SEGMENT: In-page athlete popup.
@@ -41,7 +41,7 @@
 
       <!-- SEGMENT: Add athlete popup form.
            addAthlete() reads #new-* fields and saves directly to Supabase. -->
-      <div id="add-panel" style="display:none;">
+      <div id="add-panel" data-tour="add-athlete-modal" style="display:none;">
         <div class="admin-title">Add Athlete</div>
         <div class="admin-grid">
           <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="new-name" class="form-input" placeholder="First Last" /></div>
@@ -57,7 +57,7 @@
 
       <!-- SEGMENT: Edit athlete popup form.
            saveEditAthlete() persists changes directly to the athletes Supabase table. -->
-      <div id="edit-panel" style="display:none;">
+      <div id="edit-panel" data-tour="edit-athlete-modal" style="display:none;">
         <div class="admin-title">Edit Athlete</div>
         <input type="hidden" id="edit-id" />
         <div class="admin-grid">
@@ -66,7 +66,7 @@
           <div class="form-group"><label class="form-label">Sport</label><input type="text" id="edit-sport" class="form-input" /></div>
           <div class="form-group"><label class="form-label">Groups / Team (comma separated)</label><input type="text" id="edit-groups" class="form-input" /></div>
         </div>
-        <div class="credential-card">
+        <div class="credential-card" data-tour="student-credentials">
           <div class="credential-head">
             <div>
               <div class="credential-title">Athlete Login</div>

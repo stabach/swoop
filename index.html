@@ -103,6 +103,137 @@
     transition: background 0.15s;
   }
   .header-nav-btn:hover { background: rgba(255,255,255,0.2); }
+  .demo-mode-badge {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 10050;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(11, 46, 26, 0.92);
+    color: var(--green-100);
+    border: 1px solid rgba(141, 232, 169, 0.65);
+    box-shadow: 0 10px 28px rgba(11,46,26,0.22);
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+  .tour-root {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    pointer-events: none;
+  }
+  .tour-root[hidden] { display: none; }
+  .tour-highlight {
+    position: fixed;
+    border: 2px solid var(--green-300);
+    border-radius: 14px;
+    box-shadow:
+      0 0 0 9999px rgba(2, 8, 5, 0.62),
+      0 0 0 6px rgba(78, 203, 113, 0.20),
+      0 0 34px rgba(78, 203, 113, 0.42);
+    transition: top 0.22s ease, left 0.22s ease, width 0.22s ease, height 0.22s ease;
+  }
+  .tour-popover {
+    position: fixed;
+    width: min(390px, calc(100vw - 32px));
+    background: #ffffff;
+    color: var(--text-main);
+    border: 1px solid rgba(208, 220, 211, 0.98);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+    pointer-events: auto;
+    transition: top 0.22s ease, left 0.22s ease;
+  }
+  .tour-popover.centered {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .tour-progress {
+    color: var(--green-700);
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    margin-bottom: 8px;
+  }
+  .tour-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--green-900);
+    margin-bottom: 8px;
+  }
+  .tour-description {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.48;
+  }
+  .tour-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+    margin-top: 16px;
+  }
+  .tour-actions-left,
+  .tour-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tour-btn {
+    min-height: 38px;
+    padding: 8px 13px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text-main);
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .tour-btn.primary {
+    background: var(--green-800);
+    border-color: var(--green-800);
+    color: #fff;
+  }
+  .tour-btn.subtle {
+    color: var(--text-muted);
+  }
+  .tour-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .tour-arrow {
+    position: fixed;
+    width: 18px;
+    height: 18px;
+    background: #ffffff;
+    border-left: 1px solid rgba(208, 220, 211, 0.98);
+    border-top: 1px solid rgba(208, 220, 211, 0.98);
+    transform: rotate(45deg);
+    z-index: 12001;
+    transition: top 0.22s ease, left 0.22s ease;
+  }
+  @media (max-width: 720px) {
+    .tour-popover {
+      left: 16px !important;
+      right: 16px;
+      width: auto;
+    }
+    .tour-actions { flex-direction: column; align-items: stretch; }
+    .tour-actions-left,
+    .tour-actions-right { justify-content: space-between; }
+  }
   /* ---- LOADING ---- */
 
   /* ---- CONFIG SCREEN ---- */
@@ -1825,6 +1956,32 @@
     aspect-ratio: 16 / 9;
     background: #050e08;
   }
+  .demo-tutorial-frame {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at center, rgba(78,203,113,0.22), transparent 52%),
+      linear-gradient(135deg, #06100a, #13281a);
+    color: white;
+    text-align: center;
+    padding: 28px;
+  }
+  .demo-video-label {
+    color: var(--green-200);
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    margin-bottom: 10px;
+  }
+  .demo-video-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(38px, 6vw, 76px);
+    line-height: 0.95;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
   .tutorial-player-frame iframe {
     position: absolute;
     inset: 0;
@@ -1974,7 +2131,7 @@
 
 <!-- LOGIN SCREEN -->
 <div id="config-screen">
-  <div class="config-card">
+  <div class="config-card" data-tour="student-login-preview">
     <div class="config-logo">
       <img src="eagle.png" class="eagle-icon" />
       <div>
@@ -2003,17 +2160,19 @@
       <div class="header-subtitle">Coaching Platform</div>
     </div>
   </div>
-  <div style="display:flex;gap:8px;">
-    <button class="header-nav-btn" data-athlete-only onclick="showPage('athlete-dashboard')" style="display:none;">My Workout</button>
-    <button class="header-nav-btn" data-coach-only onclick="showPage('today')">Today's Workout</button>
-    <button class="header-nav-btn" data-coach-only onclick="showPage('edit-workouts')">Edit Workouts</button>
-    <button class="header-nav-btn" data-coach-only onclick="showPage('admin')">Manage Athletes</button>
-    <button class="header-nav-btn" data-coach-only onclick="showPage('attendance')">Attendance</button>
-    <button class="header-nav-btn" data-coach-only onclick="showPage('calendar')">Calendar</button>
-    <button class="header-nav-btn" onclick="showPage('tutorials')">Tutorials</button>
+  <div style="display:flex;gap:8px;" data-tour="header-nav">
+    <button class="header-nav-btn" data-athlete-only data-tour="nav-student-workout" onclick="showPage('athlete-dashboard')" style="display:none;">My Workout</button>
+    <button class="header-nav-btn" data-coach-only data-tour="nav-todays-workout" onclick="showPage('today')">Today's Workout</button>
+    <button class="header-nav-btn" data-coach-only data-tour="nav-edit-workout" onclick="showPage('edit-workouts')">Edit Workouts</button>
+    <button class="header-nav-btn" data-coach-only data-tour="nav-manage-athletes" onclick="showPage('admin')">Manage Athletes</button>
+    <button class="header-nav-btn" data-coach-only data-tour="nav-attendance" onclick="showPage('attendance')">Attendance</button>
+    <button class="header-nav-btn" data-coach-only data-tour="nav-calendar" onclick="showPage('calendar')">Calendar</button>
+    <button class="header-nav-btn" data-tour="nav-tutorials" onclick="showPage('tutorials')">Tutorials</button>
     <button class="header-nav-btn" onclick="logoutCoach()" style="color:#ff6b6b;font-size:12px;">Logout</button>
   </div>
 </div>
+
+<button id="demo-mode-badge" class="demo-mode-badge" style="display:none;" onclick="restartTutorial()" title="Restart demo walkthrough">Demo Mode · Restart Tutorial</button>
 
 <!-- MAIN CONTENT -->
 <div id="main-content" style="display:none;">
@@ -2022,20 +2181,20 @@
   <!-- include:page-dashboard --><div data-include="ui/pages/dashboard.html"></div><!-- /include:page-dashboard -->
 
   <!-- ATHLETE DASHBOARD -->
-  <div id="page-athlete-dashboard" class="page">
+  <div id="page-athlete-dashboard" class="page" data-tour="student-dashboard">
     <div class="athlete-dashboard-shell">
       <div class="athlete-hero">
         <div>
           <div class="athlete-hero-title" id="athlete-dashboard-name">Athlete</div>
           <div class="athlete-hero-meta" id="athlete-dashboard-meta">Today&apos;s workout</div>
         </div>
-        <div class="athlete-actions">
+        <div class="athlete-actions" data-tour="student-header-nav">
           <button class="btn-sm" onclick="showPage('tutorials')">Tutorials</button>
           <button class="btn-sm" id="exit-student-view-btn" onclick="exitStudentView()" style="display:none;">Exit Student View</button>
           <button class="btn-sm" onclick="logoutCoach()">Logout</button>
         </div>
       </div>
-      <div class="athlete-rm-card">
+      <div class="athlete-rm-card" data-tour="one-rm-card">
         <div class="athlete-rm-title">Your 1RM Lifts</div>
         <div class="rm-grid">
           <div class="rm-card"><div class="rm-lift">Bench Press</div><div class="rm-val" id="athlete-rm-bench">N/A</div></div>
@@ -2043,7 +2202,7 @@
           <div class="rm-card"><div class="rm-lift">Deadlift</div><div class="rm-val" id="athlete-rm-deadlift">N/A</div></div>
         </div>
       </div>
-      <div class="athlete-workout-card">
+      <div class="athlete-workout-card" data-tour="student-workout">
         <div class="athlete-workout-heading">Today&apos;s Workout</div>
         <div class="athlete-workout-date" id="athlete-workout-date">Today</div>
         <div id="athlete-workout-panel">
@@ -2147,7 +2306,7 @@
       <div class="attendance-toolbar">
         <div class="attendance-filter-field">
           <label class="form-label">Group</label>
-          <select id="attendance-group" class="form-input" onchange="renderAttendanceList()"></select>
+          <select id="attendance-group" class="form-input" data-tour="attendance-team-selector" onchange="renderAttendanceList()"></select>
         </div>
         <div class="attendance-filter-field">
           <label class="form-label">Date</label>
@@ -2158,9 +2317,9 @@
           <button class="btn-sm" onclick="openAttendanceOverview()">Attendance Overview</button>
         </div>
       </div>
-      <div class="attendance-table-wrap" id="attendance-list"><div class="empty-state"><span class="empty-icon">⏳</span>Loading...</div></div>
+      <div class="attendance-table-wrap" id="attendance-list" data-tour="attendance-list"><div class="empty-state"><span class="empty-icon">⏳</span>Loading...</div></div>
     </div>
-    <div class="admin-card" id="attendance-overview-card" style="display:none;margin-top:12px;">
+    <div class="admin-card" id="attendance-overview-card" data-tour="attendance-report" style="display:none;margin-top:12px;">
       <div class="admin-title">Attendance Overview by Student</div>
       <div style="display:grid;grid-template-columns:repeat(3,minmax(160px,1fr));gap:8px;">
         <div><label class="form-label">Group</label><select id="attendance-overview-group" class="form-input"></select></div>
@@ -2180,7 +2339,7 @@
         <div style="flex:1;"><label class="form-label">Month</label><input type="month" id="calendar-month" class="form-input" onchange="loadCalendarEvents()" /></div>
       </div>
       <div id="calendar-weekdays" class="calendar-weekdays" style="margin-top:10px;"></div>
-      <div id="calendar-grid" class="calendar-grid" style="margin-top:8px;"></div>
+      <div id="calendar-grid" class="calendar-grid" data-tour="shared-calendar" style="margin-top:8px;"></div>
     </div>
   </div>
 
@@ -2264,7 +2423,7 @@
         <input type="number" id="log-sets-completed" class="modal-input" min="1" max="20" step="1" value="1" oninput="renderDynamicLogSetRows()" />
       </div>
     </div>
-    <div>
+    <div data-tour="set-entry-fields">
       <label class="modal-label">Set-by-Set Log</label>
       <div id="log-set-rows"></div>
     </div>
@@ -2282,7 +2441,7 @@
   <div class="modal-box" onclick="event.stopPropagation()">
     <div class="modal-title" id="calendar-event-title">Calendar Events</div>
     <div id="calendar-existing-events" class="calendar-event-list"></div>
-    <button type="button" class="btn-sm" id="calendar-add-another-btn" onclick="showCalendarEventForm()" style="margin-bottom:12px;">Add another event</button>
+    <button type="button" class="btn-sm" id="calendar-add-another-btn" data-tour="calendar-add-event" onclick="showCalendarEventForm()" style="margin-bottom:12px;">Add another event</button>
     <div id="calendar-event-form" style="display:none;">
       <input type="hidden" id="calendar-event-edit-index" value="" />
       <div class="modal-grid">
@@ -2320,6 +2479,25 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<div id="tour-root" class="tour-root" hidden aria-hidden="true">
+  <div id="tour-highlight" class="tour-highlight"></div>
+  <div id="tour-arrow" class="tour-arrow"></div>
+  <section id="tour-popover" class="tour-popover" role="dialog" aria-live="polite" aria-labelledby="tour-title">
+    <div class="tour-progress" id="tour-progress">Step 1 of 1</div>
+    <div class="tour-title" id="tour-title">Demo Tour</div>
+    <div class="tour-description" id="tour-description"></div>
+    <div class="tour-actions">
+      <div class="tour-actions-left">
+        <button type="button" class="tour-btn subtle" id="tour-skip-btn" onclick="skipTutorial()">Skip Tutorial</button>
+      </div>
+      <div class="tour-actions-right">
+        <button type="button" class="tour-btn" id="tour-back-btn" onclick="previousTutorialStep()">Back</button>
+        <button type="button" class="tour-btn primary" id="tour-next-btn" onclick="nextTutorialStep()">Next</button>
+      </div>
+    </div>
+  </section>
+</div>
+
 <script>
 // ===================== CONFIG =====================
 let supabase = null;
@@ -2336,6 +2514,652 @@ let currentAuthUser = null;
 let currentRole = null;
 let athleteCredentialBackfillDone = false;
 let appDialogResolver = null;
+let isDemoMode = false;
+let demoRole = null;
+let demoData = null;
+const DEMO_LOGIN_USERNAME = 'test';
+const DEMO_LOGIN_PASSWORD = 'test';
+const DEMO_STUDENT_USERNAME = 'Swoop Eagle';
+const DEMO_STUDENT_PASSWORD_MASK = '********';
+
+function demoOffsetDate(days) {
+  const d = new Date();
+  d.setHours(12, 0, 0, 0);
+  d.setDate(d.getDate() + days);
+  return toLocalDateStr(d);
+}
+
+function demoWeekDates() {
+  const monday = getMondayOfCurrentWeek(new Date());
+  return Array.from({ length: 4 }, (_, idx) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + idx);
+    return toLocalDateStr(d);
+  });
+}
+
+function createDemoWorkout(date, teamName, title, stationPairs) {
+  return normalizeWorkoutRecord({
+    id: `demo-workout-${date}-${teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+    date,
+    teamName,
+    title,
+    sections: stationPairs.map((exercises, stationIndex) => ({
+      section: stationTitle(stationIndex),
+      exercises: exercises.map(ex => blankStationExercise(ex))
+    })),
+    createdBy: 'Demo Coach'
+  });
+}
+
+function createDemoData() {
+  const today = toLocalDateStr();
+  const yesterday = demoOffsetDate(-1);
+  const lastWeek = demoOffsetDate(-7);
+  const weekDates = demoWeekDates();
+  const athletesSeed = [
+    { id: 'demo-ath-jackson', name: 'Jackson Miller', grade: 11, sport: 'Baseball', groups: ['Baseball Varsity', 'Varsity'], active_status: true, notes: 'Starting catcher. Focus on shoulder care.', username: DEMO_STUDENT_USERNAME, password: DEMO_STUDENT_PASSWORD_MASK, role: 'athlete' },
+    { id: 'demo-ath-ethan', name: 'Ethan Carter', grade: 12, sport: 'Football', groups: ['Football Varsity', 'Varsity'], active_status: true, notes: 'Senior captain.', username: 'Ethan Carter', password: DEMO_STUDENT_PASSWORD_MASK, role: 'athlete' },
+    { id: 'demo-ath-mason', name: 'Mason Brooks', grade: 10, sport: 'Basketball', groups: ['Basketball JV', 'JV'], active_status: true, notes: 'Needs landing mechanics work.', username: 'Mason Brooks', password: DEMO_STUDENT_PASSWORD_MASK, role: 'athlete' },
+    { id: 'demo-ath-noah', name: 'Noah Thompson', grade: 9, sport: 'Baseball', groups: ['Baseball JV', 'JV'], active_status: true, notes: 'New athlete onboarding.', username: 'Noah Thompson', password: DEMO_STUDENT_PASSWORD_MASK, role: 'athlete' },
+    { id: 'demo-ath-lucas', name: 'Lucas Anderson', grade: 11, sport: 'Soccer', groups: ['General Strength', 'Varsity'], active_status: true, notes: 'Return-to-play sprint volume.', username: 'Lucas Anderson', password: DEMO_STUDENT_PASSWORD_MASK, role: 'athlete' },
+    { id: 'demo-ath-caleb', name: 'Caleb Johnson', grade: 12, sport: 'Football', groups: ['Football Varsity', 'Injured/Modified Workout'], active_status: false, notes: 'Injured. Modified lower body only.', username: 'Caleb Johnson', password: DEMO_STUDENT_PASSWORD_MASK, role: 'athlete' }
+  ];
+  const workoutsSeed = [
+    createDemoWorkout(today, 'Baseball Varsity', 'Baseball Varsity Strength', [
+      [
+        { name: 'Bench Press', sets: 3, reps: '10-10-10', tempo: '70-70-70', rest: '60', workTime: '180' },
+        { name: 'DB Row', sets: 3, reps: '10-10-10', tempo: '', rest: '45', workTime: '120' }
+      ],
+      [
+        { name: 'Squat', sets: 3, reps: '8-8-8', tempo: '75-75-75', rest: '75', workTime: '180' },
+        { name: 'RDL', sets: 3, reps: '8-8-8', tempo: '', rest: '60', workTime: '150' }
+      ],
+      [
+        { name: 'Deadlift', sets: 3, reps: '5-5-5', tempo: '80-80-80', rest: '90', workTime: '180' },
+        { name: 'Plank', sets: 3, reps: '3 rounds', tempo: '', rest: '30', workTime: '60' }
+      ]
+    ]),
+    createDemoWorkout(today, 'Football Varsity', 'Football Lower Body', [
+      [
+        { name: 'Back Squats', sets: 4, reps: '6-6-5-5', tempo: '70-75-80-85', rest: '90', workTime: '180' },
+        { name: 'Lunges', sets: 3, reps: '8-8-8', rest: '45', workTime: '120' }
+      ],
+      [
+        { name: 'Power Clean', sets: 4, reps: '5-5-4-4', tempo: '65-70-75-80', rest: '90', workTime: '150' },
+        { name: 'Box Jumps', sets: 3, reps: '5-5-5', rest: '45', workTime: '60' }
+      ],
+      [
+        { name: 'Hamstring Curl', sets: 3, reps: '10-10-10', rest: '45', workTime: '120' },
+        { name: 'Calf Raises', sets: 3, reps: '12-12-12', rest: '30', workTime: '90' }
+      ]
+    ]),
+    createDemoWorkout(today, 'General Strength', 'General Athletic Development', [
+      [
+        { name: 'Goblet Squat', sets: 3, reps: '10-10-10', rest: '45', workTime: '120' },
+        { name: 'Push Ups', sets: 3, reps: '12-12-12', rest: '30', workTime: '90' }
+      ],
+      [
+        { name: 'Trap Bar Deadlift', sets: 3, reps: '6-6-6', tempo: '65-70-75', rest: '75', workTime: '150' },
+        { name: 'Band Rows', sets: 3, reps: '12-12-12', rest: '30', workTime: '90' }
+      ],
+      [
+        { name: 'Pallof Press', sets: 3, reps: '10-10-10', rest: '30', workTime: '75' },
+        { name: 'Sprint Starts', sets: 4, reps: '4-4-4-4', rest: '60', workTime: '20' }
+      ]
+    ]),
+    createDemoWorkout(yesterday, 'Basketball JV', 'Basketball JV Strength', [
+      [
+        { name: 'Incline Press', sets: 3, reps: '8-8-8', tempo: '65-70-75', rest: '60', workTime: '120' },
+        { name: 'TRX Row', sets: 3, reps: '10-10-10', rest: '45', workTime: '90' }
+      ],
+      [
+        { name: 'Front Squat', sets: 3, reps: '6-6-6', tempo: '70-75-80', rest: '75', workTime: '150' },
+        { name: 'Single Leg RDL', sets: 3, reps: '8-8-8', rest: '45', workTime: '120' }
+      ],
+      [
+        { name: 'Med Ball Slam', sets: 3, reps: '8-8-8', rest: '30', workTime: '60' },
+        { name: 'Side Plank', sets: 3, reps: '30s-30s-30s', rest: '20', workTime: '30' }
+      ]
+    ]),
+    createDemoWorkout(lastWeek, 'Baseball Varsity', 'Baseball Varsity Strength Copy Source', [
+      [
+        { name: 'Bench Press', sets: 4, reps: '8-8-6-6', tempo: '65-70-75-80', rest: '75', workTime: '180' },
+        { name: 'Chest Supported Row', sets: 4, reps: '10-10-8-8', rest: '45', workTime: '120' }
+      ],
+      [
+        { name: 'Back Squats', sets: 4, reps: '8-8-6-6', tempo: '65-70-75-80', rest: '90', workTime: '180' },
+        { name: 'Hamstring Bridge', sets: 3, reps: '10-10-10', rest: '30', workTime: '90' }
+      ],
+      [
+        { name: 'Deadlift', sets: 3, reps: '5-5-5', tempo: '70-75-80', rest: '90', workTime: '180' },
+        { name: 'Anti-Rotation Hold', sets: 3, reps: '30s-30s-30s', rest: '30', workTime: '45' }
+      ]
+    ]),
+    createDemoWorkout(today, 'Injured/Modified Workout', 'Injured Modified Workout', [
+      [
+        { name: 'Bike Warmup', sets: 1, reps: '8 min', rest: '', workTime: '480' },
+        { name: 'Band Pull Aparts', sets: 3, reps: '15-15-15', rest: '30', workTime: '60' }
+      ],
+      [
+        { name: 'Split Squat ISO', sets: 3, reps: '20s-20s-20s', rest: '45', workTime: '20' },
+        { name: 'Core Breathing', sets: 3, reps: '5-5-5', rest: '30', workTime: '45' }
+      ],
+      [
+        { name: 'Mobility Circuit', sets: 3, reps: '3 rounds', rest: '30', workTime: '120' },
+        { name: 'Coach Check-In', sets: 1, reps: 'review', rest: '', workTime: '60' }
+      ]
+    ])
+  ];
+  const logsSeed = [];
+  const addLog = (athleteId, date, exercise, entries, workoutId = null, workoutItemIdValue = null) => {
+    let best = { epley: 0, reps: null, weight: null };
+    entries.forEach(entry => {
+      const weight = Number(entry.weight || 0);
+      const reps = Number(entry.reps || 0);
+      const estimate = weight && reps ? weight * (1 + reps / 30) : 0;
+      if (estimate > best.epley) best = { epley: estimate, reps, weight };
+    });
+    logsSeed.push({
+      id: `demo-log-${logsSeed.length + 1}`,
+      athlete_id: athleteId,
+      date,
+      exercise,
+      workout_id: workoutId,
+      workout_item_id: workoutItemIdValue,
+      sport_team: '',
+      set_entries: entries.map((entry, idx) => ({ set: idx + 1, reps: entry.reps, weight: entry.weight })),
+      sets_completed: entries.length,
+      reps_completed: best.reps,
+      weight_used: best.weight,
+      performance_notes: `[Set Log] ${JSON.stringify(entries.map((entry, idx) => ({ set: idx + 1, reps: entry.reps, weight: entry.weight })))}`,
+      created_by: 'demo',
+      created_by_role: 'athlete',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    });
+  };
+  addLog('demo-ath-jackson', weekDates[0], 'Bench Press', [{ weight: 125, reps: 10 }, { weight: 135, reps: 8 }, { weight: 145, reps: 6 }]);
+  addLog('demo-ath-jackson', weekDates[1], 'Squat', [{ weight: 185, reps: 8 }, { weight: 195, reps: 8 }, { weight: 205, reps: 6 }]);
+  addLog('demo-ath-jackson', lastWeek, 'Deadlift', [{ weight: 225, reps: 5 }, { weight: 245, reps: 5 }, { weight: 255, reps: 4 }]);
+  addLog('demo-ath-ethan', weekDates[0], 'Back Squats', [{ weight: 275, reps: 6 }, { weight: 295, reps: 5 }]);
+  addLog('demo-ath-ethan', weekDates[2], 'Deadlift', [{ weight: 315, reps: 5 }, { weight: 335, reps: 3 }]);
+  addLog('demo-ath-mason', weekDates[1], 'Bench Press', [{ weight: 105, reps: 10 }, { weight: 115, reps: 8 }]);
+  addLog('demo-ath-noah', weekDates[0], 'Bench Press', [{ weight: 95, reps: 10 }, { weight: 105, reps: 8 }]);
+  addLog('demo-ath-lucas', weekDates[0], 'Trap Bar Deadlift', [{ weight: 205, reps: 6 }, { weight: 225, reps: 6 }]);
+  addLog('demo-ath-lucas', weekDates[3], 'Squat', [{ weight: 175, reps: 8 }, { weight: 185, reps: 8 }]);
+  return {
+    coach: { username: 'test', email: 'demo@eaglestrength.local', auth_user_id: 'demo-coach-auth' },
+    authUser: { id: 'demo-coach-auth', email: 'demo@eaglestrength.local' },
+    athletes: athletesSeed,
+    teams: ['Baseball Varsity', 'Baseball JV', 'Football Varsity', 'Basketball JV', 'General Strength', 'Injured/Modified Workout'],
+    workouts: workoutsSeed,
+    workoutLogs: logsSeed,
+    attendanceRecords: [
+      { athlete_id: 'demo-ath-jackson', date: weekDates[0], group_name: 'Baseball Varsity', status: 'present' },
+      { athlete_id: 'demo-ath-jackson', date: weekDates[1], group_name: 'Baseball Varsity', status: 'absent' },
+      { athlete_id: 'demo-ath-noah', date: weekDates[0], group_name: 'Baseball JV', status: 'present' },
+      { athlete_id: 'demo-ath-ethan', date: weekDates[0], group_name: 'Football Varsity', status: 'present' },
+      { athlete_id: 'demo-ath-ethan', date: weekDates[1], group_name: 'Football Varsity', status: 'absent' },
+      { athlete_id: 'demo-ath-mason', date: weekDates[2], group_name: 'Basketball JV', status: 'absent' },
+      { athlete_id: 'demo-ath-lucas', date: weekDates[0], group_name: 'General Strength', status: 'present' }
+    ],
+    calendarEvents: [
+      { date: weekDates[0], time: '15:30', text: 'Baseball Lift' },
+      { date: weekDates[1], time: '16:00', text: 'Football Max Testing' },
+      { date: weekDates[2], time: '15:15', text: 'Basketball Recovery Session' },
+      { date: demoOffsetDate(2), time: '', text: 'Weight Room Closed' }
+    ],
+    today,
+    copySourceWorkoutId: workoutsSeed.find(w => w.date === lastWeek)?.id || workoutsSeed[0].id,
+    studentAthleteId: 'demo-ath-jackson'
+  };
+}
+
+function demoTutorialVideosFor(term = 'Bench Press') {
+  const query = String(term || 'Bench Press').trim() || 'Bench Press';
+  const isBench = query.toLowerCase().includes('bench');
+  const titles = isBench
+    ? ['Bench Press Setup', 'Bench Press Bar Path', 'Bench Press Spotting', 'Bench Press Common Mistakes', 'Bench Press Full Tutorial']
+    : [`${query} Setup`, `${query} Technique`, `${query} Coaching Cues`, `${query} Common Mistakes`, `${query} Full Tutorial`];
+  return titles.map((title, idx) => ({
+    id: `demo-tutorial-${idx + 1}`,
+    title,
+    channelTitle: 'Eagle Strength Demo',
+    isShort: true,
+    demo: true,
+    url: '#'
+  }));
+}
+
+function showDemoBadge(show = isDemoMode) {
+  const badge = document.getElementById('demo-mode-badge');
+  if (badge) badge.style.display = show ? 'block' : 'none';
+}
+
+async function startDemoMode() {
+  isDemoMode = true;
+  demoRole = 'coach';
+  demoData = createDemoData();
+  currentRole = 'coach';
+  currentCoach = demoData.coach;
+  currentAthlete = null;
+  currentAuthUser = demoData.authUser;
+  currentAthleteId = null;
+  studentViewAthlete = null;
+  athletes = demoData.athletes;
+  dateTeamWorkouts = demoData.workouts;
+  savedWorkoutTeams = demoData.teams;
+  calendarEvents = demoData.calendarEvents;
+  athleteCredentialBackfillDone = true;
+  setSessionChrome('coach');
+  showDemoBadge(true);
+  document.getElementById('config-screen').style.display = 'none';
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'block';
+  renderDashboard();
+  showPage('dashboard');
+  setTimeout(() => startTutorial(), 500);
+}
+
+function applyDemoCoachSession(options = {}) {
+  if (!isDemoMode || !demoData) return;
+  demoRole = 'coach';
+  currentRole = 'coach';
+  currentCoach = demoData.coach;
+  currentAthlete = null;
+  currentAuthUser = demoData.authUser;
+  athletes = demoData.athletes;
+  dateTeamWorkouts = demoData.workouts;
+  savedWorkoutTeams = demoData.teams;
+  setSessionChrome('coach');
+  showDemoBadge(true);
+  document.getElementById('config-screen').style.display = 'none';
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'block';
+  if (options.showDashboard !== false) showPage('dashboard');
+}
+
+function applyDemoAthleteSession(athleteId = demoData?.studentAthleteId) {
+  if (!isDemoMode || !demoData) return;
+  const athlete = demoData.athletes.find(a => String(a.id) === String(athleteId)) || demoData.athletes[0];
+  demoRole = 'athlete';
+  currentRole = 'athlete';
+  currentCoach = null;
+  currentAthlete = athlete;
+  currentAuthUser = { id: `demo-auth-${athlete.id}`, email: athlete.username };
+  currentAthleteId = athlete.id;
+  athletes = [athlete];
+  studentViewAthlete = null;
+  setSessionChrome('athlete');
+  showDemoBadge(true);
+  document.getElementById('config-screen').style.display = 'none';
+  document.getElementById('app-header').style.display = 'flex';
+  document.getElementById('main-content').style.display = 'block';
+  renderAthleteDashboard();
+  showPage('athlete-dashboard');
+}
+
+function showDemoStudentLoginPreview() {
+  if (!isDemoMode || !demoData) return;
+  closeTVDisplay();
+  currentRole = null;
+  currentCoach = null;
+  currentAthlete = null;
+  currentAuthUser = null;
+  setSessionChrome(null);
+  document.getElementById('app-header').style.display = 'none';
+  document.getElementById('main-content').style.display = 'none';
+  document.getElementById('config-screen').style.display = 'block';
+  document.getElementById('login-username').value = DEMO_STUDENT_USERNAME;
+  document.getElementById('login-password').value = DEMO_STUDENT_PASSWORD_MASK;
+  const loginSub = document.querySelector('.config-sub');
+  if (loginSub) loginSub.textContent = 'Student Login Preview (Demo)';
+  showDemoBadge(true);
+}
+
+function exitDemoMode() {
+  stopTutorial();
+  isDemoMode = false;
+  demoRole = null;
+  demoData = null;
+  showDemoBadge(false);
+}
+
+const DEMO_TOUR_STEPS = [
+  { id: 'dashboard-intro', route: 'dashboard', targetSelector: '[data-tour="coach-dashboard"]', title: 'Coach Dashboard', description: 'This is the demo coach dashboard. Everything shown here is fake preview data and will not touch real athletes, workouts, attendance, or lift logs.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
+  { id: 'dashboard-search', route: 'dashboard', targetSelector: '[data-tour="dashboard-search"]', title: 'Dashboard Search Bar', description: 'This search bar lets coaches quickly find athletes by name, sport, team, group, or grade.', placement: 'left', beforeStepAction: 'demoFilterSearch' },
+  { id: 'weekly-bubbles', route: 'dashboard', targetSelector: '[data-tour="weekly-lift-bubbles"]', title: 'Weekly Lift Bubbles', description: 'These bubbles show which athletes logged their lifts during the current week. Filled bubbles mean the athlete logged a workout on that day. Empty bubbles mean no lift was logged.', placement: 'left', beforeStepAction: 'demoClearSearch' },
+  { id: 'summary-cards', route: 'dashboard', targetSelector: '[data-tour="dashboard-summary"]', title: 'Dashboard Summary Cards', description: 'These quick-view cards help coaches instantly see participation and logging activity across the weight room.', placement: 'bottom' },
+  { id: 'header-nav', route: 'dashboard', targetSelector: '[data-tour="header-nav"]', title: 'Header Navigation', description: 'The header gives coaches quick access to Today’s Workout, Edit Workout, Manage Athletes, Attendance, Calendar, and Tutorials.', placement: 'bottom' },
+  { id: 'nav-today', route: 'dashboard', targetSelector: '[data-tour="nav-todays-workout"]', title: 'Today’s Workout', description: 'Today’s Workout shows the workouts created for the current day. Multiple coaches can create multiple workouts for the same day.', placement: 'bottom' },
+  { id: 'today-list', route: 'today', targetSelector: '[data-tour="today-workout-selector"]', title: 'Select Workout', description: 'Choose which workout you want to view. This allows different teams, sessions, or coaches to have separate workouts on the same day.', placement: 'top', beforeStepAction: 'demoSelectTodayWorkout' },
+  { id: 'display-tv-button', route: 'today', targetSelector: '[data-tour="display-on-tv-button"]', title: 'Display on TV', description: 'Click Display on TV to open an enhanced workout display designed for large screens in the weight room.', placement: 'bottom', beforeStepAction: 'demoSelectTodayWorkout' },
+  { id: 'tv-screen', route: 'tv-display', targetSelector: '[data-tour="tv-display-screen"]', title: 'Weight Room TV View', description: 'This view is optimized for the weight room TV. It gives athletes and coaches a cleaner large-screen view of the workout.', placement: 'left', beforeStepAction: 'demoOpenTv' },
+  { id: 'nav-edit', route: 'dashboard', targetSelector: '[data-tour="nav-edit-workout"]', title: 'Edit Workout', description: 'Use Edit Workout to create, edit, copy, and organize workouts by date, team, group, session, or sport.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
+  { id: 'monthly-calendar', route: 'edit-workouts', targetSelector: '[data-tour="workout-calendar"]', title: 'Monthly Calendar', description: 'This calendar lets coaches select the day they want to create or edit a workout for.', placement: 'bottom' },
+  { id: 'select-day', route: 'edit-workouts', targetSelector: '[data-tour="calendar-date"]', title: 'Select a Day', description: 'Click any day to create or edit the workout for that date.', placement: 'top' },
+  { id: 'copy-workout', route: 'edit-workouts', targetSelector: '[data-tour="copy-workout-button"]', title: 'Copy Workout', description: 'If you created a workout in the past and want to reuse it, click Copy and choose the new date you want to copy it to.', placement: 'left', beforeStepAction: 'demoOpenPastWorkoutDate' },
+  { id: 'team-session-groups', route: 'edit-workouts', targetSelector: '[data-tour="workout-team-section"]', title: 'Teams, Sessions, and Groups', description: 'Workouts can be organized by sport, team, group, or session. For example, Baseball Varsity can have a separate workout from Football Varsity or Basketball JV.', placement: 'bottom', beforeStepAction: 'demoOpenWorkoutEditor' },
+  { id: 'nav-manage-athletes', route: 'dashboard', targetSelector: '[data-tour="nav-manage-athletes"]', title: 'Manage Athletes', description: 'Manage Athletes is where coaches add athletes, edit athlete profiles, manage active or inactive status, and view student login credentials.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
+  { id: 'add-athlete', route: 'admin', targetSelector: '[data-tour="add-athlete-button"]', title: 'Add Athlete', description: 'Click Add Athlete to create a new athlete profile.', placement: 'bottom' },
+  { id: 'edit-athlete-button', route: 'admin', targetSelector: '[data-tour="edit-athlete-button"]', title: 'Edit Athlete', description: 'Click Edit to update an athlete’s name, grade, sport, group, and login credentials.', placement: 'left' },
+  { id: 'edit-athlete-modal', route: 'admin', targetSelector: '[data-tour="edit-athlete-modal"]', title: 'Athlete Credentials', description: 'Each athlete can have their own generated username and password. These credentials allow the athlete to log in and only see their own workout, lift logs, and tutorials.', placement: 'left', beforeStepAction: 'demoOpenEditAthlete' },
+  { id: 'status-toggle', route: 'admin', targetSelector: '[data-tour="athlete-status-toggle"]', title: 'Active or Inactive Status', description: 'The green circle means the athlete is active. Click it to change the athlete to inactive or injured. Inactive athletes are visually marked in red.', placement: 'left', beforeStepAction: 'demoCloseAthleteModal' },
+  { id: 'delete-athlete', route: 'admin', targetSelector: '[data-tour="delete-athlete-button"]', title: 'Delete Athlete', description: 'Use the trash icon to remove an athlete from the system. In demo mode this does not delete real data.', placement: 'left' },
+  { id: 'student-login-preview', route: 'login-preview', targetSelector: '[data-tour="student-login-preview"]', title: 'Student Login Preview', description: 'This is what it looks like when a student uses their own athlete credentials to log in. The password can remain masked.', placement: 'bottom', beforeStepAction: 'demoStudentLoginPreview' },
+  { id: 'student-dashboard', route: 'student-dashboard', targetSelector: '[data-tour="student-dashboard"]', title: 'Student Dashboard', description: 'When a student logs in, the system recognizes their athlete profile, sport, team, and group. If their coach created a matching workout, that workout appears here.', placement: 'bottom', beforeStepAction: 'demoStudentDashboard' },
+  { id: 'log-lift-button', route: 'student-dashboard', targetSelector: '[data-tour="log-lift-button"]', title: 'Log Lift Button', description: 'Students can log their completed lifts directly from their workout.', placement: 'left' },
+  { id: 'set-entry-fields', route: 'student-dashboard', targetSelector: '[data-tour="set-entry-fields"]', title: 'Set Entry Fields', description: 'The athlete enters the weight and reps completed for each set. The system stores the lift log for that athlete only.', placement: 'left', beforeStepAction: 'demoOpenLiftLog' },
+  { id: 'one-rm-calc', route: 'student-dashboard', targetSelector: '[data-tour="one-rm-card"]', title: '1RM Calculation', description: 'When an athlete logs Bench Press, Squat, or Deadlift, the system calculates an estimated 1 rep max using weight times one plus reps divided by 30.', placement: 'bottom', beforeStepAction: 'demoSaveLiftLog' },
+  { id: 'percentage-prescription', route: 'student-dashboard', targetSelector: '[data-tour="student-workout"]', title: 'Percentage-Based Prescription', description: 'Once the athlete has a calculated 1RM, future percentage-based workouts show the recommended weight. If a lift has no 1RM data, the target displays N/A.', placement: 'top' },
+  { id: 'student-restrictions', route: 'student-dashboard', targetSelector: '[data-tour="student-header-nav"]', title: 'Student Restrictions', description: 'Students only have access to their own workout, their own lift logs, their own 1RM values, and the Tutorials section.', placement: 'bottom' },
+  { id: 'nav-attendance', route: 'dashboard', targetSelector: '[data-tour="nav-attendance"]', title: 'Attendance', description: 'Attendance lets coaches track who attended weight room sessions.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
+  { id: 'attendance-team', route: 'attendance', targetSelector: '[data-tour="attendance-team-selector"]', title: 'Team Selector', description: 'Choose the team or group you want to take attendance for.', placement: 'bottom' },
+  { id: 'attendance-list', route: 'attendance', targetSelector: '[data-tour="attendance-list"]', title: 'Attendance List', description: 'Mark each athlete present or absent for the selected date and team.', placement: 'top' },
+  { id: 'attendance-report', route: 'attendance', targetSelector: '[data-tour="attendance-report"]', title: 'Attendance Reports', description: 'Use attendance reports to review absences by athlete, date range, team, or group.', placement: 'top', beforeStepAction: 'demoAttendanceReport' },
+  { id: 'nav-calendar', route: 'dashboard', targetSelector: '[data-tour="nav-calendar"]', title: 'Calendar', description: 'The shared calendar helps coaches stay up to date with weight room events, team schedules, testing days, and reminders.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
+  { id: 'calendar-view', route: 'calendar', targetSelector: '[data-tour="shared-calendar"]', title: 'Shared Calendar', description: 'All coaches can view the shared calendar.', placement: 'top' },
+  { id: 'calendar-event', route: 'calendar', targetSelector: '[data-tour="calendar-add-event"]', title: 'Add or Edit Events', description: 'Coaches can add or edit events to keep everyone updated.', placement: 'left', beforeStepAction: 'demoOpenCalendarEvent' },
+  { id: 'nav-tutorials', route: 'dashboard', targetSelector: '[data-tour="nav-tutorials"]', title: 'Tutorials', description: 'Tutorials are available to all coaches and athletes.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
+  { id: 'tutorial-search', route: 'tutorials', targetSelector: '[data-tour="tutorial-search"]', title: 'Tutorial Search Bar', description: 'Search for an exercise to find relevant how-to videos and coaching resources.', placement: 'bottom', beforeStepAction: 'demoTutorialSearch' },
+  { id: 'tutorial-results', route: 'tutorials', targetSelector: '[data-tour="tutorial-results"]', title: 'Search Results', description: 'The system shows the most relevant tutorial videos for the searched exercise. This helps athletes learn proper technique and gives coaches a consistent resource to share.', placement: 'top' },
+  { id: 'finish', route: 'dashboard', targetSelector: null, title: 'Demo Walkthrough Complete', description: 'You have completed the demo walkthrough. You can now explore the demo site freely. All data shown here is fake demo data and does not affect real athletes, coaches, workouts, lift logs, or attendance.', placement: 'center', final: true, beforeStepAction: 'demoCoachDashboard' }
+];
+let tutorialState = { active: false, index: 0, positioning: false };
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function stopTutorial() {
+  tutorialState.active = false;
+  const root = document.getElementById('tour-root');
+  if (root) {
+    root.hidden = true;
+    root.setAttribute('aria-hidden', 'true');
+  }
+}
+
+function startTutorial() {
+  if (!isDemoMode) return;
+  tutorialState.active = true;
+  tutorialState.index = 0;
+  showTutorialStep();
+}
+
+function restartTutorial() {
+  if (!isDemoMode) return;
+  tutorialState.active = true;
+  tutorialState.index = 0;
+  showTutorialStep();
+}
+
+function skipTutorial() {
+  stopTutorial();
+}
+
+async function nextTutorialStep() {
+  const step = DEMO_TOUR_STEPS[tutorialState.index];
+  if (step?.final) {
+    stopTutorial();
+    return;
+  }
+  tutorialState.index = Math.min(tutorialState.index + 1, DEMO_TOUR_STEPS.length - 1);
+  await showTutorialStep();
+}
+
+async function previousTutorialStep() {
+  tutorialState.index = Math.max(tutorialState.index - 1, 0);
+  await showTutorialStep();
+}
+
+async function showTutorialStep() {
+  if (!tutorialState.active) return;
+  const step = DEMO_TOUR_STEPS[tutorialState.index];
+  if (!step) return stopTutorial();
+  tutorialState.positioning = true;
+  await routeForTutorialStep(step);
+  await runTutorialAction(step.beforeStepAction);
+  await sleep(140);
+  const root = document.getElementById('tour-root');
+  const popover = document.getElementById('tour-popover');
+  const progress = document.getElementById('tour-progress');
+  const title = document.getElementById('tour-title');
+  const desc = document.getElementById('tour-description');
+  const back = document.getElementById('tour-back-btn');
+  const next = document.getElementById('tour-next-btn');
+  const skip = document.getElementById('tour-skip-btn');
+  if (!root || !popover || !progress || !title || !desc) return;
+  root.hidden = false;
+  root.setAttribute('aria-hidden', 'false');
+  progress.textContent = `Step ${tutorialState.index + 1} of ${DEMO_TOUR_STEPS.length}`;
+  title.textContent = step.title;
+  desc.textContent = step.description;
+  back.disabled = tutorialState.index === 0;
+  next.textContent = step.final ? 'Finish' : 'Next';
+  skip.textContent = step.final ? 'Restart Tutorial' : 'Skip Tutorial';
+  skip.onclick = step.final ? restartTutorial : skipTutorial;
+  const target = step.targetSelector ? await waitForTourTarget(step.targetSelector) : null;
+  positionTutorial(step, target);
+  tutorialState.positioning = false;
+}
+
+async function waitForTourTarget(selector) {
+  for (let i = 0; i < 35; i += 1) {
+    const target = document.querySelector(selector);
+    if (target && target.getClientRects().length) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+      await sleep(180);
+      return target;
+    }
+    await sleep(100);
+  }
+  console.warn('Tutorial target missing:', selector);
+  return null;
+}
+
+function positionTutorial(step, target) {
+  const highlight = document.getElementById('tour-highlight');
+  const arrow = document.getElementById('tour-arrow');
+  const popover = document.getElementById('tour-popover');
+  if (!highlight || !arrow || !popover) return;
+  popover.classList.remove('centered');
+  popover.style.transform = '';
+  if (!target || step.final || step.placement === 'center') {
+    highlight.style.display = 'none';
+    arrow.style.display = 'none';
+    popover.classList.add('centered');
+    popover.style.left = '';
+    popover.style.top = '';
+    return;
+  }
+  highlight.style.display = 'block';
+  arrow.style.display = 'block';
+  const rect = target.getBoundingClientRect();
+  const pad = 8;
+  const safeTop = Math.max(8, rect.top - pad);
+  const safeLeft = Math.max(8, rect.left - pad);
+  const safeWidth = Math.min(window.innerWidth - safeLeft - 8, rect.width + pad * 2);
+  const safeHeight = Math.min(window.innerHeight - safeTop - 8, rect.height + pad * 2);
+  highlight.style.top = `${safeTop}px`;
+  highlight.style.left = `${safeLeft}px`;
+  highlight.style.width = `${safeWidth}px`;
+  highlight.style.height = `${safeHeight}px`;
+
+  const popRect = popover.getBoundingClientRect();
+  const gap = 18;
+  const placement = step.placement || 'bottom';
+  let top = rect.bottom + gap;
+  let left = rect.left + rect.width / 2 - popRect.width / 2;
+  if (placement === 'top') top = rect.top - popRect.height - gap;
+  if (placement === 'left') {
+    top = rect.top + rect.height / 2 - popRect.height / 2;
+    left = rect.left - popRect.width - gap;
+  }
+  if (placement === 'right') {
+    top = rect.top + rect.height / 2 - popRect.height / 2;
+    left = rect.right + gap;
+  }
+  top = Math.max(14, Math.min(window.innerHeight - popRect.height - 14, top));
+  left = Math.max(14, Math.min(window.innerWidth - popRect.width - 14, left));
+  popover.style.top = `${top}px`;
+  popover.style.left = `${left}px`;
+  const arrowLeft = Math.max(18, Math.min(window.innerWidth - 30, rect.left + rect.width / 2 - 9));
+  const arrowTop = placement === 'top' ? top + popRect.height - 9 : placement === 'left' || placement === 'right' ? rect.top + rect.height / 2 - 9 : top - 9;
+  arrow.style.left = `${arrowLeft}px`;
+  arrow.style.top = `${Math.max(12, Math.min(window.innerHeight - 30, arrowTop))}px`;
+}
+
+async function routeForTutorialStep(step) {
+  const route = step.route;
+  if (!route) return;
+  if (route !== 'tv-display' && document.getElementById('tv-display')?.classList.contains('active')) closeTVDisplay();
+  if (route === 'login-preview') {
+    showDemoStudentLoginPreview();
+    return;
+  }
+  if (route === 'student-dashboard') {
+    applyDemoAthleteSession();
+    return;
+  }
+  if (route === 'tv-display') {
+    await runTutorialAction('demoOpenTv');
+    return;
+  }
+  if (isDemoMode && !isCoachSession()) applyDemoCoachSession({ showDashboard: false });
+  showPage(route);
+}
+
+async function runTutorialAction(action) {
+  if (!action || !isDemoMode || !demoData) return;
+  switch (action) {
+    case 'demoCoachDashboard':
+      closeAdminAthleteModal();
+      closeCalendarEventModal();
+      document.getElementById('copy-workout-modal')?.style && (document.getElementById('copy-workout-modal').style.display = 'none');
+      applyDemoCoachSession({ showDashboard: false });
+      showPage('dashboard');
+      break;
+    case 'demoFilterSearch': {
+      const input = document.getElementById('search-input');
+      if (input) input.value = 'Baseball';
+      renderAthleteGrid();
+      break;
+    }
+    case 'demoClearSearch': {
+      const input = document.getElementById('search-input');
+      if (input) input.value = '';
+      renderAthleteGrid();
+      break;
+    }
+    case 'demoSelectTodayWorkout': {
+      todayWorkoutDate = demoData.today;
+      const workout = getWorkoutsForDate(demoData.today)[0];
+      todaySelectedWorkoutId = workout?.id || null;
+      showTodayPage();
+      break;
+    }
+    case 'demoOpenTv': {
+      applyDemoCoachSession({ showDashboard: false });
+      todayWorkoutDate = demoData.today;
+      const workout = getWorkoutsForDate(demoData.today)[0];
+      todaySelectedWorkoutId = workout?.id || null;
+      if (workout) openTVDisplay(workout.id);
+      break;
+    }
+    case 'demoOpenPastWorkoutDate':
+      selectEditDate(getWorkoutById(demoData.copySourceWorkoutId)?.date || demoData.today);
+      break;
+    case 'demoOpenWorkoutEditor': {
+      const workout = getWorkoutById(demoData.copySourceWorkoutId) || dateTeamWorkouts[0];
+      if (workout) {
+        selectEditDate(workout.date);
+        editWorkoutRecord(workout.id);
+      }
+      break;
+    }
+    case 'demoOpenEditAthlete':
+      await openEditAthlete(demoData.studentAthleteId);
+      break;
+    case 'demoCloseAthleteModal':
+      closeAdminAthleteModal();
+      renderAdminList();
+      break;
+    case 'demoStudentLoginPreview':
+      showDemoStudentLoginPreview();
+      break;
+    case 'demoStudentDashboard':
+      applyDemoAthleteSession(demoData.studentAthleteId);
+      break;
+    case 'demoOpenLiftLog':
+      applyDemoAthleteSession(demoData.studentAthleteId);
+      await sleep(120);
+      await openDemoBenchPressLog();
+      fillDemoLogModal();
+      break;
+    case 'demoSaveLiftLog':
+      if (document.getElementById('log-modal')?.style.display === 'flex') {
+        fillDemoLogModal();
+        await submitLog();
+      }
+      currentRenderedOneRepMaxes = await getAthleteOneRepMaxes(currentAthleteId);
+      renderAthleteDashboard(true);
+      break;
+    case 'demoAttendanceReport':
+      openAttendanceOverview();
+      await runAttendanceOverview();
+      break;
+    case 'demoOpenCalendarEvent': {
+      const eventDate = demoData.calendarEvents[0]?.date || demoData.today;
+      openCalendarEventPrompt(eventDate);
+      break;
+    }
+    case 'demoTutorialSearch': {
+      const input = document.getElementById('tutorial-search-input');
+      if (input) input.value = 'Bench Press';
+      await searchTutorials();
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+async function openDemoBenchPressLog() {
+  const athlete = currentAthlete || demoData?.athletes.find(a => a.id === demoData.studentAthleteId);
+  const workout = getWorkoutsForDate(toLocalDateStr()).find(record => workoutMatchesAthlete(record, athlete)) || dateTeamWorkouts[0];
+  if (!workout) return;
+  const stations = getWorkoutStations(workout);
+  for (let si = 0; si < stations.length; si += 1) {
+    for (let ei = 0; ei < (stations[si].exercises || []).length; ei += 1) {
+      const ex = stations[si].exercises[ei];
+      if (normLiftName(ex.name) === normLiftName('Bench Press')) {
+        await openLogModal(ex.name, '', workout.id, workoutItemId(workout, si, ei, ex));
+        return;
+      }
+    }
+  }
+}
+
+function fillDemoLogModal() {
+  const setCount = document.getElementById('log-sets-completed');
+  if (setCount) setCount.value = '3';
+  renderDynamicLogSetRows([
+    { weight: 135, reps: 10 },
+    { weight: 145, reps: 8 },
+    { weight: 155, reps: 6 }
+  ]);
+  const notes = document.getElementById('log-notes');
+  if (notes) notes.value = 'Demo lift log entry.';
+}
+
+window.addEventListener('resize', () => {
+  if (!tutorialState.active || tutorialState.positioning) return;
+  const step = DEMO_TOUR_STEPS[tutorialState.index];
+  const target = step?.targetSelector ? document.querySelector(step.targetSelector) : null;
+  positionTutorial(step || {}, target);
+});
 function onLoginKeydown(event) {
   if (event.key !== 'Enter') return;
   event.preventDefault();
@@ -2446,6 +3270,17 @@ async function loginCoach() {
   const loginValue = (document.getElementById('login-username').value || '').trim();
   const password = (document.getElementById('login-password').value || '').trim();
   if (!loginValue || !password) return toast('Enter username/email and password');
+  if (loginValue.toLowerCase() === DEMO_LOGIN_USERNAME && password === DEMO_LOGIN_PASSWORD) {
+    await startDemoMode();
+    return;
+  }
+  if (isDemoMode && demoData) {
+    const demoAthlete = demoData.athletes.find(a => String(a.username || '').toLowerCase() === loginValue.toLowerCase());
+    if (demoAthlete) {
+      applyDemoAthleteSession(demoAthlete.id);
+      return;
+    }
+  }
   if (!supabase) await connectToSupabase(SUPABASE_URL, SUPABASE_KEY);
   if (!supabase) return;
 
@@ -2477,6 +3312,24 @@ async function loginCoach() {
 }
 
 async function logoutCoach() {
+  if (isDemoMode) {
+    exitDemoMode();
+    currentCoach = null;
+    currentAthlete = null;
+    currentAuthUser = null;
+    currentRole = null;
+    athleteCredentialBackfillDone = false;
+    setSessionChrome(null);
+    document.getElementById('login-username').value = '';
+    document.getElementById('login-password').value = '';
+    document.getElementById('app-header').style.display = 'none';
+    document.getElementById('main-content').style.display = 'none';
+    document.getElementById('config-screen').style.display = 'block';
+    const loginSub = document.querySelector('.config-sub');
+    if (loginSub) loginSub.textContent = 'Coach / Athlete Login';
+    setTimeout(() => document.getElementById('login-username')?.focus(), 0);
+    return;
+  }
   if (isCoachSession()) await auditAction('logout', 'Coach signed out');
   if (supabase?.auth) await supabase.auth.signOut();
   currentCoach = null;
@@ -2495,6 +3348,7 @@ async function logoutCoach() {
 }
 
 async function auditAction(action, details = '') {
+  if (isDemoMode) return;
   if (!supabase || !currentCoach || !currentAuthUser?.id) return;
   await supabase.from('coach_audit_logs').insert([{
     auth_user_id: currentAuthUser.id,
@@ -2643,6 +3497,7 @@ function initLogDatePicker() {
 }
 
 function enforceWorkoutLogDate(inputEl) {
+  if (isDemoMode) return true;
   const val = inputEl?.value || '';
   if (!val) return true;
   if (isWorkoutLoggingDay(val)) {
@@ -2667,6 +3522,10 @@ async function initApp() {
 
 // ===================== DATA =====================
 async function loadAthletes() {
+  if (isDemoMode && demoData) {
+    athletes = isAthleteSession() && currentAthlete ? [currentAthlete] : demoData.athletes;
+    return;
+  }
   if (!requireCoachAction('Athletes are coach-only')) return;
   const { data, error } = await supabase.from('athletes').select('*').order('name');
   if (error) { toast('Error loading athletes: ' + error.message); return; }
@@ -2703,6 +3562,15 @@ async function getSessionAccessToken() {
 }
 
 async function callAthleteAuth(action, payload = {}) {
+  if (isDemoMode && demoData) {
+    const athlete = demoData.athletes.find(a => String(a.id) === String(payload.athleteId)) || demoData.athletes[0];
+    return {
+      athlete,
+      athletes: demoData.athletes,
+      credentials: { username: athlete?.username || DEMO_STUDENT_USERNAME, password: DEMO_STUDENT_PASSWORD_MASK, temporaryPassword: DEMO_STUDENT_PASSWORD_MASK },
+      createdCount: 0
+    };
+  }
   if (!requireCoachAction()) throw new Error('Coach login required');
   const token = await getSessionAccessToken();
   if (!token) throw new Error('Coach session expired');
@@ -2728,6 +3596,7 @@ async function ensureAthleteCredentials(athleteId, options = {}) {
 }
 
 async function backfillAthleteCredentials(options = {}) {
+  if (isDemoMode) return;
   if (!isCoachSession() || athleteCredentialBackfillDone) return;
   athleteCredentialBackfillDone = true;
   try {
@@ -2753,6 +3622,11 @@ async function resetAthletePassword() {
   const athleteId = document.getElementById('edit-id')?.value;
   const athlete = athletes.find(a => String(a.id) === String(athleteId));
   if (!athlete) return;
+  if (isDemoMode) {
+    populateAthleteLoginFields(athlete, { username: athlete.username || DEMO_STUDENT_USERNAME, password: DEMO_STUDENT_PASSWORD_MASK });
+    toast('Demo password reset');
+    return;
+  }
   if (!await appConfirm('Reset Athlete Password', `Generate a new password for ${athlete.name}?`)) return;
   try {
     const data = await callAthleteAuth('reset-password', { athleteId });
@@ -2771,6 +3645,30 @@ async function addAthlete() {
   const sport = document.getElementById('new-sport').value.trim();
   const groups = parseGroups(document.getElementById('new-groups').value);
   if (!name) { toast('Please enter athlete name'); return; }
+  if (isDemoMode && demoData) {
+    const created = {
+      id: `demo-ath-${Date.now()}`,
+      name,
+      grade,
+      sport,
+      groups,
+      active_status: true,
+      notes: '',
+      role: 'athlete',
+      username: name,
+      password: DEMO_STUDENT_PASSWORD_MASK
+    };
+    demoData.athletes.push(created);
+    athletes = demoData.athletes;
+    toast('Demo athlete added');
+    document.getElementById('new-name').value = '';
+    document.getElementById('new-sport').value = '';
+    document.getElementById('new-groups').value = '';
+    renderAdminList();
+    renderAthleteGrid();
+    closeAdminAthleteModal();
+    return;
+  }
   const { data: created, error } = await supabase.from('athletes').insert([{ name, grade, sport, groups, active_status: true, notes: '', role: 'athlete' }]).select('*').single();
   if (error) { toast('Error: ' + error.message); return; }
   if (created?.id) {
@@ -2792,6 +3690,14 @@ async function addAthlete() {
 async function updateAthleteStatus(val) {
   if (!requireCoachAction()) return;
   const active = val === 'true';
+  if (isDemoMode && demoData) {
+    const idx = demoData.athletes.findIndex(a => String(a.id) === String(currentAthleteId));
+    if (idx >= 0) demoData.athletes[idx].active_status = active;
+    const localIdx = athletes.findIndex(a => String(a.id) === String(currentAthleteId));
+    if (localIdx >= 0) athletes[localIdx].active_status = active;
+    toast('Demo status updated');
+    return;
+  }
   const { error } = await supabase.from('athletes').update({ active_status: active }).eq('id', currentAthleteId);
   if (error) { toast('Error saving status'); return; }
   const idx = athletes.findIndex(a => a.id === currentAthleteId);
@@ -2802,6 +3708,13 @@ async function updateAthleteStatus(val) {
 async function saveAthleteNotes() {
   if (!requireCoachAction()) return;
   const notes = document.getElementById('profile-notes').value;
+  if (isDemoMode && demoData) {
+    const idx = demoData.athletes.findIndex(a => String(a.id) === String(currentAthleteId));
+    if (idx >= 0) demoData.athletes[idx].notes = notes;
+    const localIdx = athletes.findIndex(a => String(a.id) === String(currentAthleteId));
+    if (localIdx >= 0) athletes[localIdx].notes = notes;
+    return;
+  }
   const { error } = await supabase.from('athletes').update({ notes }).eq('id', currentAthleteId);
   if (error) return;
   const idx = athletes.findIndex(a => a.id === currentAthleteId);
@@ -2816,6 +3729,16 @@ async function saveEditAthlete() {
   const sport = document.getElementById('edit-sport').value.trim();
   const groups = parseGroups(document.getElementById('edit-groups').value);
   if (!name) { toast('Name required'); return; }
+  if (isDemoMode && demoData) {
+    const athlete = demoData.athletes.find(a => String(a.id) === String(id));
+    if (athlete) Object.assign(athlete, { name, grade, sport, groups, username: athlete.username || name });
+    athletes = isAthleteSession() && currentAthlete ? [currentAthlete] : demoData.athletes;
+    renderAdminList();
+    renderAthleteGrid();
+    closeAdminAthleteModal();
+    toast('Demo athlete saved');
+    return;
+  }
   const { error } = await supabase.from('athletes').update({ name, grade, sport, groups }).eq('id', id);
   if (error) { toast('Error: ' + error.message); return; }
   await auditAction('edit_athlete', `Edited athlete: ${name}`);
@@ -2831,6 +3754,15 @@ async function toggleAthleteStatus(id) {
   const athlete = athletes.find(a => String(a.id) === String(id));
   if (!athlete) return;
   const newStatus = !athlete.active_status;
+  if (isDemoMode && demoData) {
+    athlete.active_status = newStatus;
+    const demoAthlete = demoData.athletes.find(a => String(a.id) === String(id));
+    if (demoAthlete) demoAthlete.active_status = newStatus;
+    renderAdminList();
+    renderAthleteGrid();
+    toast(newStatus ? 'Demo athlete activated' : 'Demo athlete deactivated');
+    return;
+  }
   const { error } = await supabase.from('athletes').update({ active_status: newStatus }).eq('id', id);
   if (error) { toast('Error'); return; }
   athlete.active_status = newStatus;
@@ -2842,6 +3774,14 @@ async function toggleAthleteStatus(id) {
 async function deleteAthlete(id) {
   if (!requireCoachAction()) return;
   const athlete = athletes.find(a => a.id === id);
+  if (isDemoMode && demoData) {
+    demoData.athletes = demoData.athletes.filter(a => String(a.id) !== String(id));
+    athletes = demoData.athletes;
+    renderAdminList();
+    renderAthleteGrid();
+    toast(`Demo removed ${athlete?.name || 'athlete'}`);
+    return;
+  }
   if (!await appConfirm('Delete Athlete', `Delete ${athlete?.name}? This cannot be undone.`)) return;
   const { error } = await supabase.from('athletes').delete().eq('id', id);
   if (error) { toast('Error deleting'); return; }
@@ -2853,6 +3793,11 @@ async function deleteAthlete(id) {
 }
 
 async function loadWorkoutLogs(athleteId) {
+  if (isDemoMode && demoData) {
+    return demoData.workoutLogs
+      .filter(log => String(log.athlete_id) === String(athleteId))
+      .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+  }
   const { data, error } = await supabase.from('workout_logs').select('*').eq('athlete_id', athleteId).order('date', { ascending: false });
   if (error) return [];
   return data || [];
@@ -3012,6 +3957,23 @@ async function submitLog() {
   };
   const existing = await getExistingWorkoutLog(logModalExercise, date, context);
   if (!existing?.id) payload.created_at = new Date().toISOString();
+  if (isDemoMode && demoData) {
+    if (existing?.id) {
+      const idx = demoData.workoutLogs.findIndex(log => String(log.id) === String(existing.id));
+      if (idx >= 0) demoData.workoutLogs[idx] = { ...demoData.workoutLogs[idx], ...payload, id: existing.id };
+    } else {
+      payload.id = `demo-log-${Date.now()}`;
+      payload.created_at = payload.created_at || new Date().toISOString();
+      demoData.workoutLogs.push(payload);
+    }
+    document.getElementById('log-modal').style.display = 'none';
+    currentRenderedOneRepMaxes = await getAthleteOneRepMaxes(currentAthleteId);
+    renderOneRepMaxFields(currentRenderedOneRepMaxes, isAthleteSession() ? 'athlete-rm' : 'rm');
+    toast('Demo lift logged');
+    await refreshLoggedExercisesForCurrentDate();
+    refreshCurrentWorkoutView();
+    return;
+  }
   let saveQuery = null;
   if (existing?.id) {
     payload.id = existing.id;
@@ -3071,6 +4033,15 @@ async function updateDashboardKpis() {
   weekStart.setDate(weekStart.getDate() - 6);
   const from = weekStart.toISOString().split('T')[0];
   const to = new Date().toISOString().split('T')[0];
+  if (isDemoMode && demoData) {
+    const weeklyLogs = demoData.workoutLogs.filter(log => String(log.date || '') >= from && String(log.date || '') <= to);
+    const uniqueSessions = new Set(weeklyLogs.filter(x => x.athlete_id && x.date).map(x => `${x.athlete_id}__${x.date}`));
+    document.getElementById('kpi-logs').textContent = uniqueSessions.size;
+    const athletesWithLogs = new Set(weeklyLogs.filter(x => x.athlete_id).map(x => x.athlete_id));
+    const denom = Math.max(activeCount, 1);
+    document.getElementById('kpi-completion').textContent = `${Math.min(Math.round((athletesWithLogs.size / denom) * 100), 100)}%`;
+    return;
+  }
   const { data, error } = await supabase
     .from('workout_logs')
     .select('athlete_id,date')
@@ -3099,7 +4070,7 @@ async function updateDashboardKpis() {
 async function renderAthleteGrid() {
   const query = (document.getElementById('search-input')?.value || '').toLowerCase();
   const filtered = athletes
-    .filter(a => a.name.toLowerCase().includes(query) || (a.sport || '').toLowerCase().includes(query))
+    .filter(a => [a.name, a.sport, formatGroups(a.groups), String(a.grade || '')].join(' ').toLowerCase().includes(query))
     .sort((a,b) => athleteLastName(a).localeCompare(athleteLastName(b)) || String(a.name || '').localeCompare(String(b.name || '')));
   document.getElementById('athlete-count').textContent = `(${filtered.length})`;
 
@@ -3117,11 +4088,17 @@ async function renderAthleteGrid() {
   thursday.setDate(monday.getDate() + 3);
   const from = monday.toISOString().split('T')[0];
   const to = thursday.toISOString().split('T')[0];
-  const { data: weekLogs } = await supabase
-    .from('workout_logs')
-    .select('athlete_id,date')
-    .gte('date', from)
-    .lte('date', to);
+  let weekLogs = [];
+  if (isDemoMode && demoData) {
+    weekLogs = demoData.workoutLogs.filter(log => String(log.date || '') >= from && String(log.date || '') <= to);
+  } else {
+    const { data } = await supabase
+      .from('workout_logs')
+      .select('athlete_id,date')
+      .gte('date', from)
+      .lte('date', to);
+    weekLogs = data || [];
+  }
 
   const weekdayKeys = ['M','T','W','TH'];
   const dateKeyOrder = {};
@@ -3139,7 +4116,7 @@ async function renderAthleteGrid() {
     logsByAthlete[l.athlete_id].add(idx);
   });
 
-  document.getElementById('athlete-grid').innerHTML = filtered.map(a => `
+  document.getElementById('athlete-grid').innerHTML = filtered.map((a, athleteIndex) => `
     <div class="athlete-card" data-athlete-id="${a.id}" role="button" tabindex="0">
       ${!a.active_status ? '<span class="inactive-badge">Inactive</span>' : ''}
       <div>
@@ -3150,7 +4127,7 @@ async function renderAthleteGrid() {
         <div class="athlete-row-label">Details</div>
         <div class="athlete-meta">Grade ${escHtml(a.grade || '—')} · ${escHtml(a.sport || 'No sport')}</div>
       </div>
-      <div class="athlete-week" aria-label="Monday through Thursday log status">
+      <div class="athlete-week" ${athleteIndex === 0 ? 'data-tour="weekly-lift-bubbles"' : ''} aria-label="Monday through Thursday log status">
         ${weekdayKeys.map((k, idx) => {
           const didLog = logsByAthlete[a.id]?.has(idx);
           return `<span class="week-pill ${didLog ? 'logged' : 'missed'}">${k}</span>`;
@@ -3220,8 +4197,9 @@ async function renderAdminList() {
 
   wrap.innerHTML = `<table class="admin-athlete-table">
     <thead><tr><th>Name</th><th>Grade</th><th>Team / Group</th><th>Sport</th><th>Status</th><th>Actions</th></tr></thead>
-    <tbody>${filtered.map(a => {
+    <tbody>${filtered.map((a, athleteIndex) => {
       const teams = (a.groups || []).length ? (a.groups || []).map(g => `<span class="admin-team-pill">${escHtml(g)}</span>`).join('') : '—';
+      const firstRow = athleteIndex === 0;
       return `<tr>
         <td><div class="admin-table-name">${escHtml(a.name)}</div></td>
         <td>Grade ${escHtml(a.grade || '—')}</td>
@@ -3229,9 +4207,9 @@ async function renderAdminList() {
         <td>${escHtml(a.sport || '—')}</td>
         <td>${a.active_status ? 'Active' : 'Inactive'}</td>
         <td><div class="admin-actions">
-          <button class="btn-sm" onclick="openEditAthlete('${a.id}')">✏️ Edit</button>
-          <button class="btn-icon" onclick="toggleAthleteStatus('${a.id}')" title="${a.active_status ? 'Deactivate' : 'Activate'}">${a.active_status ? '🟢' : '⭕'}</button>
-          <button class="btn-icon danger" onclick="deleteAthlete('${a.id}')" title="Delete">🗑️</button>
+          <button class="btn-sm" ${firstRow ? 'data-tour="edit-athlete-button"' : ''} onclick="openEditAthlete('${a.id}')">Edit</button>
+          <button class="btn-icon" ${firstRow ? 'data-tour="athlete-status-toggle"' : ''} onclick="toggleAthleteStatus('${a.id}')" title="${a.active_status ? 'Deactivate' : 'Activate'}" style="${a.active_status ? 'color:var(--green-600);font-size:24px;' : 'color:var(--danger);font-size:24px;'}">${a.active_status ? '●' : '○'}</button>
+          <button class="btn-icon danger" ${firstRow ? 'data-tour="delete-athlete-button"' : ''} onclick="deleteAthlete('${a.id}')" title="Delete">×</button>
         </div></td>
       </tr>`;
     }).join('')}</tbody>
@@ -3485,6 +4463,18 @@ async function refreshLoggedExercisesForCurrentDate() {
     loggedWorkoutLogsForDate = new Map();
     return;
   }
+  if (isDemoMode && demoData) {
+    const data = demoData.workoutLogs.filter(log => String(log.athlete_id) === String(currentAthleteId) && String(log.date) === String(currentDate));
+    loggedExercisesForDate = new Set(data.map(x => x.exercise));
+    loggedWorkoutLogsForDate = new Map();
+    data.forEach(log => {
+      loggedWorkoutLogsForDate.set(workoutLogKey(log.workout_id, log.workout_item_id, log.exercise), log);
+      if (!log.workout_id || !log.workout_item_id) {
+        loggedWorkoutLogsForDate.set(workoutLogLegacyKey(log.exercise), log);
+      }
+    });
+    return;
+  }
   const { data, error } = await supabase
     .from('workout_logs')
     .select('*')
@@ -3526,12 +4516,14 @@ function renderExercises(exercises, context = {}) {
       teamName: record.teamName || ''
     };
     const existingLog = getLoggedExerciseForContext(logContext);
+    const logTourAttr = normLiftName(ex.name) === normLiftName('Bench Press') ? 'data-tour="log-lift-button"' : '';
+    const detailTourAttr = normLiftName(ex.name) === normLiftName('Bench Press') ? 'data-tour="percentage-prescription"' : '';
     return `
     <div class="exercise-row">
-      <button class="log-btn" data-log-exercise="${escHtml(logContext.exerciseName)}" onclick="openLogModal(${jsArg(logContext.exerciseName)}, '', ${jsArg(logContext.workoutId)}, ${jsArg(logContext.workoutItemId)})">Log</button>
+      <button class="log-btn" ${logTourAttr} data-log-exercise="${escHtml(logContext.exerciseName)}" onclick="openLogModal(${jsArg(logContext.exerciseName)}, '', ${jsArg(logContext.workoutId)}, ${jsArg(logContext.workoutItemId)})">Log</button>
       <div style="flex:1">
         <div class="exercise-name">${escHtml(ex.name || 'Untitled Exercise')}</div>
-        <div class="exercise-detail">${escHtml(exerciseDetailText(ex))}</div>
+        <div class="exercise-detail" ${detailTourAttr}>${escHtml(exerciseDetailText(ex))}</div>
         ${renderExerciseLogSummary(existingLog, logContext)}
       </div>
     </div>`;
@@ -3542,6 +4534,16 @@ function renderExercises(exercises, context = {}) {
 
 async function getExistingWorkoutLog(exercise, date, context = {}) {
   if (!currentAthleteId || !exercise || !date) return null;
+  if (isDemoMode && demoData) {
+    const rows = demoData.workoutLogs
+      .filter(log => String(log.athlete_id) === String(currentAthleteId))
+      .filter(log => String(log.date) === String(date))
+      .filter(log => String(log.exercise) === String(exercise));
+    return rows.find(log => String(log.workout_id || '') === String(context.workoutId || '') && String(log.workout_item_id || '') === String(context.workoutItemId || ''))
+      || rows.find(log => !log.workout_id && !log.workout_item_id)
+      || rows[0]
+      || null;
+  }
   const { data, error } = await supabase
     .from('workout_logs')
     .select('*')
@@ -3640,6 +4642,13 @@ async function deleteWorkoutLog(exercise, workoutId = '', workoutItemIdValue = '
   const log = await getExistingWorkoutLog(exercise, currentDate || toLocalDateStr(), context);
   if (!log) return toast('No saved log found');
   const dateLabel = formatWorkoutDate(log.date || currentDate, { month: 'long', day: 'numeric' });
+  if (isDemoMode && demoData) {
+    demoData.workoutLogs = demoData.workoutLogs.filter(existing => String(existing.id) !== String(log.id));
+    toast('Demo lift log deleted');
+    await refreshLoggedExercisesForCurrentDate();
+    refreshCurrentWorkoutView();
+    return;
+  }
   if (!await appConfirm('Delete Lift Log', `Delete ${exercise} log for ${dateLabel}?`)) return;
   let deleteQuery = supabase.from('workout_logs').delete();
   if (log.id) {
@@ -3851,17 +4860,33 @@ function selectTutorialVideo(videoId) {
   const player = document.getElementById('tutorial-player');
   if (player) {
     player.style.display = 'block';
-    player.innerHTML = `
-      <div class="tutorial-player-frame">
-        <iframe src="${tutorialEmbedUrl(video.id)}" title="${escHtml(video.title)}" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-      </div>
-      <div class="tutorial-player-meta">
-        <div>
-          <div class="tutorial-player-title">${escHtml(video.title)}</div>
-          <div class="tutorial-player-channel">${escHtml(video.channelTitle || 'YouTube')}</div>
+    if (video.demo) {
+      player.innerHTML = `
+        <div class="tutorial-player-frame demo-tutorial-frame">
+          <div>
+            <div class="demo-video-label">Demo Tutorial Preview</div>
+            <div class="demo-video-title">${escHtml(video.title)}</div>
+          </div>
         </div>
-        <a class="btn-sm" href="${escHtml(video.url || `https://www.youtube.com/watch?v=${video.id}`)}" target="_blank" rel="noopener">Open on YouTube</a>
-      </div>`;
+        <div class="tutorial-player-meta">
+          <div>
+            <div class="tutorial-player-title">${escHtml(video.title)}</div>
+            <div class="tutorial-player-channel">${escHtml(video.channelTitle || 'Eagle Strength Demo')}</div>
+          </div>
+        </div>`;
+    } else {
+      player.innerHTML = `
+        <div class="tutorial-player-frame">
+          <iframe src="${tutorialEmbedUrl(video.id)}" title="${escHtml(video.title)}" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        <div class="tutorial-player-meta">
+          <div>
+            <div class="tutorial-player-title">${escHtml(video.title)}</div>
+            <div class="tutorial-player-channel">${escHtml(video.channelTitle || 'YouTube')}</div>
+          </div>
+          <a class="btn-sm" href="${escHtml(video.url || `https://www.youtube.com/watch?v=${video.id}`)}" target="_blank" rel="noopener">Open on YouTube</a>
+        </div>`;
+    }
     player.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   renderTutorialResults();
@@ -3884,6 +4909,12 @@ async function searchTutorials(event) {
   if (results) results.innerHTML = `<div class="empty-state">Finding tutorial videos...</div>`;
   if (player) player.style.display = 'none';
   selectedTutorialVideoId = null;
+  if (isDemoMode) {
+    tutorialVideos = demoTutorialVideosFor(term);
+    renderTutorialResults();
+    if (tutorialVideos.length) selectTutorialVideo(tutorialVideos[0].id);
+    return;
+  }
 
   try {
     const separator = TUTORIALS_API_URL.includes('?') ? '&' : '?';
@@ -4225,6 +5256,11 @@ async function loadWorkoutTemplates() {
   liveTemplates = JSON.parse(JSON.stringify(WORKOUT_TEMPLATES));
   dateTeamWorkouts = [];
   savedWorkoutTeams = [];
+  if (isDemoMode && demoData) {
+    dateTeamWorkouts = demoData.workouts;
+    savedWorkoutTeams = demoData.teams;
+    return;
+  }
 
   const { data, error } = await supabase.from('workout_templates').select('day_name, template_json');
   if (error) {
@@ -4253,6 +5289,10 @@ async function loadWorkoutTemplates() {
 
 async function saveWorkoutTemplates(templates) {
   if (!requireCoachAction()) return false;
+  if (isDemoMode) {
+    liveTemplates = deepClone(templates);
+    return true;
+  }
   const rows = Object.keys(templates).map(day => ({
     day_name: day,
     template_json: deepClone(templates[day])
@@ -4285,6 +5325,11 @@ async function saveWorkoutRecord(record) {
   if (!normalized) return null;
   normalized.updatedAt = new Date().toISOString();
   if (!normalized.createdAt) normalized.createdAt = normalized.updatedAt;
+  if (isDemoMode && demoData) {
+    upsertLocalWorkoutRecord(normalized);
+    demoData.workouts = dateTeamWorkouts;
+    return normalized;
+  }
   const { error } = await supabase
     .from('workout_templates')
     .upsert([{ day_name: workoutStorageKey(normalized.id), template_json: deepClone(normalized) }], { onConflict: 'day_name' });
@@ -4298,6 +5343,11 @@ async function saveWorkoutRecord(record) {
 
 async function deleteWorkoutRecordById(id) {
   if (!requireCoachAction()) return false;
+  if (isDemoMode && demoData) {
+    dateTeamWorkouts = dateTeamWorkouts.filter(w => w.id !== id);
+    demoData.workouts = dateTeamWorkouts;
+    return true;
+  }
   const { error } = await supabase.from('workout_templates').delete().eq('day_name', workoutStorageKey(id));
   if (error) {
     toast('Error deleting workout: ' + error.message);
@@ -4311,6 +5361,10 @@ async function saveWorkoutTeamList() {
   if (!requireCoachAction()) return;
   const teams = [...new Set(savedWorkoutTeams.map(normalizeTeamName).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
   savedWorkoutTeams = teams;
+  if (isDemoMode && demoData) {
+    demoData.teams = teams;
+    return;
+  }
   const { error } = await supabase
     .from('workout_templates')
     .upsert([{ day_name: WORKOUT_TEAM_LIST_KEY, template_json: { teams } }], { onConflict: 'day_name' });
@@ -4464,6 +5518,7 @@ function showTodayPage(options = {}) {
   if (dateInput) dateInput.value = selectedDate;
 
   const workouts = getWorkoutsForDate(selectedDate);
+  if (isDemoMode && !todaySelectedWorkoutId && workouts.length) todaySelectedWorkoutId = workouts[0].id;
   if (todaySelectedWorkoutId && !workouts.some(w => w.id === todaySelectedWorkoutId)) todaySelectedWorkoutId = null;
   const panel = document.getElementById('today-workout-panel');
 
@@ -4474,10 +5529,10 @@ function showTodayPage(options = {}) {
     return;
   }
 
-  panel.innerHTML = `<div class="today-workout-grid">${workouts.map(record => {
+  panel.innerHTML = `<div class="today-workout-grid">${workouts.map((record, workoutIndex) => {
     const selected = record.id === todaySelectedWorkoutId;
     return `
-      <div class="today-workout-card ${selected ? 'selected' : ''}" onclick="selectTodayWorkout(${jsArg(record.id)})" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectTodayWorkout(${jsArg(record.id)});}">
+      <div class="today-workout-card ${selected ? 'selected' : ''}" ${workoutIndex === 0 ? 'data-tour="today-workout-selector"' : ''} onclick="selectTodayWorkout(${jsArg(record.id)})" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectTodayWorkout(${jsArg(record.id)});}">
         <div class="today-workout-card-head">
           <div>
             <div class="workout-title-row">
@@ -4536,14 +5591,15 @@ function renderEditWorkoutCalendar() {
       dateStr === today ? 'today' : '',
       count ? 'has-workouts' : ''
     ].filter(Boolean).join(' ');
-    return `<button type="button" class="${classes}" onclick="selectEditDate(${jsArg(dateStr)})">
+    const tourAttr = dateStr === today ? 'data-tour="calendar-date"' : '';
+    return `<button type="button" class="${classes}" ${tourAttr} onclick="selectEditDate(${jsArg(dateStr)})">
       <div class="edit-calendar-number">${cellDate.getDate()}</div>
       ${count ? `<div class="edit-calendar-count">${count}</div>` : ''}
     </button>`;
   }).join('');
 
   shell.innerHTML = `
-    <div class="edit-calendar-card">
+    <div class="edit-calendar-card" data-tour="workout-calendar">
       <div class="edit-calendar-head">
         <div>
           <div class="edit-month-title">${editCalendarMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
@@ -4590,7 +5646,7 @@ function renderEditDateWorkouts() {
   const shell = document.getElementById('edit-workout-shell');
   if (!shell || !editSelectedDate) return;
   const workouts = getWorkoutsForDate(editSelectedDate);
-  const cards = workouts.length ? workouts.map(record => `
+  const cards = workouts.length ? workouts.map((record, workoutIndex) => `
     <div class="workout-record-card ${record.id === editSelectedWorkoutId ? 'selected' : ''}">
       <div>
         <div class="workout-title-row">
@@ -4601,7 +5657,7 @@ function renderEditDateWorkouts() {
       </div>
       <div class="edit-workout-actions">
         <button class="btn-sm green" onclick="editWorkoutRecord(${jsArg(record.id)})">Edit</button>
-        <button class="btn-sm" onclick="openCopyWorkoutModal(${jsArg(record.id)})">Copy</button>
+        <button class="btn-sm" ${workoutIndex === 0 ? 'data-tour="copy-workout-button"' : ''} onclick="openCopyWorkoutModal(${jsArg(record.id)})">Copy</button>
         <button class="btn-sm danger" onclick="deleteWorkoutFromDate(${jsArg(record.id)})">Delete</button>
       </div>
     </div>`).join('') : `<div class="empty-state">No workouts have been created for this date yet.</div>`;
@@ -4697,7 +5753,7 @@ function renderEditWorkoutEditor() {
   editWorkoutDraft.sections = normalizeStationSectionsForSave(editWorkoutDraft.sections || []);
   const template = editWorkoutDraft.sections || [];
   container.innerHTML = `
-    <div class="edit-section-card">
+    <div class="edit-section-card" data-tour="workout-team-section">
       <div style="padding:14px;display:grid;grid-template-columns:minmax(180px,1fr) minmax(160px,260px);gap:12px;">
         <div>
           <label class="form-label">Workout Name</label>
@@ -5071,7 +6127,7 @@ function renderTvFullWorkout(label) {
   document.getElementById('tv-main').innerHTML = `
     <div class="tv-breakdown-shell">
     <div class="tv-display-title"><span class="tv-title-date">${escHtml(titleDate)}</span><span>Workout Breakdown</span></div>
-    <div class="tv-workout-layout">
+    <div class="tv-workout-layout" data-tour="tv-display-screen">
       ${stationCards || '<div class="tv-workout-card"><div class="tv-workout-title">No Workout Scheduled</div></div>'}
       <aside class="tv-stopwatch-panel" aria-label="Stopwatch controls">
         <div class="tv-stopwatch-heading">
@@ -5508,6 +6564,12 @@ function parseGroups(text){ return (text||'').split(',').map(x=>x.trim()).filter
 function formatGroups(arr){ return (arr||[]).join(', '); }
 async function openWeeklyOverview(){
   const end = new Date(); const start = new Date(); start.setDate(end.getDate()-6);
+  if (isDemoMode && demoData) {
+    const logs = demoData.workoutLogs
+      .filter(log => log.date >= start.toISOString().split('T')[0] && log.date <= end.toISOString().split('T')[0])
+      .map(log => ({ ...log, athletes: { name: demoData.athletes.find(a => String(a.id) === String(log.athlete_id))?.name || 'Demo Athlete' } }));
+    return renderWeeklyOverviewDialog(logs);
+  }
   const { data: logs } = await supabase
     .from('workout_logs')
     .select('athlete_id,date,exercise,weight_used,reps_completed,athletes(name)')
@@ -5515,6 +6577,10 @@ async function openWeeklyOverview(){
     .lte('date', end.toISOString().split('T')[0])
     .order('date',{ascending:false});
 
+  return renderWeeklyOverviewDialog(logs || []);
+}
+
+async function renderWeeklyOverviewDialog(logs) {
   const grouped = {};
   (logs || []).forEach(l => {
     const name = l.athletes?.name || 'Unknown Athlete';
@@ -5579,6 +6645,7 @@ function renderAttendanceGroupOptions(){
 }
 function renderAttendanceList(){
   const g=document.getElementById('attendance-group')?.value;
+  const date = document.getElementById('attendance-date')?.value || getTodayDateStr();
   const list=document.getElementById('attendance-list');
   if(!list) return;
   const filtered=athletes
@@ -5588,14 +6655,17 @@ function renderAttendanceList(){
   if (!filtered.length) { list.innerHTML = '<div class="empty-state"><span class="empty-icon">👥</span>No athletes in this group.</div>'; return; }
   list.innerHTML = `<table class="attendance-table">
     <thead><tr><th>Name</th><th>Grade</th><th>Team / Group</th><th>Status</th></tr></thead>
-    <tbody>${filtered.map(a=>`
-      <tr class="attendance-row absent" data-att="${a.id}" data-status="absent" onclick="toggleAttendanceTile(this)">
+    <tbody>${filtered.map(a=>{
+      const demoRecord = isDemoMode && demoData ? demoData.attendanceRecords.find(r => String(r.athlete_id) === String(a.id) && r.date === date && r.group_name === g) : null;
+      const status = demoRecord?.status || 'absent';
+      return `
+      <tr class="attendance-row ${status}" data-att="${a.id}" data-status="${status}" onclick="toggleAttendanceTile(this)">
         <td><div class="attendance-name">${escHtml(a.name)}</div></td>
         <td>Grade ${escHtml(a.grade || '—')}</td>
         <td>${(a.groups||[]).map(group=>`<span class="admin-team-pill">${escHtml(group)}</span>`).join('') || '—'}</td>
-        <td><span class="attendance-status">Absent</span></td>
-      </tr>
-    `).join('')}</tbody>
+        <td><span class="attendance-status">${status === 'present' ? 'Present' : 'Absent'}</span></td>
+      </tr>`;
+    }).join('')}</tbody>
   </table>`;
 }
 function toggleAttendanceTile(row){
@@ -5613,6 +6683,15 @@ async function saveAttendance(){
     athlete_id:t.dataset.att, date, group_name:group, status:t.dataset.status || 'absent'
   }));
   if (!rows.length) return toast('No athletes to save for this group');
+  if (isDemoMode && demoData) {
+    rows.forEach(row => {
+      const idx = demoData.attendanceRecords.findIndex(r => String(r.athlete_id) === String(row.athlete_id) && r.date === row.date && r.group_name === row.group_name);
+      if (idx >= 0) demoData.attendanceRecords[idx] = row;
+      else demoData.attendanceRecords.push(row);
+    });
+    toast('Demo attendance saved');
+    return;
+  }
   const {error}=await supabase.from('attendance_logs').upsert(rows,{onConflict:'athlete_id,date,group_name'});
   if(error) return toast(error.message);
   await auditAction('save_attendance', `Saved attendance for ${date}`);
@@ -5632,6 +6711,24 @@ async function runAttendanceOverview() {
   const start = document.getElementById('attendance-range-start').value;
   const end = document.getElementById('attendance-range-end').value;
   const roster = athletes.filter(a => (a.groups || []).includes(group));
+  if (isDemoMode && demoData) {
+    const data = demoData.attendanceRecords.filter(r => r.group_name === group && r.date >= start && r.date <= end);
+    const byAth = {};
+    roster.forEach(a => { byAth[a.id] = { name: a.name, team: group, absences: 0, presents: 0, datesAbsent: [] }; });
+    data.forEach(r => {
+      if (!byAth[r.athlete_id]) return;
+      if (r.status === 'absent') {
+        byAth[r.athlete_id].absences += 1;
+        byAth[r.athlete_id].datesAbsent.push(r.date);
+      }
+      if (r.status === 'present') byAth[r.athlete_id].presents += 1;
+    });
+    const rows = Object.values(byAth).sort((a,b)=>b.absences-a.absences);
+    const el = document.getElementById('attendance-overview-results');
+    if (!rows.length) { el.innerHTML = 'No students in this group.'; return; }
+    el.innerHTML = `<table class="log-table"><thead><tr><th>Student</th><th>Team</th><th>Total Absences</th><th>Dates Absent</th><th>Presents</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${escHtml(r.name)}</td><td>${escHtml(r.team)}</td><td>${r.absences}</td><td>${escHtml(r.datesAbsent.join(', ') || '—')}</td><td>${r.presents}</td></tr>`).join('')}</tbody></table>`;
+    return;
+  }
   const { data, error } = await supabase.from('attendance_logs').select('athlete_id,status,date,group_name').eq('group_name', group).gte('date', start).lte('date', end);
   if (error) return toast(error.message);
   const byAth = {};
@@ -5651,6 +6748,11 @@ let calendarModalDate = null;
 async function loadCalendarEvents() {
   const monthKey = document.getElementById('calendar-month').value;
   if (!monthKey) return;
+  if (isDemoMode && demoData) {
+    calendarEvents = demoData.calendarEvents.filter(event => String(event.date || '').startsWith(monthKey));
+    renderCalendarMonth(monthKey);
+    return;
+  }
   const { data } = await supabase.from('calendar_notes').select('notes').eq('month_key', monthKey).maybeSingle();
   calendarEvents = Array.isArray(data?.notes) ? data.notes : [];
   renderCalendarMonth(monthKey);
@@ -5708,6 +6810,12 @@ function showCalendarEventForm(eventIndex = '') {
 function editCalendarEvent(index) { showCalendarEventForm(index); }
 async function persistCalendarEvents(actionDetails = 'Calendar updated') {
   const monthKey = document.getElementById('calendar-month').value;
+  if (isDemoMode && demoData) {
+    demoData.calendarEvents = demoData.calendarEvents.filter(event => !String(event.date || '').startsWith(monthKey)).concat(calendarEvents);
+    renderCalendarMonth(monthKey);
+    renderCalendarEventList(calendarModalDate);
+    return true;
+  }
   const { error } = await supabase.from('calendar_notes').upsert({ month_key: monthKey, notes: calendarEvents }, { onConflict: 'month_key' });
   if (error) { toast(error.message); return false; }
   renderCalendarMonth(monthKey);
