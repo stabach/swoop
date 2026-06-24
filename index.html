@@ -1483,8 +1483,8 @@
     background: linear-gradient(180deg, rgba(0,0,0,0.78), transparent);
   }
   .tv-logo { justify-self:start; display:flex; align-items:center; gap:20px; min-width:0; font-size: clamp(20px, 1.45vw, 28px); font-weight: 800; letter-spacing: 8px; color: #fff; text-transform: uppercase; white-space: nowrap; }
-  .tv-brand-mark { width: 58px; height: 58px; border-radius: 50%; display:flex; align-items:center; justify-content:center; box-shadow: 0 0 24px rgba(88,240,90,.30); overflow:hidden; background: rgba(2, 8, 5, .92); }
-  .tv-eagle-head { width: 100%; height: 100%; display:block; object-fit: contain; filter: drop-shadow(0 0 7px rgba(93,255,98,.34)); }
+  .tv-brand-mark { width: 90px; height: 76px; display:flex; align-items:center; justify-content:center; overflow:visible; background: transparent; }
+  .tv-eagle-head { width: 100%; height: 100%; display:block; object-fit: contain; object-position:center; filter: drop-shadow(0 0 9px rgba(255,255,255,.13)) drop-shadow(0 0 10px rgba(93,255,98,.16)); }
   .tv-day-label { justify-self:center; width:100%; display:flex; align-items:center; justify-content:center; gap:24px; font-size: clamp(17px, 1.26vw, 24px); font-weight: 700; color: #f2fff2; letter-spacing: 3px; white-space: nowrap; }
   .tv-day-label::before,
   .tv-day-label::after { content:''; width:min(220px, 15vw); height:1px; background:linear-gradient(90deg, transparent, #58f05a 55%, transparent); box-shadow:0 0 11px rgba(88,240,90,.62); }
@@ -1910,7 +1910,7 @@
   @media (max-height: 850px) and (min-width: 1101px) {
     .tv-top-bar { padding: 18px 40px 4px; }
     .tv-logo { gap: 16px; font-size: clamp(18px, 1.25vw, 24px); letter-spacing: 7px; }
-    .tv-brand-mark { width: 50px; height: 50px; }
+    .tv-brand-mark { width: 72px; height: 62px; }
     .tv-day-label { font-size: clamp(16px, 1.1vw, 21px); }
     .tv-close-btn { min-width: 132px; padding: 10px 20px; font-size: clamp(17px, 1.15vw, 22px); }
     .tv-main { padding: 82px 38px 24px; }
@@ -2302,8 +2302,8 @@
       font-size: 17px;
     }
     .tv-brand-mark {
-      width: 42px;
-      height: 42px;
+      width: 60px;
+      height: 52px;
     }
     .tv-day-label {
       grid-column: 1 / -1;
@@ -2616,8 +2616,8 @@
       font-size: 15px;
     }
     .tv-brand-mark {
-      width: 38px;
-      height: 38px;
+      width: 54px;
+      height: 46px;
     }
     .tv-day-label {
       grid-column: 1 / -1;
@@ -2952,7 +2952,7 @@
   <div class="tv-top-bar">
     <div class="tv-logo">
       <span class="tv-brand-mark" aria-hidden="true">
-        <img class="tv-eagle-head" src="tv-eagle-mark.png" alt="" />
+        <img class="tv-eagle-head" src="tv-eagle-mark.png?v=20260624" alt="" />
       </span>
       <span>Eagle Strength</span>
     </div>
