@@ -2211,7 +2211,7 @@
   <!-- ATHLETE DASHBOARD -->
   <div id="page-athlete-dashboard" class="page" data-tour="student-dashboard">
     <div class="athlete-dashboard-shell">
-      <div class="athlete-hero">
+      <div class="athlete-hero" data-tour="student-dashboard-hero">
         <div>
           <div class="athlete-hero-title" id="athlete-dashboard-name">Athlete</div>
           <div class="athlete-hero-meta" id="athlete-dashboard-meta">Today&apos;s workout</div>
@@ -2863,9 +2863,9 @@ const DEMO_TOUR_STEPS = [
   { id: 'nav-today', route: 'dashboard', targetSelector: '[data-tour="nav-todays-workout"]', title: 'Today’s Workout', description: 'Today’s Workout shows the workouts created for the current day. Multiple coaches can create multiple workouts for the same day.', placement: 'bottom' },
   { id: 'today-list', route: 'today', targetSelector: '[data-tour="today-workout-selector"]', title: 'Select Workout', description: 'Choose which workout you want to view. This allows different teams, sessions, or coaches to have separate workouts on the same day.', placement: 'top', beforeStepAction: 'demoSelectTodayWorkout' },
   { id: 'display-tv-button', route: 'today', targetSelector: '[data-tour="display-on-tv-button"]', title: 'Display on TV', description: 'Click Display on TV to open an enhanced workout display designed for large screens in the weight room.', placement: 'bottom', beforeStepAction: 'demoSelectTodayWorkout' },
-  { id: 'tv-screen', route: 'tv-display', targetSelector: '[data-tour="tv-display-screen"]', title: 'Weight Room TV View', description: 'This view is optimized for the weight room TV. It gives athletes and coaches a cleaner large-screen view of the workout.', placement: 'left', beforeStepAction: 'demoOpenTv' },
+  { id: 'tv-screen', route: 'tv-display', targetSelector: '[data-tour="tv-display-title"]', title: 'Weight Room TV View', description: 'This view is optimized for the weight room TV. It gives athletes and coaches a cleaner large-screen view of the workout.', placement: 'bottom', beforeStepAction: 'demoOpenTv' },
   { id: 'nav-edit', route: 'dashboard', targetSelector: '[data-tour="nav-edit-workout"]', title: 'Edit Workout', description: 'Use Edit Workout to create, edit, copy, and organize workouts by date, team, group, session, or sport.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
-  { id: 'monthly-calendar', route: 'edit-workouts', targetSelector: '[data-tour="workout-calendar"]', title: 'Monthly Calendar', description: 'This calendar lets coaches select the day they want to create or edit a workout for.', placement: 'bottom' },
+  { id: 'monthly-calendar', route: 'edit-workouts', targetSelector: '[data-tour="workout-calendar-heading"]', title: 'Monthly Calendar', description: 'This calendar lets coaches select the day they want to create or edit a workout for.', placement: 'bottom' },
   { id: 'select-day', route: 'edit-workouts', targetSelector: '[data-tour="calendar-date"]', title: 'Select a Day', description: 'Click any day to create or edit the workout for that date.', placement: 'top' },
   { id: 'copy-workout', route: 'edit-workouts', targetSelector: '[data-tour="copy-workout-button"]', title: 'Copy Workout', description: 'If you created a workout in the past and want to reuse it, click Copy and choose the new date you want to copy it to.', placement: 'left', beforeStepAction: 'demoOpenPastWorkoutDate' },
   { id: 'team-session-groups', route: 'edit-workouts', targetSelector: '[data-tour="workout-team-section"]', title: 'Teams, Sessions, and Groups', description: 'Workouts can be organized by sport, team, group, or session. For example, Baseball Varsity can have a separate workout from Football Varsity or Basketball JV.', placement: 'bottom', beforeStepAction: 'demoOpenWorkoutEditor' },
@@ -2876,22 +2876,22 @@ const DEMO_TOUR_STEPS = [
   { id: 'status-toggle', route: 'admin', targetSelector: '[data-tour="athlete-status-toggle"]', title: 'Active or Inactive Status', description: 'The green circle means the athlete is active. Click it to change the athlete to inactive or injured. Inactive athletes are visually marked in red.', placement: 'left', beforeStepAction: 'demoCloseAthleteModal' },
   { id: 'delete-athlete', route: 'admin', targetSelector: '[data-tour="delete-athlete-button"]', title: 'Delete Athlete', description: 'Use the trash icon to remove an athlete from the system. In demo mode this does not delete real data.', placement: 'left' },
   { id: 'student-login-preview', route: 'login-preview', targetSelector: '[data-tour="student-login-preview"]', title: 'Student Login Preview', description: 'This is what it looks like when a student uses their own athlete credentials to log in. The password can remain masked.', placement: 'bottom', beforeStepAction: 'demoStudentLoginPreview' },
-  { id: 'student-dashboard', route: 'student-dashboard', targetSelector: '[data-tour="student-dashboard"]', title: 'Student Dashboard', description: 'When a student logs in, the system recognizes their athlete profile, sport, team, and group. If their coach created a matching workout, that workout appears here.', placement: 'bottom', beforeStepAction: 'demoStudentDashboard' },
-  { id: 'log-lift-button', route: 'student-dashboard', targetSelector: '[data-tour="log-lift-button"]', title: 'Log Lift Button', description: 'Students can log their completed lifts directly from their workout.', placement: 'left' },
+  { id: 'student-dashboard', route: 'student-dashboard', targetSelector: '[data-tour="student-dashboard-hero"]', title: 'Student Dashboard', description: 'When a student logs in, the system recognizes their athlete profile, sport, team, and group. If their coach created a matching workout, that workout appears here.', placement: 'bottom', beforeStepAction: 'demoStudentDashboard' },
+  { id: 'log-lift-button', route: 'student-dashboard', targetSelector: '[data-tour="log-lift-button"]', title: 'Log Lift Button', description: 'Students can log their completed lifts directly from their workout.', placement: 'right', beforeStepAction: 'demoCloseLiftLog' },
   { id: 'set-entry-fields', route: 'student-dashboard', targetSelector: '[data-tour="set-entry-fields"]', title: 'Set Entry Fields', description: 'The athlete enters the weight and reps completed for each set. The system stores the lift log for that athlete only.', placement: 'left', beforeStepAction: 'demoOpenLiftLog' },
   { id: 'one-rm-calc', route: 'student-dashboard', targetSelector: '[data-tour="one-rm-card"]', title: '1RM Calculation', description: 'When an athlete logs Bench Press, Squat, or Deadlift, the system calculates an estimated 1 rep max using weight times one plus reps divided by 30.', placement: 'bottom', beforeStepAction: 'demoSaveLiftLog' },
-  { id: 'percentage-prescription', route: 'student-dashboard', targetSelector: '[data-tour="student-workout"]', title: 'Percentage-Based Prescription', description: 'Once the athlete has a calculated 1RM, future percentage-based workouts show the recommended weight. If a lift has no 1RM data, the target displays N/A.', placement: 'top' },
+  { id: 'percentage-prescription', route: 'student-dashboard', targetSelector: '[data-tour="percentage-prescription"]', title: 'Percentage-Based Prescription', description: 'Once the athlete has a calculated 1RM, future percentage-based workouts show the recommended weight. If a lift has no 1RM data, the target displays N/A.', placement: 'bottom' },
   { id: 'student-restrictions', route: 'student-dashboard', targetSelector: '[data-tour="student-header-nav"]', title: 'Student Restrictions', description: 'Students only have access to their own workout, their own lift logs, their own 1RM values, and the Tutorials section.', placement: 'bottom' },
   { id: 'nav-attendance', route: 'dashboard', targetSelector: '[data-tour="nav-attendance"]', title: 'Attendance', description: 'Attendance lets coaches track who attended weight room sessions.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
   { id: 'attendance-team', route: 'attendance', targetSelector: '[data-tour="attendance-team-selector"]', title: 'Team Selector', description: 'Choose the team or group you want to take attendance for.', placement: 'bottom' },
   { id: 'attendance-list', route: 'attendance', targetSelector: '[data-tour="attendance-list"]', title: 'Attendance List', description: 'Mark each athlete present or absent for the selected date and team.', placement: 'top' },
   { id: 'attendance-report', route: 'attendance', targetSelector: '[data-tour="attendance-report"]', title: 'Attendance Reports', description: 'Use attendance reports to review absences by athlete, date range, team, or group.', placement: 'top', beforeStepAction: 'demoAttendanceReport' },
   { id: 'nav-calendar', route: 'dashboard', targetSelector: '[data-tour="nav-calendar"]', title: 'Calendar', description: 'The shared calendar helps coaches stay up to date with weight room events, team schedules, testing days, and reminders.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
-  { id: 'calendar-view', route: 'calendar', targetSelector: '[data-tour="shared-calendar"]', title: 'Shared Calendar', description: 'All coaches can view the shared calendar.', placement: 'top' },
+  { id: 'calendar-view', route: 'calendar', targetSelector: '[data-tour="shared-calendar-primary"]', title: 'Shared Calendar', description: 'All coaches can view the shared calendar.', placement: 'right', beforeStepAction: 'demoCloseCalendarEvent' },
   { id: 'calendar-event', route: 'calendar', targetSelector: '[data-tour="calendar-add-event"]', title: 'Add or Edit Events', description: 'Coaches can add or edit events to keep everyone updated.', placement: 'left', beforeStepAction: 'demoOpenCalendarEvent' },
   { id: 'nav-tutorials', route: 'dashboard', targetSelector: '[data-tour="nav-tutorials"]', title: 'Tutorials', description: 'Tutorials are available to all coaches and athletes.', placement: 'bottom', beforeStepAction: 'demoCoachDashboard' },
   { id: 'tutorial-search', route: 'tutorials', targetSelector: '[data-tour="tutorial-search"]', title: 'Tutorial Search Bar', description: 'Search for an exercise to find relevant how-to videos and coaching resources.', placement: 'bottom', beforeStepAction: 'demoTutorialSearch' },
-  { id: 'tutorial-results', route: 'tutorials', targetSelector: '[data-tour="tutorial-results"]', title: 'Search Results', description: 'The system shows the most relevant tutorial videos for the searched exercise. This helps athletes learn proper technique and gives coaches a consistent resource to share.', placement: 'top' },
+  { id: 'tutorial-results', route: 'tutorials', targetSelector: '[data-tour="tutorial-result-card"]', title: 'Search Results', description: 'The system shows the most relevant tutorial videos for the searched exercise. This helps athletes learn proper technique and gives coaches a consistent resource to share.', placement: 'top' },
   { id: 'finish', route: 'dashboard', targetSelector: null, title: 'Demo Walkthrough Complete', description: 'You have completed the demo walkthrough. You can now explore the demo site freely. All data shown here is fake demo data and does not affect real athletes, coaches, workouts, lift logs, or attendance.', placement: 'center', final: true, beforeStepAction: 'demoCoachDashboard' }
 ];
 let tutorialState = { active: false, index: 0, positioning: false };
@@ -2978,7 +2978,7 @@ async function waitForTourTarget(selector) {
   for (let i = 0; i < 35; i += 1) {
     const target = document.querySelector(selector);
     if (target && target.getClientRects().length) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      target.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
       await sleep(180);
       return target;
     }
@@ -3061,6 +3061,55 @@ function positionTutorial(step, target) {
     arrowTop = highlightRect.top + highlightRect.height / 2 - (arrowHeight / 2);
   }
   arrow.className = `tour-arrow arrow-${arrowDirection}`;
+  const placedPopover = {
+    top,
+    left,
+    right: left + popRect.width,
+    bottom: top + popRect.height,
+    width: popRect.width,
+    height: popRect.height
+  };
+  if (placement === 'bottom') {
+    const gapTop = highlightRect.bottom;
+    const gapBottom = placedPopover.top;
+    if (gapBottom > gapTop + arrowHeight) {
+      arrowTop = gapTop + (gapBottom - gapTop - arrowHeight) / 2;
+    }
+    arrowLeft = Math.min(
+      Math.max(highlightRect.left + highlightRect.width / 2 - arrowWidth / 2, placedPopover.left + 16),
+      placedPopover.right - arrowWidth - 16
+    );
+  } else if (placement === 'top') {
+    const gapTop = placedPopover.bottom;
+    const gapBottom = highlightRect.top;
+    if (gapBottom > gapTop + arrowHeight) {
+      arrowTop = gapTop + (gapBottom - gapTop - arrowHeight) / 2;
+    }
+    arrowLeft = Math.min(
+      Math.max(highlightRect.left + highlightRect.width / 2 - arrowWidth / 2, placedPopover.left + 16),
+      placedPopover.right - arrowWidth - 16
+    );
+  } else if (placement === 'left') {
+    const gapLeft = placedPopover.right;
+    const gapRight = highlightRect.left;
+    if (gapRight > gapLeft + arrowWidth) {
+      arrowLeft = gapLeft + (gapRight - gapLeft - arrowWidth) / 2;
+    }
+    arrowTop = Math.min(
+      Math.max(highlightRect.top + highlightRect.height / 2 - arrowHeight / 2, placedPopover.top + 16),
+      placedPopover.bottom - arrowHeight - 16
+    );
+  } else if (placement === 'right') {
+    const gapLeft = highlightRect.right;
+    const gapRight = placedPopover.left;
+    if (gapRight > gapLeft + arrowWidth) {
+      arrowLeft = gapLeft + (gapRight - gapLeft - arrowWidth) / 2;
+    }
+    arrowTop = Math.min(
+      Math.max(highlightRect.top + highlightRect.height / 2 - arrowHeight / 2, placedPopover.top + 16),
+      placedPopover.bottom - arrowHeight - 16
+    );
+  }
   arrow.style.left = `${Math.max(12, Math.min(window.innerWidth - 76, arrowLeft))}px`;
   arrow.style.top = `${Math.max(12, Math.min(window.innerHeight - 36, arrowTop))}px`;
 }
@@ -3091,6 +3140,7 @@ async function runTutorialAction(action) {
     case 'demoCoachDashboard':
       closeAdminAthleteModal();
       closeCalendarEventModal();
+      document.getElementById('log-modal')?.style && (document.getElementById('log-modal').style.display = 'none');
       document.getElementById('copy-workout-modal')?.style && (document.getElementById('copy-workout-modal').style.display = 'none');
       applyDemoCoachSession({ showDashboard: false });
       showPage('dashboard');
@@ -3146,6 +3196,11 @@ async function runTutorialAction(action) {
     case 'demoStudentDashboard':
       applyDemoAthleteSession(demoData.studentAthleteId);
       break;
+    case 'demoCloseLiftLog':
+      applyDemoAthleteSession(demoData.studentAthleteId);
+      document.getElementById('log-modal')?.style && (document.getElementById('log-modal').style.display = 'none');
+      renderAthleteDashboard(true);
+      break;
     case 'demoOpenLiftLog':
       applyDemoAthleteSession(demoData.studentAthleteId);
       await sleep(120);
@@ -3169,6 +3224,9 @@ async function runTutorialAction(action) {
       openCalendarEventPrompt(eventDate);
       break;
     }
+    case 'demoCloseCalendarEvent':
+      closeCalendarEventModal();
+      break;
     case 'demoTutorialSearch': {
       const input = document.getElementById('tutorial-search-input');
       if (input) input.value = 'Bench Press';
@@ -4881,11 +4939,12 @@ function tutorialEmbedUrl(videoId) {
   return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0&modestbranding=1`;
 }
 
-function tutorialCard(video) {
+function tutorialCard(video, index = 0) {
   const selected = video.id === selectedTutorialVideoId;
   const badge = video.isShort ? 'Shorts' : 'Quick Video';
+  const tourAttr = index === 0 ? 'data-tour="tutorial-result-card"' : '';
   return `
-    <button class="tutorial-card ${selected ? 'selected' : ''}" type="button" onclick="selectTutorialVideo(${jsArg(video.id)})">
+    <button class="tutorial-card ${selected ? 'selected' : ''}" ${tourAttr} type="button" onclick="selectTutorialVideo(${jsArg(video.id)})">
       <div class="tutorial-thumb-wrap">
         ${video.thumbnail ? `<img class="tutorial-thumb" src="${escHtml(video.thumbnail)}" alt="${escHtml(video.title)} thumbnail" loading="lazy" />` : ''}
         <span class="tutorial-badge">${escHtml(badge)}</span>
@@ -4904,7 +4963,7 @@ function renderTutorialResults() {
     results.innerHTML = `<div class="empty-state">No tutorial videos found. Try searching a different exercise name.</div>`;
     return;
   }
-  results.innerHTML = `<div class="tutorial-grid">${tutorialVideos.map(tutorialCard).join('')}</div>`;
+  results.innerHTML = `<div class="tutorial-grid">${tutorialVideos.map((video, index) => tutorialCard(video, index)).join('')}</div>`;
 }
 
 function selectTutorialVideo(videoId) {
@@ -5654,7 +5713,7 @@ function renderEditWorkoutCalendar() {
 
   shell.innerHTML = `
     <div class="edit-calendar-card" data-tour="workout-calendar">
-      <div class="edit-calendar-head">
+      <div class="edit-calendar-head" data-tour="workout-calendar-heading">
         <div>
           <div class="edit-month-title">${editCalendarMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>
           <div class="edit-date-subtitle">Choose a date to view, create, copy, or delete team workouts.</div>
@@ -6180,7 +6239,7 @@ function renderTvFullWorkout(label) {
   const titleDate = formatTvDisplayDate(tvCurrentWorkoutRecord?.date, true);
   document.getElementById('tv-main').innerHTML = `
     <div class="tv-breakdown-shell">
-    <div class="tv-display-title"><span class="tv-title-date">${escHtml(titleDate)}</span><span>Workout Breakdown</span></div>
+    <div class="tv-display-title" data-tour="tv-display-title"><span class="tv-title-date">${escHtml(titleDate)}</span><span>Workout Breakdown</span></div>
     <div class="tv-workout-layout" data-tour="tv-display-screen">
       ${stationCards || '<div class="tv-workout-card"><div class="tv-workout-title">No Workout Scheduled</div></div>'}
       <aside class="tv-stopwatch-panel" aria-label="Stopwatch controls">
@@ -6842,10 +6901,13 @@ function renderCalendarMonth(monthKey) {
   document.getElementById('calendar-weekdays').innerHTML = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div class="weekday-head">${d}</div>`).join('');
   const cells = [];
   for (let i=0;i<startDay;i++) cells.push('<div class="calendar-cell muted"></div>');
+  let markedTourCell = false;
   for (let d=1; d<=daysInMonth; d++) {
     const date = `${monthKey}-${String(d).padStart(2,'0')}`;
     const events = calendarEventsForDate(date);
-    cells.push(`<div class="calendar-cell" onclick="openCalendarEventPrompt('${date}')"><div class="calendar-date">${d}</div>${events.map(e=>`<div class="calendar-item">${e.time || 'All day'} — ${escHtml(e.text || '')}</div>`).join('')}</div>`);
+    const tourAttr = events.length && !markedTourCell ? 'data-tour="shared-calendar-primary"' : '';
+    if (tourAttr) markedTourCell = true;
+    cells.push(`<div class="calendar-cell" ${tourAttr} onclick="openCalendarEventPrompt('${date}')"><div class="calendar-date">${d}</div>${events.map(e=>`<div class="calendar-item">${e.time || 'All day'} — ${escHtml(e.text || '')}</div>`).join('')}</div>`);
   }
   grid.innerHTML = cells.join('');
 }
