@@ -125,11 +125,12 @@
     position: fixed;
     inset: 0;
     z-index: 12000;
-    pointer-events: none;
+    pointer-events: auto;
   }
   .tour-root[hidden] { display: none; }
   .tour-highlight {
     position: fixed;
+    pointer-events: none;
     border: 2px solid var(--green-300);
     border-radius: 14px;
     box-shadow:
@@ -215,15 +216,42 @@
   }
   .tour-arrow {
     position: fixed;
-    width: 18px;
-    height: 18px;
-    background: #ffffff;
-    border-left: 1px solid rgba(208, 220, 211, 0.98);
-    border-top: 1px solid rgba(208, 220, 211, 0.98);
-    transform: rotate(45deg);
+    width: 64px;
+    height: 24px;
     z-index: 12001;
     transition: top 0.22s ease, left 0.22s ease;
+    pointer-events: none;
+    transform-origin: center center;
   }
+  .tour-arrow::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    width: 45px;
+    height: 4px;
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 0 14px rgba(78,203,113,0.38);
+    transform: translateY(-50%);
+  }
+  .tour-arrow::after {
+    content: '';
+    position: absolute;
+    right: 2px;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border-left: 16px solid #ffffff;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    filter: drop-shadow(0 0 8px rgba(78,203,113,0.30));
+    transform: translateY(-50%);
+  }
+  .tour-arrow.arrow-right { transform: rotate(0deg); }
+  .tour-arrow.arrow-left { transform: rotate(180deg); }
+  .tour-arrow.arrow-up { transform: rotate(-90deg); }
+  .tour-arrow.arrow-down { transform: rotate(90deg); }
   @media (max-width: 720px) {
     .tour-popover {
       left: 16px !important;
@@ -2938,8 +2966,9 @@ async function showTutorialStep() {
   desc.textContent = step.description;
   back.disabled = tutorialState.index === 0;
   next.textContent = step.final ? 'Finish' : 'Next';
-  skip.textContent = step.final ? 'Restart Tutorial' : 'Skip Tutorial';
-  skip.onclick = step.final ? restartTutorial : skipTutorial;
+  skip.hidden = !step.final;
+  skip.textContent = 'Restart Tutorial';
+  skip.onclick = restartTutorial;
   const target = step.targetSelector ? await waitForTourTarget(step.targetSelector) : null;
   positionTutorial(step, target);
   tutorialState.positioning = false;
@@ -3005,10 +3034,25 @@ function positionTutorial(step, target) {
   left = Math.max(14, Math.min(window.innerWidth - popRect.width - 14, left));
   popover.style.top = `${top}px`;
   popover.style.left = `${left}px`;
-  const arrowLeft = Math.max(18, Math.min(window.innerWidth - 30, rect.left + rect.width / 2 - 9));
-  const arrowTop = placement === 'top' ? top + popRect.height - 9 : placement === 'left' || placement === 'right' ? rect.top + rect.height / 2 - 9 : top - 9;
-  arrow.style.left = `${arrowLeft}px`;
-  arrow.style.top = `${Math.max(12, Math.min(window.innerHeight - 30, arrowTop))}px`;
+  let arrowDirection = 'up';
+  let arrowLeft = rect.left + rect.width / 2 - 32;
+  let arrowTop = top - 30;
+  if (placement === 'top') {
+    arrowDirection = 'down';
+    arrowLeft = rect.left + rect.width / 2 - 32;
+    arrowTop = top + popRect.height + 6;
+  } else if (placement === 'left') {
+    arrowDirection = 'right';
+    arrowLeft = left + popRect.width + 4;
+    arrowTop = rect.top + rect.height / 2 - 12;
+  } else if (placement === 'right') {
+    arrowDirection = 'left';
+    arrowLeft = left - 68;
+    arrowTop = rect.top + rect.height / 2 - 12;
+  }
+  arrow.className = `tour-arrow arrow-${arrowDirection}`;
+  arrow.style.left = `${Math.max(12, Math.min(window.innerWidth - 76, arrowLeft))}px`;
+  arrow.style.top = `${Math.max(12, Math.min(window.innerHeight - 36, arrowTop))}px`;
 }
 
 async function routeForTutorialStep(step) {
