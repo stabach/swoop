@@ -2722,6 +2722,329 @@
       width: calc(100vw - 20px);
     }
   }
+
+  /* TV display: compact stopwatch header + full-width stations */
+  #tv-display {
+    background:
+      radial-gradient(circle at 18% 0%, rgba(76, 240, 92, 0.12), transparent 30%),
+      radial-gradient(circle at 88% 6%, rgba(76, 240, 92, 0.10), transparent 25%),
+      radial-gradient(circle at 50% 78%, rgba(76, 240, 92, 0.045), transparent 38%),
+      linear-gradient(180deg, #010303 0%, #040807 48%, #020504 100%);
+  }
+  #tv-display.active { display: flex; }
+  #tv-display .tv-top-bar {
+    padding: clamp(16px, 2.2vh, 28px) clamp(28px, 2.7vw, 54px) 8px;
+    grid-template-columns: minmax(330px, auto) minmax(420px, 1fr) minmax(470px, auto);
+    gap: clamp(22px, 2.2vw, 40px);
+    align-items: center;
+  }
+  #tv-display .tv-logo {
+    gap: clamp(14px, 1.1vw, 22px);
+    font-size: clamp(21px, 1.7vw, 34px);
+    letter-spacing: clamp(6px, .52vw, 10px);
+    text-shadow: 0 0 16px rgba(255,255,255,.14);
+  }
+  #tv-display .tv-brand-mark {
+    width: clamp(70px, 5vw, 100px);
+    height: clamp(58px, 4.2vw, 82px);
+  }
+  #tv-display .tv-day-label {
+    gap: clamp(26px, 2.4vw, 48px);
+    font-size: clamp(20px, 1.55vw, 30px);
+    letter-spacing: clamp(3px, .28vw, 6px);
+    justify-self: stretch;
+  }
+  #tv-display .tv-day-label::before,
+  #tv-display .tv-day-label::after {
+    width: min(250px, 14vw);
+    opacity: .95;
+  }
+  #tv-display .tv-top-actions {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 1vw, 18px);
+    min-width: 0;
+  }
+  #tv-display .tv-compact-stopwatch {
+    min-height: clamp(42px, 4vh, 52px);
+    display: grid;
+    grid-template-columns: clamp(28px, 2vw, 36px) auto auto;
+    align-items: center;
+    gap: clamp(9px, .75vw, 14px);
+    padding: clamp(4px, .35vw, 6px) clamp(10px, .75vw, 14px);
+    border: 1px solid rgba(88,240,90,.48);
+    border-radius: 12px;
+    background:
+      radial-gradient(circle at 18% 18%, rgba(88,240,90,.16), transparent 44%),
+      linear-gradient(180deg, rgba(7,20,11,.88), rgba(1,7,4,.92));
+    box-shadow: inset 0 0 22px rgba(88,240,90,.075), 0 0 22px rgba(88,240,90,.12);
+  }
+  #tv-display .tv-compact-stopwatch-icon {
+    width: clamp(28px, 2vw, 36px);
+    height: clamp(28px, 2vw, 36px);
+    color: #58f05a;
+    filter: drop-shadow(0 0 10px rgba(88,240,90,.55));
+  }
+  #tv-display .tv-compact-stopwatch-readout {
+    display: flex;
+    align-items: center;
+    text-align: left;
+  }
+  #tv-display .tv-stopwatch-time {
+    font-size: clamp(23px, 1.68vw, 32px);
+    letter-spacing: -2px;
+    line-height: .95;
+  }
+  #tv-display .tv-compact-stopwatch-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  #tv-display .tv-sw-btn {
+    width: auto;
+    min-height: clamp(30px, 3vh, 38px);
+    padding: 0 clamp(10px, .7vw, 14px);
+    gap: 8px;
+    border-width: 1px;
+    border-radius: 8px;
+    font-size: clamp(13px, .92vw, 18px);
+    letter-spacing: 1.4px;
+  }
+  #tv-display .tv-sw-btn svg {
+    width: clamp(16px, 1.1vw, 22px);
+    height: clamp(16px, 1.1vw, 22px);
+  }
+  #tv-display .tv-close-btn {
+    min-height: clamp(60px, 5.8vh, 76px);
+    min-width: clamp(140px, 9vw, 178px);
+    padding: 0 clamp(20px, 1.45vw, 28px);
+    border-radius: 12px;
+    font-size: clamp(22px, 1.65vw, 32px);
+    letter-spacing: clamp(2px, .22vw, 4px);
+    border-color: rgba(255,255,255,.28);
+    background: rgba(255,255,255,.055);
+  }
+  #tv-display .tv-close-btn svg {
+    width: clamp(24px, 1.75vw, 34px);
+    height: clamp(24px, 1.75vw, 34px);
+  }
+  #tv-display .tv-main {
+    padding: clamp(88px, 8.7vh, 104px) clamp(28px, 2.5vw, 54px) clamp(18px, 2vh, 26px);
+  }
+  #tv-display .tv-breakdown-shell {
+    width: min(1868px, calc(100vw - clamp(56px, 5vw, 108px)));
+    gap: clamp(8px, 1.05vh, 14px);
+  }
+  #tv-display .tv-display-title {
+    font-size: clamp(38px, 3.25vw, 58px);
+    letter-spacing: clamp(4px, .42vw, 8px);
+    gap: clamp(14px, 1.35vw, 26px);
+  }
+  #tv-display .tv-display-title::before,
+  #tv-display .tv-display-title::after {
+    width: clamp(68px, 5.8vw, 106px);
+    height: clamp(10px, .85vw, 15px);
+    opacity: .78;
+  }
+  #tv-display .tv-workout-layout {
+    height: min(100%, 850px);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(24px, 1.65vw, 34px);
+  }
+  #tv-display .tv-station-card {
+    border-width: 2px;
+    border-color: rgba(88,240,90,.66);
+    border-radius: 22px;
+    box-shadow: inset 0 0 34px rgba(88,240,90,.07), 0 20px 70px rgba(0,0,0,.50), 0 0 18px rgba(88,240,90,.12);
+  }
+  #tv-display .tv-station-header {
+    min-height: clamp(82px, 8.2vh, 104px);
+    padding: clamp(13px, 1.35vh, 18px) clamp(20px, 1.7vw, 32px);
+    gap: clamp(20px, 1.65vw, 30px);
+  }
+  #tv-display .tv-station-number {
+    width: clamp(58px, 4.2vw, 80px);
+    height: clamp(58px, 4.2vw, 80px);
+    font-size: clamp(34px, 2.5vw, 48px);
+  }
+  #tv-display .tv-station-number span {
+    width: calc(100% - 9px);
+    height: calc(100% - 9px);
+  }
+  #tv-display .tv-station-title {
+    font-size: clamp(34px, 2.5vw, 48px);
+    letter-spacing: clamp(5px, .45vw, 9px);
+  }
+  #tv-display .tv-station-slashes {
+    width: clamp(48px, 3.4vw, 66px);
+    height: clamp(25px, 2vw, 34px);
+    gap: 8px;
+  }
+  #tv-display .tv-station-slashes span {
+    width: 7px;
+  }
+  #tv-display .tv-station-body {
+    gap: clamp(14px, 1.45vh, 20px);
+    padding: clamp(15px, 1.35vw, 24px);
+  }
+  #tv-display .tv-station-exercise {
+    grid-template-columns: clamp(72px, 5.1vw, 98px) minmax(0, 1fr);
+    padding: clamp(18px, 1.45vw, 26px);
+    column-gap: clamp(22px, 1.8vw, 32px);
+    row-gap: clamp(8px, .85vh, 13px);
+    border-radius: 18px;
+    border-color: rgba(88,240,90,.44);
+    background:
+      radial-gradient(circle at 18% 8%, rgba(88,240,90,.15), transparent 46%),
+      linear-gradient(180deg, rgba(10,30,17,.82), rgba(3,10,6,.92));
+  }
+  #tv-display .tv-exercise-icon-hex {
+    width: clamp(72px, 5.1vw, 98px);
+    height: clamp(72px, 5.1vw, 98px);
+  }
+  #tv-display .tv-exercise-icon-hex svg {
+    stroke-width: 2.6;
+  }
+  #tv-display .tv-station-exercise-name {
+    font-size: clamp(40px, 2.72vw, 52px);
+    letter-spacing: clamp(2px, .24vw, 5px);
+    text-shadow: 0 0 14px rgba(255,255,255,.12), 0 7px 18px rgba(0,0,0,.38);
+  }
+  #tv-display .tv-workout-set-list {
+    gap: clamp(5px, .58vh, 8px);
+    margin-top: clamp(2px, .32vh, 5px);
+  }
+  #tv-display .tv-workout-set-row {
+    font-size: clamp(30px, 2vw, 39px);
+    gap: clamp(15px, .95vw, 20px);
+    letter-spacing: clamp(1px, .16vw, 3px);
+    line-height: .98;
+    text-shadow: 0 5px 16px rgba(0,0,0,.42);
+  }
+  #tv-display .tv-set-bullet {
+    width: clamp(13px, .9vw, 17px);
+    height: clamp(13px, .9vw, 17px);
+    box-shadow: 0 0 16px rgba(88,240,90,.86), 0 0 28px rgba(88,240,90,.34);
+  }
+  #tv-display .tv-stopwatch-panel {
+    display: none;
+  }
+
+  @media (max-height: 850px) and (min-width: 1101px) {
+    #tv-display .tv-top-bar {
+      padding: 12px 36px 5px;
+      grid-template-columns: minmax(300px, auto) minmax(360px, 1fr) minmax(420px, auto);
+    }
+    #tv-display .tv-logo { font-size: clamp(18px, 1.35vw, 26px); }
+    #tv-display .tv-brand-mark { width: 70px; height: 58px; }
+    #tv-display .tv-day-label { font-size: clamp(17px, 1.2vw, 22px); }
+    #tv-display .tv-compact-stopwatch,
+    #tv-display .tv-close-btn { min-height: 48px; }
+    #tv-display .tv-stopwatch-time { font-size: clamp(20px, 1.45vw, 28px); }
+    #tv-display .tv-sw-btn { min-height: 30px; font-size: clamp(12px, .8vw, 15px); }
+    #tv-display .tv-main { padding: 76px 36px 24px; }
+    #tv-display .tv-display-title { font-size: clamp(42px, 3.55vw, 62px); }
+    #tv-display .tv-workout-layout { height: min(100%, 690px); gap: 22px; }
+    #tv-display .tv-station-header { min-height: 70px; }
+    #tv-display .tv-station-number { width: 54px; height: 54px; font-size: 30px; }
+    #tv-display .tv-station-title { font-size: 32px; }
+    #tv-display .tv-station-body { gap: 14px; padding: 14px; }
+    #tv-display .tv-station-exercise { grid-template-columns: 70px minmax(0, 1fr); padding: 20px; }
+    #tv-display .tv-exercise-icon-hex { width: 70px; height: 70px; }
+    #tv-display .tv-station-exercise-name { font-size: clamp(40px, 2.78vw, 52px); }
+    #tv-display .tv-workout-set-row { font-size: clamp(29px, 1.95vw, 38px); }
+    #tv-display .tv-set-bullet { width: 14px; height: 14px; }
+  }
+
+  @media (max-width: 1100px) {
+    #tv-display .tv-top-bar {
+      position: relative;
+      grid-template-columns: 1fr;
+      padding: 18px 18px 8px;
+      gap: 12px;
+    }
+    #tv-display .tv-day-label {
+      grid-column: auto;
+      order: 2;
+    }
+    #tv-display .tv-top-actions {
+      order: 3;
+      justify-self: stretch;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    #tv-display .tv-compact-stopwatch {
+      flex: 1 1 330px;
+    }
+    #tv-display .tv-main {
+      padding: 16px 18px 22px;
+      overflow: auto;
+      height: auto;
+      min-height: 100vh;
+    }
+    #tv-display .tv-workout-layout {
+      height: auto;
+      grid-template-columns: 1fr;
+    }
+    #tv-display .tv-station-card {
+      min-height: 560px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    #tv-display .tv-logo {
+      font-size: 15px;
+      letter-spacing: 2px;
+    }
+    #tv-display .tv-brand-mark {
+      width: 54px;
+      height: 46px;
+    }
+    #tv-display .tv-day-label {
+      font-size: 13px;
+      letter-spacing: 1.5px;
+    }
+    #tv-display .tv-top-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    #tv-display .tv-compact-stopwatch {
+      grid-template-columns: 34px minmax(0, 1fr);
+    }
+    #tv-display .tv-compact-stopwatch-actions {
+      grid-column: 1 / -1;
+      justify-content: stretch;
+    }
+    #tv-display .tv-compact-stopwatch-actions .tv-sw-btn {
+      flex: 1;
+    }
+    #tv-display .tv-close-btn {
+      width: 100%;
+      min-height: 50px;
+      font-size: 18px;
+    }
+    #tv-display .tv-display-title {
+      flex-wrap: wrap;
+      white-space: normal;
+      font-size: 34px;
+      letter-spacing: 2px;
+    }
+    #tv-display .tv-station-exercise {
+      grid-template-columns: 48px minmax(0, 1fr);
+      padding: 14px;
+    }
+    #tv-display .tv-exercise-icon-hex {
+      width: 48px;
+      height: 48px;
+    }
+    #tv-display .tv-station-exercise-name {
+      font-size: 28px;
+    }
+    #tv-display .tv-workout-set-row {
+      font-size: 20px;
+    }
+  }
 </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -2957,13 +3280,34 @@
       <span>Eagle Strength</span>
     </div>
     <div class="tv-day-label" id="tv-day-label">Monday</div>
-    <button class="tv-close-btn" onclick="closeTVDisplay()">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M10 7V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M15 12H3m0 0 4-4m-4 4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span>Exit</span>
-    </button>
+    <div class="tv-top-actions">
+      <div class="tv-compact-stopwatch" aria-label="Stopwatch controls">
+        <svg class="tv-compact-stopwatch-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="26" r="13" stroke="currentColor" stroke-width="3"/>
+          <path d="M24 26v-8M24 26l6 4M20 6h8M24 10V6M36 14l3-3" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div class="tv-compact-stopwatch-readout">
+          <div class="tv-stopwatch-time" id="tv-stopwatch">00:00.00</div>
+        </div>
+        <div class="tv-compact-stopwatch-actions">
+          <button class="tv-sw-btn primary" id="tv-sw-btn" onclick="tvToggleStopwatch()" title="Start stopwatch">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 5v14l11-7-11-7Z" fill="currentColor"/></svg>
+            <span>Start</span>
+          </button>
+          <button class="tv-sw-btn" onclick="tvResetStopwatch()" title="Reset stopwatch">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Reset</span>
+          </button>
+        </div>
+      </div>
+      <button class="tv-close-btn" onclick="closeTVDisplay()">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M10 7V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M15 12H3m0 0 4-4m-4 4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Exit</span>
+      </button>
+    </div>
   </div>
 
   <div class="tv-main" id="tv-main">
@@ -6905,25 +7249,6 @@ function renderTvFullWorkout(label) {
     <div class="tv-display-title" data-tour="tv-display-title"><span class="tv-title-date">${escHtml(titleDate)}</span><span>Workout Breakdown</span></div>
     <div class="tv-workout-layout" data-tour="tv-display-screen">
       ${stationCards || '<div class="tv-workout-card"><div class="tv-workout-title">No Workout Scheduled</div></div>'}
-      <aside class="tv-stopwatch-panel" aria-label="Stopwatch controls">
-        <div class="tv-stopwatch-heading">
-          <svg class="tv-stopwatch-icon" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-            <circle cx="24" cy="26" r="13" stroke="currentColor" stroke-width="3"/>
-            <path d="M24 26v-8M24 26l6 4M20 6h8M24 10V6M36 14l3-3" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-          <div class="tv-stopwatch-label-wrap"><div class="tv-stopwatch-label">Stopwatch</div></div>
-        </div>
-        <div class="tv-stopwatch-shell">
-          <div class="tv-stopwatch-time" id="tv-stopwatch">00:00.00</div>
-        </div>
-        <div class="tv-stopwatch-actions">
-          <button class="tv-sw-btn primary" id="tv-sw-btn" onclick="tvToggleStopwatch()">${tvStopwatchButtonContent(false)}</button>
-          <button class="tv-sw-btn" onclick="tvResetStopwatch()">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span>Reset</span>
-          </button>
-        </div>
-      </aside>
     </div>
     </div>`;
   requestAnimationFrame(fitTvExerciseTitles);
